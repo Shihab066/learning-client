@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.lg-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.drawer-side a.active {
+    color: white;
+    background-color: #3b5fe2;
+}
+
+.drawer-side a {
+    margin-bottom: 5px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.menu a.active{
+    color: white;
+    background-color: #3b5fe2;
+}
+.menu a {
+    margin-right:5px;
+}
+

@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
             setUser(loggeduser)
             console.log('logged user ', loggeduser);
             if (loggeduser) {
-                axios.post('https://summer-camp-school-server-zeta.vercel.app/jwt', { email: loggeduser.email })
+                axios.post('https://learning-info-bd.vercel.app/jwt', { email: loggeduser.email })
                     .then(res => {
                         localStorage.setItem('access-token', res.data.token)
                         setloading(false);

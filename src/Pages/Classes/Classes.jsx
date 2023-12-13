@@ -15,13 +15,12 @@ const Classes = () => {
     const { data: classes = [], isLoading } = useQuery({
         queryKey: ['classes'],
         queryFn: async () => {
-            const res = await axios.get('https://summer-camp-school-server-zeta.vercel.app/classes')
+            const res = await axios.get('https://learning-info-bd.vercel.app/classes')
             return res.data
         }
     })
 
     const selectClass = (id) => {
-        console.log(id, email)
         if (!user) {
             Swal.fire({
                 title: 'Login First',
@@ -37,7 +36,7 @@ const Classes = () => {
                 }
             })
         } else {
-            axiosSecure.post(`https://summer-camp-school-server-zeta.vercel.app/selectClass/${id}`, { email: email })
+            axiosSecure.post(`https://learning-info-bd.vercel.app/selectClass/${id}`, { email: email })
                 .then(res => {
                     if (res.data.insertedId) {
                         Swal.fire({

@@ -5,7 +5,7 @@ import ClassCard from "../../../components/ClassCard/ClassCard";
 const PopularClasses = () => {
     const [classes, setClasses] = useState([]);
     useEffect(() => {
-        fetch('https://summer-camp-school-server-zeta.vercel.app/topclass')
+        fetch('https://learning-info-bd.vercel.app/topclass')
             .then(res => res.json())
             .then(data => setClasses(data))
     }, [])
@@ -17,7 +17,7 @@ const PopularClasses = () => {
                     key={item._id}
                     item={item}  
                     overlay={true}
-                    cardForClass={false}
+                    cardForClass={true}
                 ></ClassCard>)}
             </div>
         </div>

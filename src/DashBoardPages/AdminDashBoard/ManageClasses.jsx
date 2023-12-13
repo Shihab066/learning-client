@@ -8,7 +8,7 @@ const ManageClasses = () => {
     const { data: classes = [], refetch } = useQuery({
         queryKey: ['classes'],
         queryFn: async () => {
-            const res = await axiosSecure.get(`https://summer-camp-school-server-zeta.vercel.app/allClasses`);
+            const res = await axiosSecure.get(`https://learning-info-bd.vercel.app/allClasses`);
             return res.data;
         }
     })    
@@ -20,7 +20,7 @@ const ManageClasses = () => {
                     <tr>
                         <th>Classes</th>
                         <th >Instructor Name</th>
-                        <th>Instructor Email</th>
+                        {/* <th>Instructor Email</th> */}
                         <th>Available seats</th>
                         <th>Price</th>
                         <th>Status</th>

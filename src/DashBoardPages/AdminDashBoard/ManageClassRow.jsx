@@ -4,7 +4,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 const ManageClassRow = ({ classData, refetch }) => {
-    const { _id, name, image, price, seats, status, instructorName, email } = classData;
+    const { _id, name, image, price, seats, status, instructorName } = classData;
     const { register, handleSubmit, reset } = useForm();       
     const [axiosSecure] = useAxiosSecure();
     const onSubmit = data => {
@@ -74,7 +74,7 @@ const ManageClassRow = ({ classData, refetch }) => {
                 </div>
             </td>
             <td className="px-0">{instructorName}</td>
-            <td className="px-0">{email}</td>
+            {/* <td className="px-0">{email}</td> */}
             <td className="px-0">{seats}</td>
             <td className="text-right pl-0">${price}</td>
             <td className="px-2">

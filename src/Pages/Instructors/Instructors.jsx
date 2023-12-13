@@ -6,7 +6,7 @@ const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
         queryKey: ['instructor'],
         queryFn: async () => {
-            const res = await axios.get('https://summer-camp-school-server-zeta.vercel.app/instructors')
+            const res = await axios.get('https://learning-info-bd.vercel.app/instructors')
             return res.data
         }
     })
@@ -22,6 +22,7 @@ const Instructors = () => {
                             key={instructorData._id}
                             item={instructorData}
                             overlay={false}
+                            cardForClass={false}
                         ></ClassCard>)}
                     </div>
                 </div>

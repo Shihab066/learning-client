@@ -8,7 +8,7 @@ const useUserRole = () => {
         queryKey: ['userRole', user?.email],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axios.get(`https://summer-camp-school-server-zeta.vercel.app/users/${user?.email}`);
+            const res = await axios.get(`https://learning-info-bd.vercel.app/users/${user?.email}`);
             return res.data;
         }
     })    

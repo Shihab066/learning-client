@@ -25,7 +25,7 @@ const SignUp = () => {
                 updateUser(name, image)
                     .then(() => {                        
                         setImage('')                        
-                        axios.post('https://summer-camp-school-server-zeta.vercel.app/users', {image, name: name || "anonymous", email, role: 'student' })
+                        axios.post('https://learning-info-bd.vercel.app/users', {image, name: name || "anonymous", email, role: 'student' })
                             .then(data => {
                                 if (data.data.insertedId) {
                                     reset()                                    

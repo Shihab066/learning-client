@@ -6,7 +6,7 @@ import ClassCard from "../../../components/ClassCard/ClassCard";
 const PopularInstructor = () => {
     const [instructors, setInstructors] = useState([]);
     useEffect(() => {
-        axios.get('https://summer-camp-school-server-zeta.vercel.app/topinstructors')
+        axios.get('https://learning-info-bd.vercel.app/topinstructors')
             .then(res => {
                 setInstructors(res.data)
             })

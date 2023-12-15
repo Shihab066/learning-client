@@ -18,6 +18,7 @@ const PopularClasses = () => {
                     item={item}  
                     overlay={true}
                     cardForClass={true}
+                    propularClass={true}
                 ></ClassCard>)}
             </div>
         </div>

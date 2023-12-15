@@ -11,22 +11,22 @@ import img5 from '../../../assets/home/5.jpg';
 
 const Slider = () => {
     return (
-        <Carousel className='' showThumbs={false} showStatus={false} autoPlay={true} infiniteLoop={true} autoFocus={true} transitionTime={1000} showArrows={false}>
+        <Carousel className='' animationHandler='fade' swipeable={false} showThumbs={false} showStatus={false} autoPlay={true} infiniteLoop={true} autoFocus={true} interval={4000} transitionTime={500} stopOnHover={true} showArrows={false}>
             <div>
-                <img src={img1} />
+                <img src={img1} className='h-full min-h-[400px] object-cover' />
             </div>
             <div>
-                <img src={img2} />
+                <img src={img2} className='h-full min-h-[400px] object-cover' />
             </div>
             <div>
-                <img src={img3} />
+                <img src={img3} className='h-full min-h-[400px] object-cover' />
             </div>
             <div>
-                <img src={img4} />
+                <img src={img4} className='h-full min-h-[400px] object-cover' />
             </div>
             <div>
-                <img src={img5} />
-            </div>        
+                <img src={img5} className='h-full min-h-[400px] object-cover' />
+            </div>
         </Carousel>
     );
 };

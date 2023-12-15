@@ -2,11 +2,11 @@
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 
-const ManageUserRow = ({ user, refetch }) => {
+const ManageUserRow = ({ user, refetch, userEmail }) => {
     const { _id, name, image, email, role } = user;
     const [axiosSecure] = useAxiosSecure();
 
-    const handleMakeAdmin = () => {
+    const handleMakeAdmin = () => {        
         Swal.fire({
             title: 'Are you sure?',
             text: "Want to make this user Admin?",
@@ -36,6 +36,9 @@ const ManageUserRow = ({ user, refetch }) => {
     }
 
     const handleMakeInstructor = () => {
+        if (userEmail === email) {
+            throw new Error('Operation failed')
+        }
         Swal.fire({
             title: 'Are you sure?',
             text: "Want to make this user Instructor?",
@@ -83,7 +86,7 @@ const ManageUserRow = ({ user, refetch }) => {
             <td><div className="badge badge-outline">{role}</div></td>
             <th className='px-0'>
                 <div className='flex gap-1 justify-center'>
-                    <button disabled={role === 'instructor'} onClick={handleMakeInstructor} className='btn btn-xs normal-case bg-blue-500 hover:bg-blue-600 text-white'>Make Instructor</button>
+                    <button disabled={role === 'instructor' || userEmail === email} onClick={handleMakeInstructor} className='btn btn-xs normal-case bg-blue-500 hover:bg-blue-600 text-white'>Make Instructor</button>
                     <button disabled={role === 'admin'} onClick={handleMakeAdmin} className='btn btn-xs normal-case bg-red-500 hover:bg-red-600 text-white'>Make Admin</button>
                 </div>
             </th>

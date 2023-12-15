@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import ManageUserRow from "./ManageUserRow";
+import useAuth from "../../hooks/useAuth";
 
 const ManageUser = () => {
+    const {user} = useAuth();
+    let email = user.email;
     const [axiosSecure] = useAxiosSecure();
     const { data: users = [], refetch } = useQuery({
         queryKey: ['users'],
@@ -11,7 +14,6 @@ const ManageUser = () => {
             return res.data;
         }
     }) 
-    console.log(users)
     return (
         <div className=" overflow-auto w-[1000px] h-[700px] rounded-lg shadow-xl">
             <table className="table">                
@@ -29,6 +31,7 @@ const ManageUser = () => {
                             key={user._id}
                             user={user}
                             refetch={refetch}
+                            userEmail={email}
                         ></ManageUserRow>)
                     }
                 </tbody>

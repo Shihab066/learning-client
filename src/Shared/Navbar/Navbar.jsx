@@ -40,7 +40,7 @@ const Navbar = () => {
                         </div>
                         <div className="flex gap-x-2 items-center">
                             <img src={logo} className="w-10" alt="" />
-                            <a href="/" className="hover:bg-transparent tracking-wide normal-case text-2xl">𝗦𝗵𝗶𝗸𝗵𝗼</a>
+                            <a href="/" className="text-gray-900 tracking-wide normal-case text-2xl">𝗦𝗵𝗶𝗸𝗵𝗼</a>
                         </div>
                         {/* <label className="swap swap-rotate ml-2 ">
 

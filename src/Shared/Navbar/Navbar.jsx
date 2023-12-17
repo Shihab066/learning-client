@@ -3,6 +3,7 @@ import useAuth from "../../hooks/useAuth";
 import useUserRole from "../../hooks/useUserRole";
 import { Helmet } from "react-helmet-async";
 import logo from '/logo.png'
+import { useEffect, useState } from "react";
 // import { useState } from "react";
 
 
@@ -23,11 +24,29 @@ const Navbar = () => {
         </li>
         <li><div onClick={logOut} className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white normal-case w-fit ml-2 md:hidden">Logout</div></li>
     </>
+
+    const [stickyNav, setStickyNav] = useState(false);
+    useEffect(() => {
+        const handleScroll = () => {
+            const position = window.scrollY;
+
+            if (position > 800) {
+                setStickyNav(true)
+            } else {
+                setStickyNav(false)
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
     return (
         <><Helmet>
             {/* <html lang="en" data-theme={theme ? 'dark' : 'light'} /> */}
         </Helmet>
-            <nav className=" bg-base-200 sticky top-0 z-50">
+            <nav className={`bg-white z-50 sticky ${stickyNav ? 'fade-in drop-shadow' : 'fade-out'}`}>
                 <div className="navbar lg-container">
                     <div className="navbar-start z-20">
                         <div className="dropdown">

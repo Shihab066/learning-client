@@ -6,10 +6,10 @@ import { IoLocationSharp } from "react-icons/io5";
 const Footer = () => {
 
     return (
-        <div className="bg-black">
-            <footer className="footer lg-container p-10 text-white mt-20 grid grid-cols-2 md:flex md:justify-between">
+        <div className="bg-black mt-32">
+            <footer className="footer lg-container pt-16 p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
                 <div>
-                    <h2 className='font-semibold text-xl'>𝗦𝗵𝗶𝗸𝗵𝗼</h2>
+                    <h2 className='font-semibold text-xl text-white opacity-90'>𝗦𝗵𝗶𝗸𝗵𝗼</h2>
                     <p>Shikho Ltd.<br />Best learning platform</p>
                     <div className="flex gap-x-2 mt-2">
                         <a href="#">
@@ -37,28 +37,28 @@ const Footer = () => {
                     </div>
                 </div>
                 <div>
-                    <span className="footer-title">Contact us</span>
+                    <span className="footer-title text-white opacity-90">Contact us</span>
                     <a className="link link-hover flex gap-1"><BiMailSend className="text-xl"></BiMailSend> info@shikho.com</a>
                     <a className="link link-hover flex gap-1"><BiPhone className="text-xl"></BiPhone> +1 (587) 853-4367</a>
                     <a className="link link-hover flex gap-1"><BiPhone className="text-xl"></BiPhone> (465) 867-5309</a>
                 </div>
                 <div>
-                    <span className="footer-title">Company</span>
+                    <span className="footer-title text-white opacity-90">Company</span>
                     <a className="link link-hover">About us</a>
                     <a className="link link-hover">Contact</a>
                     <a className="link link-hover">Jobs</a>
                     <a className="link link-hover">FAQ</a>
                 </div>
                 <div>
-                    <span className="footer-title">Legal</span>
+                    <span className="footer-title text-white opacity-90">Legal</span>
                     <a className="link link-hover">Terms of use</a>
                     <a className="link link-hover">Privacy policy</a>
                     <a className="link link-hover">Cookie policy</a>
                     <a className="link link-hover">Copyright information</a>
                 </div>
                 <div>
-                    <span className="footer-title">Address</span>
-                    <a className="link link-hover flex">
+                    <span className="footer-title text-white opacity-90">Address</span>
+                    <a className="link link-hover flex mb-2">
                         <IoLocationSharp className="text-xl"></IoLocationSharp>
                         San Francisco,CA 94107</a>
                     <a className="link link-hover flex"><IoLocationSharp className="text-xl"></IoLocationSharp>Pine Avenue,
@@ -66,9 +66,9 @@ const Footer = () => {
                         United States</a>
                 </div>
             </footer>
-            <hr className="w-1/2 mx-auto" />
-            <div className='text-white text-center py-5'>
-                <p><small>© 2023 SportEX Ltd. All rights reserved.</small></p>
+            <hr className="w-1/2 mx-auto opacity-60" />
+            <div className='text-white text-center py-5 opacity-70'>
+                <p><small>© 2023 Shikho Ltd. All rights reserved.</small></p>
             </div>
         </div>
 

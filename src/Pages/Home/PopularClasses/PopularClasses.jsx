@@ -11,7 +11,7 @@ const PopularClasses = () => {
     }, [])
     return (
         <div>
-            <h2 className="mt-20 mb-10 text-center text-4xl font-semibold">Popular Classes</h2>
+            <h2 className="mt-32 mb-10 text-center text-4xl font-semibold">Popular Classes</h2>
             <div className="lg-container grid md:grid-cols-3 gap-y-10">
                 {classes.map(item => <ClassCard
                     key={item._id}

@@ -28,3 +28,35 @@
     margin-right:5px;
 }
 
+
+@keyframes navAnimation {
+    0%{
+        opacity: 0;
+        transform: translateY(-100%);     
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0);       
+    }
+}
+
+@keyframes navAnimation2 {
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;      
+    }
+}
+
+.fade-in{
+    animation: navAnimation .5s ease-in-out;    
+    top: 0;    
+}
+
+.fade-out{
+    /* animation: navAnimation2 .5s ease-in-out; */
+    top: -100%;
+    transition: all 1s ease-in-out;
+}
+

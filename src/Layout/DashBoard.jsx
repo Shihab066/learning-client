@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import useUserRole from "../hooks/useUserRole";
+import { Helmet } from "react-helmet-async";
 
 
 const DashBoard = () => {
@@ -9,6 +10,9 @@ const DashBoard = () => {
     const isInstructor = userRole === 'instructor';
     return (
         <div className="lg-container pt-10">
+            <Helmet>
+                <title>Shikho_Dashboard</title>
+            </Helmet>
             <div className="drawer lg:drawer-open">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex justify-center h-fit w-full">

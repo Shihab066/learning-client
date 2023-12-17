@@ -1,6 +1,7 @@
 import axios from 'axios';
 import ClassCard from '../../components/ClassCard/ClassCard';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 
 const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
@@ -12,6 +13,9 @@ const Instructors = () => {
     })
     return (
         <div>
+            <Helmet>
+                <title>Shikho_instructors</title>
+            </Helmet>
             {isLoading ? <div className='flex justify-center items-center h-[700px] ' >
                 <span className="loading loading-spinner text-info loading-lg"></span>
             </div > :

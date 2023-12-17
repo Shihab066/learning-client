@@ -8,6 +8,7 @@ import { FaCheck, FaExclamationCircle } from 'react-icons/fa';
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const SignUp = () => {
@@ -91,6 +92,9 @@ const SignUp = () => {
 
     return (
         <div className="mt-20 px-8 pb-10 xl:w-[530px] mx-auto shadow-2xl rounded-lg">
+            <Helmet>
+                <title>Shikho_signUp</title>
+            </Helmet>
             <h3 className="text-center py-8 font-bold text-4xl">SignUp</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Name field */}

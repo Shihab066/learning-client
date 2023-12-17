@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 
 
 const Classes = () => {
@@ -63,6 +64,9 @@ const Classes = () => {
     return (
 
         <div>
+            <Helmet>
+                <title>Shikho_Classes</title>
+            </Helmet>
             {isLoading ? <div className='flex justify-center items-center h-[700px] ' >
                 <span className="loading loading-spinner text-info loading-lg"></span>
             </div > :

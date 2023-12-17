@@ -4,6 +4,7 @@ import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
+import { Helmet } from "react-helmet-async";
 
 const Login = () => {
     const location = useLocation();
@@ -22,6 +23,9 @@ const Login = () => {
     }
     return (
         <div className="mt-20 px-8 pb-10 xl:w-[530px] mx-auto shadow-2xl rounded-lg">
+            <Helmet>
+                <title>Shikho_login</title>
+            </Helmet>
             <h3 className="text-center py-8 font-bold text-4xl">Login</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {/* E-mail field */}

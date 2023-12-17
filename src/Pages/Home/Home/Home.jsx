@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import useAuth from "../../../hooks/useAuth";
 import ExtraSection from "../ExtraSection/ExtraSection";
 import PopularClasses from "../PopularClasses/PopularClasses";
@@ -9,6 +10,9 @@ const Home = () => {
     const { loading } = useAuth();
     return (
         <div>
+            <Helmet>
+                <title>Shikho_home</title>
+            </Helmet>
             {loading ?
                 <div className='flex justify-center items-center h-[700px] ' >
                     <span className="loading loading-spinner text-info loading-lg"></span>

@@ -26,8 +26,8 @@ const Home = () => {
                     <PopularInstructor></PopularInstructor>
                     <ExtraSection></ExtraSection>
                     <JobPlacement></JobPlacement>
-                    {/* <NewsLetter></NewsLetter>
-                    <Sponser></Sponser> */}
+                    <NewsLetter></NewsLetter>
+                    {/* <Sponser></Sponser> */}
                 </div>
             }
         </div>

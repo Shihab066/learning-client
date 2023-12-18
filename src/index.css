@@ -32,6 +32,9 @@
     clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 25% 0);
 }
 
+.sm-btn{
+    padding: 4px 4px !important;
+}
 
 @keyframes navAnimation {
     0%{
@@ -68,5 +71,11 @@
 @media screen and (max-width:1040px) {
     .menu a{
         margin-right: 0;
+    }
+}
+
+@media screen and (max-width:575px) {
+    .change-shape{
+        clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 0 0);
     }
 }

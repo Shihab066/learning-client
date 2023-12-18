@@ -24,8 +24,8 @@ const Home = () => {
                     <Slider></Slider>
                     <PopularClasses></PopularClasses>
                     <PopularInstructor></PopularInstructor>
-                    {/* <ExtraSection></ExtraSection>
-                    <JobPlacement></JobPlacement>
+                    <ExtraSection></ExtraSection>
+                    {/* <JobPlacement></JobPlacement>
                     <NewsLetter></NewsLetter>
                     <Sponser></Sponser> */}
                 </div>

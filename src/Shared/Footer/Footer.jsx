@@ -7,7 +7,7 @@ const Footer = () => {
 
     return (
         <div className="bg-black mt-48">
-            <footer className="footer lg-container pt-16 p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
+            <footer className="footer sm:grid-cols-2 lg-container pt-16 pl-10 pb-10 sm:p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
                 <div>
                     <h2 className='font-semibold text-xl text-white opacity-90'>𝗦𝗵𝗶𝗸𝗵𝗼</h2>
                     <p>Shikho Ltd.<br />Best learning platform</p>
@@ -19,7 +19,7 @@ const Footer = () => {
                             </div>
                         </a>
 
-                        <a href="#">
+                        <a href="#" className="hidden sm:flex">
                             <div className="bg-white p-[10px] hover:opacity-80 transition-opacity rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="black" width="16" height="16" viewBox="0 0 512 512" aria-hidden="true" className="_8pb48z0 _1n5grcp84 _1n5grcp1m _1n5grcp2pm"><path d="M298.158 216.797 484.663 0h-44.196L278.525 188.242 149.182 0H0l195.592 284.655L0 512h44.198l171.016-198.79L351.809 512h149.182L298.147 216.797zm-60.536 70.366-19.818-28.345L60.124 33.272h67.885L255.26 215.295l19.817 28.345 165.411 236.601h-67.886l-134.98-193.067z"></path></svg>
                             </div>

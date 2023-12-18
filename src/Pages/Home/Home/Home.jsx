@@ -21,10 +21,10 @@ const Home = () => {
                     <span className="loading loading-spinner text-info loading-lg"></span>
                 </div > :
                 <div>
-                    {/* <Slider></Slider>
+                    <Slider></Slider>
                     <PopularClasses></PopularClasses>
                     <PopularInstructor></PopularInstructor>
-                    <ExtraSection></ExtraSection>
+                    {/* <ExtraSection></ExtraSection>
                     <JobPlacement></JobPlacement>
                     <NewsLetter></NewsLetter>
                     <Sponser></Sponser> */}

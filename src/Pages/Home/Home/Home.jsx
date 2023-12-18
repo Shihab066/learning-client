@@ -4,6 +4,9 @@ import ExtraSection from "../ExtraSection/ExtraSection";
 import PopularClasses from "../PopularClasses/PopularClasses";
 import PopularInstructor from "../PopularInstructor/PopularInstructor";
 import Slider from "../Slider/Slider";
+import JobPlacement from "../JobPlacementSection/JobPlacement";
+import NewsLetter from "../NewsLetter/NewsLetter";
+import Sponser from "../Sponser/Sponser";
 
 
 const Home = () => {
@@ -22,6 +25,9 @@ const Home = () => {
                     <PopularClasses></PopularClasses>
                     <PopularInstructor></PopularInstructor>
                     <ExtraSection></ExtraSection>
+                    <JobPlacement></JobPlacement>
+                    <NewsLetter></NewsLetter>
+                    <Sponser></Sponser>
                 </div>
             }
         </div>

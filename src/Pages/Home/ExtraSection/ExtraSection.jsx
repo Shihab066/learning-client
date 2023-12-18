@@ -1,6 +1,5 @@
 import { useLottie } from 'lottie-react';
-import animation1 from '../../../assets/Animation/Animation - 1702834713716.json'
-import person from '../../../assets/Animation/person.gif';
+import animation1 from '../../../assets/Animation/animation3.json'
 import { RiShieldCheckLine } from "react-icons/ri";
 const ExtraSection = () => {
     const defaultOptions = {
@@ -41,8 +40,7 @@ const ExtraSection = () => {
                     </div>
                 </div>
                 <div className='w-[600px] justify-self-end'>
-                    {View}
-                    {/* <img src={person} alt="" /> */}
+                    {View}                    
                 </div>
             </div>
         </div>

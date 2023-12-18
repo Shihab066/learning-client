@@ -6,7 +6,7 @@ import { IoLocationSharp } from "react-icons/io5";
 const Footer = () => {
 
     return (
-        <div className="bg-black mt-32">
+        <div className="bg-black mt-48">
             <footer className="footer lg-container pt-16 p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
                 <div>
                     <h2 className='font-semibold text-xl text-white opacity-90'>𝗦𝗵𝗶𝗸𝗵𝗼</h2>

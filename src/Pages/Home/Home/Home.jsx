@@ -27,7 +27,7 @@ const Home = () => {
                     <ExtraSection></ExtraSection>
                     <JobPlacement></JobPlacement>
                     <NewsLetter></NewsLetter>
-                    {/* <Sponser></Sponser> */}
+                    <Sponser></Sponser>
                 </div>
             }
         </div>

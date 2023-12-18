@@ -18,7 +18,7 @@ const JobPlacement = () => {
     return (
         <div className='lg-container '>
             <div className='mt-28 sm:mt-36 lg:mt-48 grid sm:grid-cols-2 h-fit'>
-                <div className='justify-self-start hidden sm:flex'>
+                <div className='justify-self-start hidden sm:flex items-center'>
                     {View}
                 </div>
                 <div className='justify-self-center'>

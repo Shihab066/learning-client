@@ -83,7 +83,7 @@ const Navbar = () => {
                         </div>
                         <div>
                             {loading ? <span className="loading loading-ring loading-lg"></span> :
-                                user ? <div className="flex items-center gap-2 mr-2 md:mr-0">
+                                user ? <div className="flex items-center gap-2">
                                     {user.photoURL && <img src={user.photoURL} className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" title={user.displayName ? user.displayName : ''} alt="" />}
                                     <div onClick={logOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
                                 </div> :

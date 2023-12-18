@@ -10,7 +10,7 @@ import logo7 from '../../../assets/sponser/oppo.png'
 const Sponser = () => {
     return (
         <div className="lg-container grayscale">
-            <Marquee className="mt-48" gradient={true} autoFill={true}>                
+            <Marquee className="mt-20 sm:mt-28 md:mt-36 lg:mt-40 xl:mt-48" gradient={true} autoFill={true}>                
                     <img src={logo1} className="w-[100px] mr-24" />
                     <img src={logo2} className="w-[100px] mr-24" />
                     <img src={logo3} className="w-[70px] mr-24" />

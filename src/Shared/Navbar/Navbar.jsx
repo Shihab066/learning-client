@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useUserRole from "../../hooks/useUserRole";
 import { Helmet } from "react-helmet-async";
@@ -10,6 +10,11 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
     const { user, logOut, loading } = useAuth();
     // const [theme, setTheme] = useState(false);
+    const navigate = useNavigate()
+    const signOut = () => {
+        logOut()
+        navigate('/')       
+    }
     const [userRole] = useUserRole();
     const isAdmin = userRole === 'admin';
     const isStudent = userRole === 'student';
@@ -18,7 +23,7 @@ const Navbar = () => {
         <li><NavLink to={'/'} >Home</NavLink></li>
         <li><NavLink to={'/class'} >Classes</NavLink></li>
         <li><NavLink to={'/instructors'} >Instructors</NavLink></li>
-        <li><NavLink to={`/dashboard/${isStudent && 'selectedClass' || isInstructor && 'myClass' || isAdmin && 'manageClass' || ''}`} >
+        <li className={`${!user && 'hidden'}`}><NavLink to={`/dashboard/${isStudent && 'selectedClass' || isInstructor && 'myClass' || isAdmin && 'manageClass' || ''}`} >
             Dashboard
         </NavLink>
         </li>
@@ -85,7 +90,7 @@ const Navbar = () => {
                             {loading ? <span className="loading loading-ring loading-lg"></span> :
                                 user ? <div className="flex items-center gap-2">
                                     {user.photoURL && <img src={user.photoURL} className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" title={user.displayName ? user.displayName : ''} alt="" />}
-                                    <div onClick={logOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
+                                    <div onClick={signOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
                                 </div> :
                                     <Link to={'/login'}><div className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case">Login</div></Link>
                             }

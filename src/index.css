@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 
+html{
+    scroll-behavior: smooth;
+}
 
 .lg-container {
     max-width: 1280px;

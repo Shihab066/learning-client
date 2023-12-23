@@ -9,8 +9,8 @@ const Footer = () => {
         <div className="bg-black mt-20 sm:mt-28 md:mt-36 lg:mt-40 xl:mt-48">
             <footer className="footer sm:grid-cols-2 lg-container pt-16 pl-10 pb-10 sm:p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
                 <div>
-                    <h2 className='font-semibold text-xl text-white opacity-90'>𝗦𝗵𝗶𝗸𝗵𝗼</h2>
-                    <p>Shikho Ltd.<br />Best learning platform</p>
+                    <h2 className='font-bold text-lg sm:text-xl text-white opacity-90'>Learning Point</h2>
+                    <p>Learning Point Ltd.<br />Best learning platform</p>
                     <div className="flex gap-x-2 mt-2">
                         <a href="#">
                             <div className="bg-[#1877f2] p-[10px] hover:opacity-80 transition-opacity rounded">
@@ -27,7 +27,8 @@ const Footer = () => {
 
                         <a href="#"><div className="bg-[#bb0000] p-[10px] hover:opacity-80 transition-opacity rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" fill="white" width="16" height="16" aria-hidden="true" className="_8pb48z0 _1n5grcp84 _1n5grcp1m _1n5grcp2pm"><path d="M353.49 95.037c-4.393-19.115-20.029-33.214-38.848-35.312-62.031-6.931-206.396-7.014-269.18 0-18.816 2.098-34.445 16.197-38.845 35.312-8.847 38.526-8.776 132.054-.068 169.923 4.393 19.118 20.021 33.21 38.841 35.315 62.031 6.931 206.396 7.014 269.18 0 18.816-2.105 34.452-16.197 38.852-35.315 8.703-37.895 8.815-131.88.068-169.923M145.003 211.903v-63.809c0-11.344 12.28-18.434 22.105-12.762l55.261 31.906c9.824 5.672 9.824 19.852 0 25.524l-55.261 31.903c-9.825 5.672-22.105-1.418-22.105-12.762"></path></svg>
-                        </div></a>
+                        </div>
+                        </a>
 
                         <a href="#">
                             <div className="bg-[#0a66c2] p-[10px] hover:opacity-80 transition-opacity rounded">
@@ -38,7 +39,7 @@ const Footer = () => {
                 </div>
                 <div>
                     <span className="footer-title text-white opacity-90">Contact us</span>
-                    <a className="link link-hover flex gap-1"><BiMailSend className="text-xl"></BiMailSend> info@shikho.com</a>
+                    <a className="link link-hover flex gap-1"><BiMailSend className="text-xl"></BiMailSend> info@learningpoint.com</a>
                     <a className="link link-hover flex gap-1"><BiPhone className="text-xl"></BiPhone> +1 (587) 853-4367</a>
                     <a className="link link-hover flex gap-1"><BiPhone className="text-xl"></BiPhone> (465) 867-5309</a>
                 </div>
@@ -68,7 +69,7 @@ const Footer = () => {
             </footer>
             <hr className="w-1/2 mx-auto opacity-60" />
             <div className='text-white text-center py-5 opacity-70'>
-                <p><small>© 2023 Shikho Ltd. All rights reserved.</small></p>
+                <p><small>© 2023 Learning Point Ltd. All rights reserved.</small></p>
             </div>
         </div>
 

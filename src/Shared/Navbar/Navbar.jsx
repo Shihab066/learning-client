@@ -53,7 +53,7 @@ const Navbar = () => {
         </Helmet>
             <nav className={`bg-white z-50 sticky ${stickyNav ? 'fade-in drop-shadow' : 'fade-out'}`}>
                 <div className="navbar lg-container px-4 lg:py-3">
-                    <div className="navbar-start z-20">
+                    <div className="w-[80%] sm:w-[50%] justify-start z-20">
                         <div className="dropdown">
                             <label tabIndex={0} className="btn btn-ghost pl-0 lg:hidden">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
@@ -63,8 +63,8 @@ const Navbar = () => {
                             </ul>
                         </div>
                         <div className="flex gap-x-2 items-center">
-                            <img src={logo} className="w-10" alt="" />
-                            <a href="/" className="text-gray-900 tracking-wide normal-case text-2xl">𝗦𝗵𝗶𝗸𝗵𝗼</a>
+                            <img src={logo} className="w-8 sm:w-10" alt="" />
+                            <a href="/" className="text-gray-900 tracking-wide normal-case text-lg sm:text-2xl font-bold">Learning Point</a>
                         </div>
                         {/* <label className="swap swap-rotate ml-2 ">
 
@@ -80,7 +80,7 @@ const Navbar = () => {
                         </label> */}
                     </div>
 
-                    <div className="navbar-end">
+                    <div className="w-[20%] sm:w-[50%] justify-end">
                         <div className="hidden lg:flex">
                             <ul className="menu menu-horizontal px-1 font-medium">
                                 {navbarItem}
@@ -89,10 +89,10 @@ const Navbar = () => {
                         <div>
                             {loading ? <span className="loading loading-ring loading-lg"></span> :
                                 user ? <div className="flex items-center gap-2">
-                                    {user.photoURL && <img src={user.photoURL} className="w-10 h-10 rounded-full object-cover" referrerPolicy="no-referrer" title={user.displayName ? user.displayName : ''} alt="" />}
+                                    {user.photoURL && <img src={user.photoURL} className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover" referrerPolicy="no-referrer" title={user.displayName ? user.displayName : ''} alt="" />}
                                     <div onClick={signOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
                                 </div> :
-                                    <Link to={'/login'}><div className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case">Login</div></Link>
+                                    <Link to={'/login'}><div className="btn btn-sm sm:btn-md bg-blue-600 hover:bg-blue-700 text-white normal-case">Login</div></Link>
                             }
                         </div>
 

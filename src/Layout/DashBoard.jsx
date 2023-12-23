@@ -11,7 +11,7 @@ const DashBoard = () => {
     return (
         <div className="lg-container pt-10">
             <Helmet>
-                <title>Shikho_Dashboard</title>
+                <title>Learning Point_Dashboard</title>
             </Helmet>
             <div className="drawer lg:drawer-open">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />

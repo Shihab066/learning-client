@@ -38,7 +38,7 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, loggeduser => {
             setUser(loggeduser)
-            console.log('logged user ', loggeduser);
+            // console.log('logged user ', loggeduser);
             if (loggeduser) {
                 axios.post('https://learning-info-bd.vercel.app/jwt', { email: loggeduser.email })
                     .then(res => {

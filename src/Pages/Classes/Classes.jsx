@@ -65,14 +65,14 @@ const Classes = () => {
 
         <div>
             <Helmet>
-                <title>Shikho_Classes</title>
+                <title>Learning Point_Classes</title>
             </Helmet>
             {isLoading ? <div className='flex justify-center items-center h-[700px] ' >
                 <span className="loading loading-spinner text-info loading-lg"></span>
             </div > :
                 <div>
-                    <h2 className="mt-20 mb-10 text-center text-4xl font-semibold">All Classes</h2>
-                    <div className="lg-container grid md:grid-cols-3 gap-y-10">
+                    <h2 className="mt-10 sm:mt-12 lg:mt-20 mb-10 text-center text-4xl font-semibold">All Classes</h2>
+                    <div className="lg-container grid grid-cols-2 md:grid-cols-3 gap-y-10">
                         {classes.map(classData => <ClassCard
                             key={classData._id}
                             item={classData}

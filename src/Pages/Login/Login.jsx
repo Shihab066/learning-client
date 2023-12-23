@@ -22,9 +22,9 @@ const Login = () => {
             })
     }
     return (
-        <div className="mt-20 px-8 pb-10 xl:w-[530px] mx-auto shadow-2xl rounded-lg">
+        <div className="mt-20 px-8 pb-10 w-[95%] sm:w-[500px] md:w-[530px] mx-auto shadow-2xl rounded-lg">
             <Helmet>
-                <title>Shikho_login</title>
+                <title>Learning Point_login</title>
             </Helmet>
             <h3 className="text-center py-8 font-bold text-4xl">Login</h3>
             <form onSubmit={handleSubmit(onSubmit)}>

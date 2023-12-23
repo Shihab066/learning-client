@@ -14,7 +14,7 @@ const Home = () => {
     return (
         <div>
             <Helmet>
-                <title>Shikho</title>
+                <title>Learning Point</title>
             </Helmet>
             {loading ?
                 <div className='flex justify-center items-center h-[700px] ' >

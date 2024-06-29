@@ -6,7 +6,7 @@ import { IoLocationSharp } from "react-icons/io5";
 const Footer = () => {
 
     return (
-        <div className="bg-black mt-20 sm:mt-28 md:mt-36 lg:mt-40 xl:mt-48">
+        <div className="bg-black mt-20 sm:mt-28 md:mt-36 lg:mt-40 xl:mt-44">
             <footer className="footer sm:grid-cols-2 lg-container pt-16 pl-10 pb-10 sm:p-10 text-white font-medium text-opacity-70 mt-20 grid grid-cols-2 md:flex md:justify-between">
                 <div>
                     <h2 className='font-bold text-lg sm:text-xl text-white opacity-90'>Learning Point</h2>

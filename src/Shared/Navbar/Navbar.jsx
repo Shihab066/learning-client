@@ -51,7 +51,7 @@ const Navbar = () => {
         <><Helmet>
             {/* <html lang="en" data-theme={theme ? 'dark' : 'light'} /> */}
         </Helmet>
-            <nav className={`bg-white z-50 sticky ${stickyNav ? 'fade-in drop-shadow' : 'fade-out'}`}>
+            <nav className={`bg-white z-50 sticky drop-shadow ${stickyNav ? 'fade-in' : 'fade-out'}`}>
                 <div className="navbar lg-container px-4 lg:py-3">
                     <div className="w-[80%] sm:w-[50%] justify-start z-20">
                         <div className="dropdown">

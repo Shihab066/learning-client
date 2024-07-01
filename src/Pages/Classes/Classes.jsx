@@ -97,14 +97,7 @@ const Classes = () => {
     const totalItems = data?.classesCount;
     const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
     const [visiblePages, setVisiblePages] = useState([]);
-
-
-
-    useEffect(() => {
-        if (data?.classes.length === 0) {
-            setCurrentPage(visiblePages[visiblePages.length - 1]);
-        }
-    }, [data?.classes.length, visiblePages]);    
+    
 
     useEffect(() => {
         const totalPagesArr = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -117,10 +110,21 @@ const Classes = () => {
         }
     }, [totalPages, currentPage]);
 
+
+    useEffect(() => {
+        if (data?.classes.length === 0) {
+            setTimeout(() => {
+                setCurrentPage(visiblePages[visiblePages.length - 1]);
+                console.log(currentPage, visiblePages);
+            }, 200);                        
+        }
+    }, [data?.classes.length, visiblePages]);
+
     const handleItemPerPageOptions = (event) => {
         setItemPerPage(parseInt(event.target.value));
     };
 
+    // console.log(currentPage);
     return (
         <div>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
@@ -185,19 +189,30 @@ const Content = ({ data, selectClass, currentPage, visiblePages, setCurrentPage 
     </div>
 );
 
-const Pagination = ({ currentPage, visiblePages, setCurrentPage }) => (
-    <div className='flex justify-center gap-2 mt-20'>
+const Pagination = ({ currentPage, visiblePages, setCurrentPage }) => (    
+    <div className='flex justify-center items-center gap-2 mt-20'>
+        <Link
+            to={`/class/?page=${currentPage - 1}`}
+            className={`text-sm font-medium hover:bg-blue-700 text-gray-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${currentPage === visiblePages[0] ? 'text-gray-400 pointer-events-none' : ''}`}
+        >
+            PREV
+        </Link>
         {visiblePages.map((pageNo) => (
             <Link
                 to={`/class/?page=${pageNo}`}
-                type='button'
                 key={pageNo}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${(currentPage || 1) === pageNo ? 'bg-blue-600 hover:bg-blue-700 text-white pointer-events-none' : 'bg-gray-200 hover:bg-gray-300 text-gray-700 hover:underline'}`}
-                onClick={() => setCurrentPage(pageNo)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${(currentPage || 1) === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
+            onClick={() => setCurrentPage(pageNo)}
             >
                 {pageNo}
             </Link>
         ))}
+        <Link
+            to={`/class/?page=${currentPage + 1}`}
+            className={`text-sm font-medium hover:bg-blue-700 text-gray-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${currentPage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : ''}`}
+        >
+            NEXT
+        </Link>
     </div>
 );
 

@@ -3,23 +3,53 @@ import ClassCard from '../../components/ClassCard/ClassCard';
 import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
+import ScrollToTop from '../../components/ClassCard/scrollToTop';
+
+function usePathQuery() {
+    return new URLSearchParams(useLocation().search);
+}
 
 const Classes = () => {
     const { user } = useAuth();
     const email = user?.email;
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
-    const [itemPerPage, setItemPerPage] = useState(6);
-    const [currentPage, setCurrentPage] = useState(1);
+    const location = useLocation();
+
+    const query = usePathQuery();
+    const limit = parseInt(query.get('limit')) || '';
+    const page = parseInt(query.get('page')) || '';
+
+    const [itemPerPage, setItemPerPage] = useState('');
+    const [currentPage, setCurrentPage] = useState('');
+
+    useEffect(() => {
+        setItemPerPage(limit);
+        setCurrentPage(page);
+    }, [limit, page]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (itemPerPage) params.set('limit', itemPerPage);
+        if (currentPage) params.set('page', currentPage);
+        navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    }, [itemPerPage, currentPage, navigate, location.pathname]);
+
+    useEffect(() => {
+        if (query.size === 0) {
+            setCurrentPage('');
+            setItemPerPage('');
+        }
+    }, [query.size])
 
     const { data, isLoading } = useQuery({
         queryKey: ['classes', itemPerPage, currentPage],
         queryFn: async () => {
-            const res = await axios.get(`https://learning-info-bd.vercel.app/classes?limit=${itemPerPage}&page=${currentPage}`);
+            const res = await axios.get(`https://learning-info-bd.vercel.app/classes?limit=${itemPerPage || 6}&page=${currentPage || 1}`);
             return res.data;
         },
     });
@@ -65,33 +95,39 @@ const Classes = () => {
     };
 
     const totalItems = data?.classesCount;
-    const totalPages = Math.ceil(totalItems / itemPerPage);
+    const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
     const [visiblePages, setVisiblePages] = useState([]);
 
+
+
     useEffect(() => {
-        const totalPagesArr = Array.from({ length: totalPages }, (_, i) => i + 1);
-        setVisiblePages(totalPagesArr.slice(0, 7));
-    }, [totalPages]);
+        if (data?.classes.length === 0) {
+            setCurrentPage(visiblePages[visiblePages.length - 1]);
+        }
+    }, [data?.classes.length, visiblePages]);    
 
     useEffect(() => {
         const totalPagesArr = Array.from({ length: totalPages }, (_, i) => i + 1);
-        if (currentPage === visiblePages[visiblePages.length - 1] || (currentPage === visiblePages[0] && !visiblePages.includes(totalPagesArr[2]))) {
-            if (!visiblePages.includes(totalPagesArr[totalPagesArr.length - 1]) || currentPage === visiblePages[0]) {
-                setVisiblePages(totalPagesArr.slice(currentPage - 4, currentPage + 3));
+        if (currentPage < 7) {
+            setVisiblePages(totalPagesArr.slice(0, 7));
+        } else if ((currentPage || 1) === visiblePages[visiblePages.length - 1] || ((currentPage || 1) === visiblePages[0] && !visiblePages.includes(totalPagesArr[2]))) {
+            if (!visiblePages.includes(totalPagesArr[totalPagesArr.length - 1]) || (currentPage || 1) === visiblePages[0]) {
+                setVisiblePages(totalPagesArr.slice((currentPage || 1) - 4, (currentPage || 1) + 3));
             }
         }
-    }, [currentPage, totalPages, visiblePages]);
+    }, [totalPages, currentPage]);
 
-    const handlePageOptions = (event) => {
+    const handleItemPerPageOptions = (event) => {
         setItemPerPage(parseInt(event.target.value));
     };
 
     return (
         <div>
+            <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Helmet>
                 <title>Learning Point | Classes</title>
             </Helmet>
-            <Header handlePageOptions={handlePageOptions} />
+            <Header handlePageOptions={handleItemPerPageOptions} itemPerPage={itemPerPage} />
             {isLoading ? (
                 <LoadingSpinner />
             ) : (
@@ -107,12 +143,12 @@ const Classes = () => {
     );
 };
 
-const Header = ({ handlePageOptions }) => (
+const Header = ({ handlePageOptions, itemPerPage }) => (
     <div className='lg-container flex justify-between px-10 py-6'>
         <h2 className="text-lg font-medium">All Classes</h2>
         <div className='flex items-center gap-2'>
             <p className='font-medium'>Show:</p>
-            <select className='border rounded bg-base-200 px-1 focus:outline-none' onChange={handlePageOptions}>
+            <select value={itemPerPage} className='border rounded bg-base-200 px-1 focus:outline-none' onChange={handlePageOptions}>
                 <option value={6}>6</option>
                 <option value={9}>9</option>
                 <option value={18}>18</option>
@@ -152,13 +188,15 @@ const Content = ({ data, selectClass, currentPage, visiblePages, setCurrentPage 
 const Pagination = ({ currentPage, visiblePages, setCurrentPage }) => (
     <div className='flex justify-center gap-2 mt-20'>
         {visiblePages.map((pageNo) => (
-            <button
+            <Link
+                to={`/class/?page=${pageNo}`}
+                type='button'
                 key={pageNo}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${currentPage === pageNo ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700 hover:underline'}`}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${(currentPage || 1) === pageNo ? 'bg-blue-600 hover:bg-blue-700 text-white pointer-events-none' : 'bg-gray-200 hover:bg-gray-300 text-gray-700 hover:underline'}`}
                 onClick={() => setCurrentPage(pageNo)}
             >
                 {pageNo}
-            </button>
+            </Link>
         ))}
     </div>
 );

@@ -18,73 +18,79 @@ import PrivateRoutes from "./PrivateRoutes";
 import InstructorRoute from "./InstructorRoute";
 import AdminRoutes from "./AdminRoutes";
 import StudentRoutes from "./StudentRoutes";
+import ScrollToTop from "../components/ClassCard/scrollToTop";
+
 
 export const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Main></Main>,
-      errorElement:<ErrorPage></ErrorPage>,
-      children: [
-        {
-          path: '/',
-          element:<Home></Home>
-        },
-        {
-          path: 'login',
-          element:<Login></Login>
-        },
-        {
-          path: 'signup',
-          element:<SignUp></SignUp>
-        },
-        {
-          path: 'class',
-          element:<Classes></Classes>
-        },
-        {
-          path: 'instructors',
-          element:<Instructors></Instructors>
-        },
-        {
-          path: 'dashboard',
-          element: <PrivateRoutes><DashBoard></DashBoard></PrivateRoutes>,
-          children: [
+  {
+    path: "/",
+    element:
+      <>
+        <Main></Main>
+        <ScrollToTop />
+      </>,
+    errorElement: <ErrorPage></ErrorPage>,
+    children: [
+      {
+        path: '/',
+        element: <Home></Home>
+      },
+      {
+        path: 'login',
+        element: <Login></Login>
+      },
+      {
+        path: 'signup',
+        element: <SignUp></SignUp>
+      },
+      {
+        path: 'class',
+        element: <Classes></Classes>,
+      },
+      {
+        path: 'instructors',
+        element: <Instructors></Instructors>
+      },
+      {
+        path: 'dashboard',
+        element: <PrivateRoutes><DashBoard></DashBoard></PrivateRoutes>,
+        children: [
           // STUDENT ROUTES
-            {
-              path: 'selectedClass',
-              element:<StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
-            },
-            {
-              path: 'enrolledClass',
-              element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
-            },
-            {
-              path: 'paymentHistory',
-              element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
-            },
+          {
+            path: 'selectedClass',
+            element: <StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
+          },
+          {
+            path: 'enrolledClass',
+            element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
+          },
+          {
+            path: 'paymentHistory',
+            element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
+          },
 
-            // INSTRUCTOR ROUTES
-            {
-              path: 'addClass',
-              element: <InstructorRoute><AddClass></AddClass></InstructorRoute>
-            },
-            {
-              path: 'myClass',
-              element: <InstructorRoute><MyClass></MyClass></InstructorRoute>
-            },
+          // INSTRUCTOR ROUTES
+          {
+            path: 'addClass',
+            element: <InstructorRoute><AddClass></AddClass></InstructorRoute>
+          },
+          {
+            path: 'myClass',
+            element: <InstructorRoute><MyClass></MyClass></InstructorRoute>
+          },
 
-            
-            // ADMIN ROUTES
-            {
-              path: 'manageClass',
-              element:<AdminRoutes><ManageClasses></ManageClasses></AdminRoutes>
-            },
-            {
-              path: 'manageUser',
-              element: <AdminRoutes><ManageUser></ManageUser></AdminRoutes>
-            }
-          ]
-        }        
-      ]
-    },
-    ]);
+
+          // ADMIN ROUTES
+          {
+            path: 'manageClass',
+            element: <AdminRoutes><ManageClasses></ManageClasses></AdminRoutes>
+          },
+          {
+            path: 'manageUser',
+            element: <AdminRoutes><ManageUser></ManageUser></AdminRoutes>
+          }
+        ]
+      }
+    ]
+  },
+]);

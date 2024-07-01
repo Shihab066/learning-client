@@ -3,9 +3,26 @@
 @tailwind utilities;
 
 
-html{
-    scroll-behavior: smooth;
+html {
+    scroll-behavior: auto;
 }
+
+/* * {   
+    scrollbar-width: thin;
+    scrollbar-color:#3b5fe2 #f1f1f1;    
+} */
+
+::-webkit-scrollbar {    
+    width: 6px;    
+
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: #3b5fe2;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
 
 .lg-container {
     max-width: 1280px;
@@ -23,48 +40,51 @@ html{
     font-weight: 500;
 }
 
-.menu a.active{
+.menu a.active {
     color: white;
     background-color: #3b5fe2;
 }
+
 .menu a {
-    margin-right:5px;
+    margin-right: 5px;
 }
 
-.change-shape{
+.change-shape {
     clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 25% 0);
 }
 
-.sm-btn{
+.sm-btn {
     padding: 4px 4px !important;
 }
 
 @keyframes navAnimation {
-    0%{
+    0% {
         opacity: 0;
-        transform: translateY(-100%);     
+        transform: translateY(-100%);
     }
-    100%{
+
+    100% {
         opacity: 1;
-        transform: translateY(0);       
+        transform: translateY(0);
     }
 }
 
 @keyframes navAnimation2 {
-    0%{
+    0% {
         opacity: 1;
     }
-    100%{
-        opacity: 0;      
+
+    100% {
+        opacity: 0;
     }
 }
 
-.fade-in{
-    animation: navAnimation .5s ease-in-out;    
-    top: 0;    
+.fade-in {
+    animation: navAnimation .5s ease-in-out;
+    top: 0;
 }
 
-.fade-out{
+.fade-out {
     /* animation: navAnimation2 .5s ease-in-out; */
     top: -100%;
     transition: all 1s ease-in-out;
@@ -72,13 +92,13 @@ html{
 
 
 @media screen and (max-width:1040px) {
-    .menu a{
+    .menu a {
         margin-right: 0;
     }
 }
 
 @media screen and (max-width:575px) {
-    .change-shape{
+    .change-shape {
         clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 0 0);
     }
 }

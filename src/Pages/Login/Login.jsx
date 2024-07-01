@@ -64,7 +64,7 @@ const Login = () => {
                 {/* Login Button */}
                 <input type="submit" value="Login" className="mt-5 w-full btn bg-[#3b5fe2] text-white hover:bg-[#2a4ed1] normal-case" />
             </form>
-            <p className="mt-5 pl-1">New to Sportex? <Link to={'/signup'} className="text-blue-500 link">SignUp</Link></p>
+            <p className="mt-5 pl-1">New to Learning Point? <Link to={'/signup'} className="text-blue-500 link">SignUp</Link></p>
 
             <SocialLogin from={from}></SocialLogin>
         </div>

@@ -19,37 +19,44 @@ const Classes = () => {
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
     const location = useLocation();
-
     const query = usePathQuery();
+
     const limit = parseInt(query.get('limit')) || '';
     const page = parseInt(query.get('page')) || '';
+    const sort = query.get('sort') || '';
 
     const [itemPerPage, setItemPerPage] = useState('');
     const [currentPage, setCurrentPage] = useState('');
+    const [sortValue, setSortValue] = useState(0);
+
+    const activePage = currentPage || 1;
 
     useEffect(() => {
         setItemPerPage(limit);
         setCurrentPage(page);
-    }, [limit, page]);
+        setSortValue(sort.toLowerCase() === 'price.asc' ? 1 : sort.toLowerCase() === 'price.desc' ? -1 : 0);
+    }, [limit, page, sort]);
 
     useEffect(() => {
         const params = new URLSearchParams();
         if (itemPerPage) params.set('limit', itemPerPage);
         if (currentPage) params.set('page', currentPage);
+        if (sortValue) params.set('sort', (sortValue == 1 && 'price.ASC') || (sortValue == -1 && 'price.DESC'));
         navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-    }, [itemPerPage, currentPage, navigate, location.pathname]);
+    }, [itemPerPage, currentPage, sortValue, location.pathname]);
 
     useEffect(() => {
         if (query.size === 0) {
             setCurrentPage('');
             setItemPerPage('');
+            setSortValue(0)
         }
     }, [query.size])
 
     const { data, isLoading } = useQuery({
-        queryKey: ['classes', itemPerPage, currentPage],
+        queryKey: ['classes', itemPerPage, currentPage, sortValue],
         queryFn: async () => {
-            const res = await axios.get(`https://learning-info-bd.vercel.app/classes?limit=${itemPerPage || 6}&page=${currentPage || 1}`);
+            const res = await axios.get(`http://localhost:5000/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}`);
             return res.data;
         },
     });
@@ -97,41 +104,50 @@ const Classes = () => {
     const totalItems = data?.classesCount;
     const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
     const [visiblePages, setVisiblePages] = useState([]);
-    
+
 
     useEffect(() => {
         const totalPagesArr = Array.from({ length: totalPages }, (_, i) => i + 1);
-        if (currentPage < 7) {
+        if (activePage < 7) {
             setVisiblePages(totalPagesArr.slice(0, 7));
-        } else if ((currentPage || 1) === visiblePages[visiblePages.length - 1] || ((currentPage || 1) === visiblePages[0] && !visiblePages.includes(totalPagesArr[2]))) {
-            if (!visiblePages.includes(totalPagesArr[totalPagesArr.length - 1]) || (currentPage || 1) === visiblePages[0]) {
-                setVisiblePages(totalPagesArr.slice((currentPage || 1) - 4, (currentPage || 1) + 3));
+        } else if (activePage === visiblePages[visiblePages.length - 1] || (activePage === visiblePages[0])) {
+            if (!visiblePages.includes(totalPagesArr[totalPagesArr.length - 1]) || activePage === visiblePages[0]) {
+                setVisiblePages(totalPagesArr.slice(activePage - 4, activePage + 3));
             }
         }
-    }, [totalPages, currentPage]);
+    }, [totalPages, activePage]);
 
 
     useEffect(() => {
         if (data?.classes.length === 0) {
             setTimeout(() => {
                 setCurrentPage(visiblePages[visiblePages.length - 1]);
-                console.log(currentPage, visiblePages);
-            }, 200);                        
+            }, 200);
         }
-    }, [data?.classes.length, visiblePages]);
+    }, [data?.classes.length == 0]);
 
     const handleItemPerPageOptions = (event) => {
         setItemPerPage(parseInt(event.target.value));
     };
 
-    // console.log(currentPage);
+    const handleSortOptions = (event) => {
+        setSortValue(parseInt(event.target.value));
+    };
+
+    // console.log(sortValue);
+
     return (
         <div>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Helmet>
                 <title>Learning Point | Classes</title>
             </Helmet>
-            <Header handlePageOptions={handleItemPerPageOptions} itemPerPage={itemPerPage} />
+            <Header
+                handlePageOptions={handleItemPerPageOptions}
+                handleSortOptions={handleSortOptions}
+                itemPerPage={itemPerPage}
+                sortValue={sortValue}
+            />
             {isLoading ? (
                 <LoadingSpinner />
             ) : (
@@ -139,6 +155,7 @@ const Classes = () => {
                     data={data}
                     selectClass={selectClass}
                     currentPage={currentPage}
+                    activePage={activePage}
                     visiblePages={visiblePages}
                     setCurrentPage={setCurrentPage}
                 />
@@ -147,16 +164,29 @@ const Classes = () => {
     );
 };
 
-const Header = ({ handlePageOptions, itemPerPage }) => (
+const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue }) => (
     <div className='lg-container flex justify-between px-10 py-6'>
         <h2 className="text-lg font-medium">All Classes</h2>
-        <div className='flex items-center gap-2'>
-            <p className='font-medium'>Show:</p>
-            <select value={itemPerPage} className='border rounded bg-base-200 px-1 focus:outline-none' onChange={handlePageOptions}>
-                <option value={6}>6</option>
-                <option value={9}>9</option>
-                <option value={18}>18</option>
-            </select>
+        <div className='flex items-center gap-4'>
+            {/* select item per page */}
+            <div className='flex items-center gap-2'>
+                <p className='font-medium'>Show:</p>
+                <select value={itemPerPage} className='border rounded bg-base-200 px-1 focus:outline-none' onChange={handlePageOptions}>
+                    <option value={6}>6</option>
+                    <option value={9}>9</option>
+                    <option value={18}>18</option>
+                </select>
+            </div>
+
+            {/* sorting order */}
+            <div className='flex items-center gap-2'>
+                <p className='font-medium'>Sort By:</p>
+                <select value={sortValue} className='w-[120px] border rounded bg-base-200 px-1 focus:outline-none' onChange={handleSortOptions}>
+                    <option value={0}>Default</option>
+                    <option value={1}>Price(Low {'>'} High)</option>
+                    <option value={-1}>Price(High {'>'} Low)</option>
+                </select>
+            </div>
         </div>
     </div>
 );
@@ -167,7 +197,7 @@ const LoadingSpinner = () => (
     </div>
 );
 
-const Content = ({ data, selectClass, currentPage, visiblePages, setCurrentPage }) => (
+const Content = ({ data, selectClass, currentPage, activePage, visiblePages, setCurrentPage }) => (
     <div>
         <div className="lg-container grid grid-cols-2 md:grid-cols-3 gap-y-10">
             {data?.classes.map(classData => (
@@ -183,17 +213,18 @@ const Content = ({ data, selectClass, currentPage, visiblePages, setCurrentPage 
         </div>
         <Pagination
             currentPage={currentPage}
+            activePage={activePage}
             visiblePages={visiblePages}
             setCurrentPage={setCurrentPage}
         />
     </div>
 );
 
-const Pagination = ({ currentPage, visiblePages, setCurrentPage }) => (    
+const Pagination = ({ currentPage, activePage, visiblePages, setCurrentPage }) => (
     <div className='flex justify-center items-center gap-2 mt-20'>
         <Link
             to={`/class/?page=${currentPage - 1}`}
-            className={`text-sm font-medium hover:bg-blue-700 text-gray-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${currentPage === visiblePages[0] ? 'text-gray-400 pointer-events-none' : ''}`}
+            className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[0] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             PREV
         </Link>
@@ -201,15 +232,15 @@ const Pagination = ({ currentPage, visiblePages, setCurrentPage }) => (
             <Link
                 to={`/class/?page=${pageNo}`}
                 key={pageNo}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${(currentPage || 1) === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
-            onClick={() => setCurrentPage(pageNo)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${activePage === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
+                onClick={() => setCurrentPage(pageNo)}
             >
                 {pageNo}
             </Link>
         ))}
         <Link
             to={`/class/?page=${currentPage + 1}`}
-            className={`text-sm font-medium hover:bg-blue-700 text-gray-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${currentPage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : ''}`}
+            className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             NEXT
         </Link>

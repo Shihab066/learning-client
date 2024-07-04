@@ -24,10 +24,13 @@ const Classes = () => {
     const limit = parseInt(query.get('limit')) || '';
     const page = parseInt(query.get('page')) || '';
     const sort = query.get('sort') || '';
+    const search = query.get('search') || '';
 
     const [itemPerPage, setItemPerPage] = useState('');
     const [currentPage, setCurrentPage] = useState('');
     const [sortValue, setSortValue] = useState(0);
+    const [searchValue, setSearchValue] = useState('');
+    // console.log(searchValue);
 
     const activePage = currentPage || 1;
 
@@ -35,28 +38,30 @@ const Classes = () => {
         setItemPerPage(limit);
         setCurrentPage(page);
         setSortValue(sort.toLowerCase() === 'price.asc' ? 1 : sort.toLowerCase() === 'price.desc' ? -1 : 0);
-    }, [limit, page, sort]);
+        setSearchValue(search || location?.state?.search)
+    }, [limit, page, sort, search, location?.state?.search]);
 
     useEffect(() => {
         const params = new URLSearchParams();
         if (itemPerPage) params.set('limit', itemPerPage);
         if (currentPage) params.set('page', currentPage);
         if (sortValue) params.set('sort', (sortValue == 1 && 'price.ASC') || (sortValue == -1 && 'price.DESC'));
+        if (searchValue) params.set('search', (searchValue));       
         navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-    }, [itemPerPage, currentPage, sortValue, location.pathname]);
+    }, [itemPerPage, currentPage, sortValue, searchValue, location.pathname]);
 
-    useEffect(() => {
-        if (query.size === 0) {
-            setCurrentPage('');
-            setItemPerPage('');
-            setSortValue(0)
-        }
-    }, [query.size])
+    // useEffect(() => {
+    //     if (query.size === 0) {
+    //         setCurrentPage('');
+    //         setItemPerPage('');
+    //         setSortValue(0);
+    //     }
+    // }, [query.size])
 
     const { data, isLoading } = useQuery({
-        queryKey: ['classes', itemPerPage, currentPage, sortValue],
+        queryKey: ['classes', itemPerPage, currentPage, sortValue, searchValue],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}`);
+            const res = await axios.get(`http://localhost:5000/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
     });
@@ -134,8 +139,6 @@ const Classes = () => {
         setSortValue(parseInt(event.target.value));
     };
 
-    // console.log(sortValue);
-
     return (
         <div>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
@@ -166,12 +169,12 @@ const Classes = () => {
 
 const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue }) => (
     <div className='lg-container flex justify-between px-10 py-6'>
-        <h2 className="text-lg font-medium">All Classes</h2>
-        <div className='flex items-center gap-4'>
+        <h2 className="text-lg font-medium">Classes</h2>
+        <div className='flex items-center gap-4 text-sm'>
             {/* select item per page */}
             <div className='flex items-center gap-2'>
                 <p className='font-medium'>Show:</p>
-                <select value={itemPerPage} className='border rounded bg-base-200 px-1 focus:outline-none' onChange={handlePageOptions}>
+                <select value={itemPerPage} className='text-base border rounded bg-base-200 ps-1 focus:outline-none' onChange={handlePageOptions}>
                     <option value={6}>6</option>
                     <option value={9}>9</option>
                     <option value={18}>18</option>
@@ -181,7 +184,7 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue }
             {/* sorting order */}
             <div className='flex items-center gap-2'>
                 <p className='font-medium'>Sort By:</p>
-                <select value={sortValue} className='w-[120px] border rounded bg-base-200 px-1 focus:outline-none' onChange={handleSortOptions}>
+                <select value={sortValue} className='w-[115px] text-base border rounded bg-base-200 ps-1 focus:outline-none' onChange={handleSortOptions}>
                     <option value={0}>Default</option>
                     <option value={1}>Price(Low {'>'} High)</option>
                     <option value={-1}>Price(High {'>'} Low)</option>
@@ -222,12 +225,14 @@ const Content = ({ data, selectClass, currentPage, activePage, visiblePages, set
 
 const Pagination = ({ currentPage, activePage, visiblePages, setCurrentPage }) => (
     <div className='flex justify-center items-center gap-2 mt-20'>
+        {/* prev button */}
         <Link
             to={`/class/?page=${currentPage - 1}`}
             className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[0] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             PREV
         </Link>
+        {/* visible page number */}
         {visiblePages.map((pageNo) => (
             <Link
                 to={`/class/?page=${pageNo}`}
@@ -238,6 +243,7 @@ const Pagination = ({ currentPage, activePage, visiblePages, setCurrentPage }) =
                 {pageNo}
             </Link>
         ))}
+        {/* next button */}
         <Link
             to={`/class/?page=${currentPage + 1}`}
             className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}

@@ -12,7 +12,7 @@ function usePathQuery() {
 }
 
 
-const Navbar = () => {
+const Navbar = () => {    
     const { user, logOut, loading } = useAuth();
     // const [theme, setTheme] = useState(false);
     const navigate = useNavigate()
@@ -56,15 +56,16 @@ const Navbar = () => {
     const [searchValue, setSearchValue] = useState('');
 
     const handleSearch = (event) => {
-        event.preventDefault()
-        const search = event.target.search.value;        
-        setSearchValue(search)
-        navigate(`/class`, { state: { search: search } })
+        event.preventDefault();
+        const searchKey = event.target.search.value || '';
+        setSearchValue(searchKey);
+        navigate(`/class`, { state: { search: searchKey } });
+
     }
 
-    const search = usePathQuery().get('search');
+    const search = usePathQuery().get('search') || '';
     useEffect(() => {
-        setSearchValue(search)
+        setSearchValue(search);
     }, [search])
     return (
         <><Helmet>
@@ -97,7 +98,7 @@ const Navbar = () => {
                                 className="w-[450px] border-2 rounded-md border-blue-400 focus:outline-none pl-3 pr-10 py-2"
                                 placeholder="Search"
                                 autoComplete="off"
-                                value={searchValue || ''}
+                                value={searchValue}
 
                             />
 

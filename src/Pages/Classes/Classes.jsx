@@ -60,7 +60,7 @@ const Classes = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['classes', itemPerPage, currentPage, sortValue, searchValue],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
+            const res = await axios.get(`https://learning-info-bd.vercel.app/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
     });

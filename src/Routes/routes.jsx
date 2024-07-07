@@ -19,6 +19,7 @@ import InstructorRoute from "./InstructorRoute";
 import AdminRoutes from "./AdminRoutes";
 import StudentRoutes from "./StudentRoutes";
 import ScrollToTop from "../components/ClassCard/scrollToTop";
+import Profile from "../Pages/Profile/Profile";
 
 
 export const router = createBrowserRouter([
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: 'instructors',
         element: <Instructors></Instructors>
+      },
+      {
+        path: 'profile',
+        element:<Profile />
       },
       {
         path: 'dashboard',

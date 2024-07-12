@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
+import Swal from "sweetalert2";
 
 const Login = () => {
     const location = useLocation();
@@ -12,13 +13,21 @@ const Login = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const { signIn } = useAuth();
+    const { signIn, setloading } = useAuth();
     const onSubmit = data => {
         const { email, password } = data;
         signIn(email, password)
             .then(() => {
                 reset()
-                navigate(from, {replace:true})
+                navigate(from, { replace: true })
+            })
+            .catch(() => {
+                setloading(false)
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Invalid login credentials'
+                })
             })
     }
     return (

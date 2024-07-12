@@ -4,15 +4,20 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import dummyImg from '../../assets/icon/user_icon.png'
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const Profile = () => {
-    const { user, updateUser } = useAuth();
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+    const { EmailAuthProvider, user, updateUser, updateUserPassword, reAuthenticateUser } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const [name, setName] = useState('');
     const [img, setImg] = useState(null);
     const fileInputRef = useRef(null);
     const [profileUpdateDisable, setProfileUpdateDisable] = useState(true);
+    const [passwordUpdateDisable, setPasswordUpdateDisable] = useState(true);
+    const [confirmError, setConfirmError] = useState(false);
+    
     const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
 
 
@@ -50,7 +55,7 @@ const Profile = () => {
         const name = form.name.value;
         const image = form.profileImg.files;
         const formData = new FormData();
-        formData.append('image', image[0]);        
+        formData.append('image', image[0]);
 
         {
             image[0] &&
@@ -112,6 +117,52 @@ const Profile = () => {
         }
     }, [name, img, user?.displayName]);
 
+    const changePassword = (data) => {
+        const { currentPassword, newPassword } = data;
+        const credential = EmailAuthProvider.credential(
+            user.email,
+            currentPassword
+        );
+
+        reAuthenticateUser(credential)
+            .then(() => {
+                updateUserPassword(newPassword)
+                    .then(() => {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Password update successfully',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                        reset();
+                    })
+                    .catch((error) => {
+                        console.log('Something went wrong in updateUserPassword', error);
+                    })
+            })
+            .catch((error) => {
+                console.log("Something went wrong in re-authentication", error);
+            })
+
+    }
+
+    const handleConfirmPassword = (data) => {
+        const { newPassword, confirmNewPassword } = data;        
+        setConfirmError(false)
+        if (newPassword && confirmNewPassword.length >= 6) {
+            if (newPassword === confirmNewPassword) {
+                setPasswordUpdateDisable(false)
+                setConfirmError(false)
+            }
+            else {
+                setPasswordUpdateDisable(true)
+                setConfirmError(true)
+            }
+        }
+
+    }
+
     return (
         <div className="mt-10">
             <div className="lg-container bg-indigo-50 drop-shadow-md px-20 py-20 rounded-2xl">
@@ -132,6 +183,7 @@ const Profile = () => {
                             name="name"
                             className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
                             defaultValue={user?.displayName}
+                            autoComplete="off"
                             required
                         />
                     </div>
@@ -179,43 +231,78 @@ const Profile = () => {
                         className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
                         value='Update Profile'
                         disabled={profileUpdateDisable}
+
                     />
                 </form>
 
                 {/* Password change section */}
                 <h3 className="text-xl font-medium mb-3">Password</h3>
-                <div className="grid grid-cols-2 gap-x-5 gap-y-8">
+                <form
+                    onSubmit={handleSubmit(changePassword)}
+                    className="grid grid-cols-2 gap-x-5 gap-y-8">
+                    {/* current password input field */}
                     <div className="col-span-2">
                         <label className="label">
                             Current Password
                         </label>
-                        <input type="password" placeholder="Current Password" className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        // {...register('name', { required: false })}
+                        <input
+                            type="password"
+                            placeholder="Current Password"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register("currentPassword", {
+                                required: true,
+                            })}
                         />
+                        {errors.currentPassword?.type === 'required' && <span className="text-red-600">Current password is required</span>}
                     </div>
 
+                    {/* new password input field */}
                     <div>
                         <label className="label">
                             New Password
                         </label>
-                        <input type="text" placeholder="New Password" className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        // {...register('name', { required: false })}
+                        <input
+                            type="text"
+                            placeholder="New Password"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register("newPassword", {
+                                required: true,
+                                minLength: 6,
+                                pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
+                            })}
                         />
+                        {errors.newPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                        {(errors.newPassword?.type === 'minLength') || (errors.newPassword?.type === 'pattern') && <span className="text-red-600">* New Password must be atleast 6 characters  which contain at least one numeric digit and a special character!</span>}
                     </div>
 
+                    {/* confirm new password input field */}
                     <div>
                         <label className="label">
                             Confirm New Password
                         </label>
-                        <input type="password" placeholder="Confirm New Password" className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        // {...register('name', { required: false })}
+                        <input
+                            onChange={watch(handleConfirmPassword)}
+                            type="password"
+                            placeholder="Confirm New Password"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register("confirmNewPassword", {
+                                required: true,
+                            })}
                         />
+                        {errors.confirmNewPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                        {confirmError && <span className="text-red-600">The password and confirmation password do not match.</span>}
                     </div>
 
-                    <button className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end">
-                        Update Password
-                    </button>
-                </div>
+                    <input
+                        type="submit"
+                        className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                        value='Update Password'
+                        disabled={passwordUpdateDisable}
+                    />
+                </form>
             </div>
         </div>
     );

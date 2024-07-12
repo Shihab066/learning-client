@@ -9,7 +9,7 @@ const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const Profile = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
-    const { EmailAuthProvider, user, updateUser, updateUserPassword, reAuthenticateUser } = useAuth();
+    const { user, updateUser, updateUserPassword, reAuthenticateUser, EmailAuthProvider } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const [name, setName] = useState('');
     const [img, setImg] = useState(null);
@@ -17,7 +17,8 @@ const Profile = () => {
     const [profileUpdateDisable, setProfileUpdateDisable] = useState(true);
     const [passwordUpdateDisable, setPasswordUpdateDisable] = useState(true);
     const [confirmError, setConfirmError] = useState(false);
-    
+    const [isPasswordProvider, setPasswordProvider] = useState(false);
+
     const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
 
 
@@ -107,7 +108,7 @@ const Profile = () => {
         }
         form.reset();
         resetProfileInputField();
-    }
+    };
 
     useEffect(() => {
         if ((name && (name !== user?.displayName)) || img) {
@@ -148,7 +149,7 @@ const Profile = () => {
     }
 
     const handleConfirmPassword = (data) => {
-        const { newPassword, confirmNewPassword } = data;        
+        const { newPassword, confirmNewPassword } = data;
         setConfirmError(false)
         if (newPassword && confirmNewPassword.length >= 6) {
             if (newPassword === confirmNewPassword) {
@@ -163,6 +164,15 @@ const Profile = () => {
 
     }
 
+    useEffect(() => {
+        if (user?.providerData[0].providerId === 'password') {
+            setPasswordProvider(true);
+        } else {
+            setPasswordProvider(false);
+        }
+    }, [user])
+
+    console.log(isPasswordProvider)
     return (
         <div className="mt-10">
             <div className="lg-container bg-indigo-50 drop-shadow-md px-20 py-20 rounded-2xl">
@@ -236,73 +246,78 @@ const Profile = () => {
                 </form>
 
                 {/* Password change section */}
-                <h3 className="text-xl font-medium mb-3">Password</h3>
-                <form
-                    onSubmit={handleSubmit(changePassword)}
-                    className="grid grid-cols-2 gap-x-5 gap-y-8">
-                    {/* current password input field */}
-                    <div className="col-span-2">
-                        <label className="label">
-                            Current Password
-                        </label>
-                        <input
-                            type="password"
-                            placeholder="Current Password"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register("currentPassword", {
-                                required: true,
-                            })}
-                        />
-                        {errors.currentPassword?.type === 'required' && <span className="text-red-600">Current password is required</span>}
-                    </div>
-
-                    {/* new password input field */}
+                {
+                    isPasswordProvider &&
                     <div>
-                        <label className="label">
-                            New Password
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="New Password"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register("newPassword", {
-                                required: true,
-                                minLength: 6,
-                                pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
-                            })}
-                        />
-                        {errors.newPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                        {(errors.newPassword?.type === 'minLength') || (errors.newPassword?.type === 'pattern') && <span className="text-red-600">* New Password must be atleast 6 characters  which contain at least one numeric digit and a special character!</span>}
-                    </div>
+                        <h3 className="text-xl font-medium mb-3">Password</h3>
+                        <form
+                            onSubmit={handleSubmit(changePassword)}
+                            className="grid grid-cols-2 gap-x-5 gap-y-8">
+                            {/* current password input field */}
+                            <div className="col-span-2">
+                                <label className="label">
+                                    Current Password
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="Current Password"
+                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                    autoComplete="off"
+                                    {...register("currentPassword", {
+                                        required: true,
+                                    })}
+                                />
+                                {errors.currentPassword?.type === 'required' && <span className="text-red-600">Current password is required</span>}
+                            </div>
 
-                    {/* confirm new password input field */}
-                    <div>
-                        <label className="label">
-                            Confirm New Password
-                        </label>
-                        <input
-                            onChange={watch(handleConfirmPassword)}
-                            type="password"
-                            placeholder="Confirm New Password"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register("confirmNewPassword", {
-                                required: true,
-                            })}
-                        />
-                        {errors.confirmNewPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                        {confirmError && <span className="text-red-600">The password and confirmation password do not match.</span>}
-                    </div>
+                            {/* new password input field */}
+                            <div>
+                                <label className="label">
+                                    New Password
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="New Password"
+                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                    autoComplete="off"
+                                    {...register("newPassword", {
+                                        required: true,
+                                        minLength: 6,
+                                        pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
+                                    })}
+                                />
+                                {errors.newPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                                {(errors.newPassword?.type === 'minLength') || (errors.newPassword?.type === 'pattern') && <span className="text-red-600">* New Password must be atleast 6 characters which contain at least one uppercase and a special character!</span>}
+                            </div>
 
-                    <input
-                        type="submit"
-                        className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
-                        value='Update Password'
-                        disabled={passwordUpdateDisable}
-                    />
-                </form>
+                            {/* confirm new password input field */}
+                            <div>
+                                <label className="label">
+                                    Confirm New Password
+                                </label>
+                                <input
+                                    onChange={watch(handleConfirmPassword)}
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                    autoComplete="off"
+                                    {...register("confirmNewPassword", {
+                                        required: true,
+                                    })}
+                                />
+                                {errors.confirmNewPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                                {confirmError && <span className="text-red-600">The password and confirmation password do not match.</span>}
+                            </div>
+
+                            <input
+                                type="submit"
+                                className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                                value='Update Password'
+                                disabled={passwordUpdateDisable}
+                            />
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     );

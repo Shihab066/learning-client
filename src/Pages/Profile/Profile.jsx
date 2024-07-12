@@ -171,8 +171,7 @@ const Profile = () => {
             setPasswordProvider(false);
         }
     }, [user])
-
-    console.log(isPasswordProvider)
+    
     return (
         <div className="mt-10">
             <div className="lg-container bg-indigo-50 drop-shadow-md px-20 py-20 rounded-2xl">

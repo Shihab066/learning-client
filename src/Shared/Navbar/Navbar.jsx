@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import logo from '/logo.png'
 import { useEffect, useState } from "react";
 import searchIcon from '../../assets/icon/search_icon.svg';
+import dummyImg from '../../assets/icon/user_icon.png';
 
 
 function usePathQuery() {
@@ -12,7 +13,7 @@ function usePathQuery() {
 }
 
 
-const Navbar = () => {    
+const Navbar = () => {
     const { user, logOut, loading } = useAuth();
     // const [theme, setTheme] = useState(false);
     const navigate = useNavigate()
@@ -68,9 +69,10 @@ const Navbar = () => {
         setSearchValue(search);
     }, [search])
     return (
-        <><Helmet>
-            {/* <html lang="en" data-theme={theme ? 'dark' : 'light'} /> */}
-        </Helmet>
+        <>
+            <Helmet>
+                {/* <html lang="en" data-theme={theme ? 'dark' : 'light'} /> */}
+            </Helmet>
             <nav className={`bg-white z-50 sticky drop-shadow ${stickyNav ? 'fade-in' : 'fade-out'}`}>
                 <div className="lg-container flex justify-between px-4 lg:py-3">
                     <div className="flex items-center z-20">
@@ -120,7 +122,13 @@ const Navbar = () => {
                         <div>
                             {loading ? <span className="loading loading-ring loading-lg"></span> :
                                 user ? <div className="flex items-center gap-2">
-                                    {user.photoURL && <img src={user.photoURL} className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover" referrerPolicy="no-referrer" title={user.displayName ? user.displayName : ''} alt="" />}
+                                    <Link to={'/profile'}>
+                                        <img src={user.photoURL || dummyImg}
+                                            className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer"
+                                            referrerPolicy="no-referrer"
+                                            title={user.displayName ? user.displayName : ''} alt="user image"
+                                        />
+                                    </Link>
                                     <div onClick={signOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
                                 </div> :
                                     <Link to={'/login'}><div className="btn btn-sm sm:btn-md bg-blue-600 hover:bg-blue-700 text-white normal-case">Login</div></Link>

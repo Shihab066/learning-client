@@ -30,6 +30,7 @@ const Profile = () => {
         }
     })
 
+    // handle profile update
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -118,6 +119,8 @@ const Profile = () => {
         }
     }, [name, img, user?.displayName]);
 
+
+    // handle password update
     const changePassword = (data) => {
         const { currentPassword, newPassword } = data;
         const credential = EmailAuthProvider.credential(

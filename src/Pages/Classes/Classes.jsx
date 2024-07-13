@@ -53,8 +53,9 @@ const Classes = () => {
         if (currentPage) params.set('page', currentPage);
         if (sortValue) params.set('sort', sortValue === 1 ? 'price.ASC' : sortValue === -1 ? 'price.DESC' : '');
         if (searchValue) params.set('search', searchValue);
-        navigate(`/class?${params.toString()}`, { replace: true });
+        navigate(`/class?${params.toString()}`, {replace : true});        
     }, [itemPerPage, currentPage, sortValue, searchValue]);
+
 
     // Fetch classes data
     const { data, isLoading } = useQuery({
@@ -134,10 +135,13 @@ const Classes = () => {
     // Handlers for item per page and sort options
     const handleItemPerPageOptions = (event) => {
         setItemPerPage(parseInt(event.target.value));
+        navigate(`/class?limit=${parseInt(event.target.value)}`)
     };
 
     const handleSortOptions = (event) => {
-        setSortValue(parseInt(event.target.value));
+        const sort = parseInt(event.target.value);
+        setSortValue(sort);
+        navigate(`/class/?sort=${sort === 1 ? 'price.ASC' : sort === -1 ? 'price.DESC' : ''}`)
     };
 
     return (

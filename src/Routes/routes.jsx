@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../Layout/Main";
-import Login from "../Pages/Login/Login";
-import SignUp from "../Pages/SignUp/SignUp";
+import Login from "../Pages/Authentication/Login/Login";
+import SignUp from "../Pages/Authentication/SignUp/SignUp";
 import Home from "../Pages/Home/Home/Home";
 import Classes from "../Pages/Classes/Classes";
 import Instructors from "../Pages/Instructors/Instructors";
@@ -18,8 +18,8 @@ import PrivateRoutes from "./PrivateRoutes";
 import InstructorRoute from "./InstructorRoute";
 import AdminRoutes from "./AdminRoutes";
 import StudentRoutes from "./StudentRoutes";
-import ScrollToTop from "../components/ClassCard/scrollToTop";
-import Profile from "../Pages/Profile/Profile";
+import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
+import Profile from "../Pages/Authentication/Profile/Profile";
 
 
 export const router = createBrowserRouter([

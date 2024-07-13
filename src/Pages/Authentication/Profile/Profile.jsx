@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../hooks/useAuth";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import dummyImg from '../../assets/icon/user_icon.png';
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import dummyImg from '../../../assets/icon/user_icon.png';
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";

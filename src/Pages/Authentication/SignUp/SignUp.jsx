@@ -2,10 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
+import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import { FaCheck, FaExclamationCircle } from 'react-icons/fa';
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";

@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
+import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
 

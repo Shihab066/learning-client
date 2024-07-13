@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
-import ScrollToTop from '../../components/ClassCard/scrollToTop';
+import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 
 // Custom hook to get query parameters

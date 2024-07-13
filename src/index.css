@@ -54,6 +54,10 @@ html {
     padding: 4px 4px !important;
 }
 
+.swal2-close:focus {
+    box-shadow: none !important;
+}
+
 @keyframes navAnimation {
     0% {
         opacity: 0;

@@ -142,12 +142,19 @@ const Profile = () => {
                         });
                         reset();
                     })
-                    .catch((error) => {
-                        console.log('Something went wrong in updateUserPassword', error);
+                    .catch((error) => {                        
+                        console.error('Something went wrong in updateUserPassword', error);
                     });
             })
             .catch((error) => {
-                console.log("Something went wrong in re-authentication", error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Wrong current passowrd!',
+                    showConfirmButton: false,
+                    showCloseButton: true
+                });
+                console.error("Something went wrong in re-authentication", error);
             });
     };
 

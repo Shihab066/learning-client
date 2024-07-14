@@ -20,6 +20,8 @@ import AdminRoutes from "./AdminRoutes";
 import StudentRoutes from "./StudentRoutes";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import Profile from "../Pages/Authentication/Profile/Profile";
+import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
+import AddNewPassword from "../Pages/Authentication/PassowrdReset/AddNewPassword";
 
 
 export const router = createBrowserRouter([
@@ -54,7 +56,15 @@ export const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element:<PrivateRoutes><Profile /></PrivateRoutes>
+        element: <PrivateRoutes><Profile /></PrivateRoutes>
+      },
+      {
+        path: 'account_recovery',
+        element: <PasswordReset />
+      },
+      {
+        path: 'password_reset',
+        element: <AddNewPassword />
       },
       {
         path: 'dashboard',

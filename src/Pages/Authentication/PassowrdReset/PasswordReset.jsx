@@ -1,37 +1,57 @@
 import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
+import axios from "axios";
 
-const PasswordReset = () => {    
+const PasswordReset = () => {
     const { sendAccountRecoveryEmail } = useAuth();
 
     // Handle password reset email submission
     const handlePasswordResetEmail = (event) => {
         event.preventDefault();
-        const email = event.target.email.value; 
+        const email = event.target.email.value;
 
         if (email) {
-            sendAccountRecoveryEmail(email)
-                .then(() => {                    
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'An Email has been sent to your account!',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                    event.target.reset();
+            axios.get(`http://localhost:5000/getSignupMethod/${email}`)
+                .then(res => {
+                    const { signupMethod } = res.data;
+                    if (signupMethod === 'password') {
+                        sendAccountRecoveryEmail(email)
+                            .then(() => {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'An Email has been sent to your account!',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                event.target.reset();
+                            })
+                            .catch((error) => {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'error',
+                                    title: 'Something went wrong!',
+                                    showConfirmButton: false,
+                                    showCloseButton: true
+                                });
+                                console.error('Something went wrong while sending password reset email', error);
+                            });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'No account found with this email. Please check the email address.',
+                            showConfirmButton: false,
+                            showCloseButton: true
+                        });
+                    }
                 })
-                .catch((error) => {                   
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'error',
-                        title: 'Something went wrong!',
-                        showConfirmButton: false,
-                        showCloseButton: true
-                    });
-                    console.error('Something went wrong while sending password reset email', error);
+                .catch(error => {                   
+                    console.error('Something went wrong while geting userSignupMethod', error);
                 });
         }
+
     };
 
     return (

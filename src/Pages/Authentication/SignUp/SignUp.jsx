@@ -20,16 +20,16 @@ const SignUp = () => {
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
-        const { name, email, password } = data;        
+        const { name, email, password } = data;
         await createUser(email, password)
             .then(() => {
                 updateUser(name, image)
-                    .then(() => {                        
-                        setImage('')                        
-                        axios.post('https://learning-info-bd.vercel.app/users', {image, name: name || "anonymous", email, role: 'student' })
+                    .then(() => {
+                        setImage('')
+                        axios.post('https://learning-info-bd.vercel.app/users', { name: name || "anonymous", email, image, role: 'student', signupMethod: 'password'  })
                             .then(data => {
                                 if (data.data.insertedId) {
-                                    reset()                                    
+                                    reset()
                                     Swal.fire({
                                         position: 'center',
                                         icon: 'success',

@@ -234,7 +234,7 @@ const Profile = () => {
                             onClick={handleAddImage}
                             className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700"
                         >
-                            Change Profile Image
+                            {user?.photoURL ? 'Change Profile Image' : 'Add Profile Image'}
                         </button>
                     </div>
 

@@ -3,15 +3,15 @@ import axios from 'axios';
 import logo from '../../assets/img/Google.png'
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-const SocialLogin = ({from}) => {
+const SocialLogin = ({ from }) => {
     const { googleSignIn } = useAuth();
     const navigate = useNavigate();
     const handleSignIn = () => {
         googleSignIn()
             .then(result => {
                 const user = result.user;
-                axios.post('https://learning-info-bd.vercel.app/users', {image:user.photoURL, name: user.displayName || "anonymous", email: user.email, role: 'student' })
-                navigate(from, {replace:true})
+                axios.post('https://learning-info-bd.vercel.app/users', { name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                navigate(from, { replace: true })
             })
     }
     return (

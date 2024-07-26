@@ -111,7 +111,7 @@ const AddNewPassword = () => {
                     <input
                         type="submit"
                         className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
-                        value="Save"
+                        value="Save Password"
                     />
                 </form>
             </div>

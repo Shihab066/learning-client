@@ -122,12 +122,12 @@ const Navbar = () => {
                         <div>
                             {loading ? <span className="loading loading-ring loading-lg"></span> :
                                 user ? <div className="flex items-center gap-2">
-                                    <Link to={'/profile'}>
-                                        <img src={user.photoURL || dummyImg}
-                                            className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer"
-                                            referrerPolicy="no-referrer"
-                                            title={user.displayName ? user.displayName : ''} alt="user image"
-                                        />
+                                    <Link to={'/profile'}>                                        
+                                            <img src={user.photoURL || dummyImg}
+                                                className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
+                                                referrerPolicy="no-referrer"
+                                                title={user.displayName ? user.displayName : ''} alt="user image"
+                                            />                                        
                                     </Link>
                                     <div onClick={signOut} className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case hidden md:flex">Logout</div>
                                 </div> :

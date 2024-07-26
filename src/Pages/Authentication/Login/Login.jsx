@@ -63,12 +63,11 @@ const Login = () => {
                 </div>
 
                 {/* Remember me NOT FUNCTIONAL */}
-                <div className="flex items-center gap-1 mt-2 ml-1">
-                    <input type="checkbox" className="checkbox checkbox-info" />
-                    <label className="cursor-pointer label">
-                        <span className="label-text">Remember me</span>
-                    </label>
-                </div>
+                <Link
+                    to='/account_recovery'
+                    className="flex mt-2 ml-1 text-blue-500 link">
+                    Forget password?
+                </Link>
 
                 {/* Login Button */}
                 <input type="submit" value="Login" className="mt-5 w-full btn bg-[#3b5fe2] text-white hover:bg-[#2a4ed1] normal-case" />

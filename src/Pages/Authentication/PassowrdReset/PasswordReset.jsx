@@ -11,7 +11,7 @@ const PasswordReset = () => {
         const email = event.target.email.value;
 
         if (email) {
-            axios.get(`http://localhost:5000/getSignupMethod/${email}`)
+            axios.get(`https://learning-info-bd.vercel.app/getSignupMethod/${email}`)
                 .then(res => {
                     const { signupMethod } = res.data;
                     if (signupMethod === 'password') {

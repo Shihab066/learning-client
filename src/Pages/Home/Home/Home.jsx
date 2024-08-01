@@ -7,6 +7,7 @@ import Slider from "../Slider/Slider";
 import JobPlacement from "../JobPlacementSection/JobPlacement";
 import NewsLetter from "../NewsLetter/NewsLetter";
 import Sponser from "../Sponser/Sponser";
+import PopularInstructorSkeletonCard from "../../../components/PopularInstructorsSkeleton.jsx/PopularInstructorSkeletonCard";
 
 
 const Home = () => {
@@ -21,13 +22,13 @@ const Home = () => {
                     <span className="loading loading-spinner text-info loading-lg"></span>
                 </div > :
                 <div>
-                    <Slider></Slider>
-                    <PopularClasses></PopularClasses>
-                    <PopularInstructor></PopularInstructor>
-                    <ExtraSection></ExtraSection>
-                    <JobPlacement></JobPlacement>
-                    <NewsLetter></NewsLetter>
-                    <Sponser></Sponser>
+                    <Slider />
+                    <PopularClasses />                    
+                    <PopularInstructor />                    
+                    <ExtraSection />
+                    <JobPlacement />
+                    <NewsLetter />
+                    <Sponser />
                 </div>
             }
         </div>

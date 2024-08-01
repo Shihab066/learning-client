@@ -13,7 +13,9 @@ const ClassCard = ({ item, overlay, btn, cardForClass, selectClass, propularClas
     return (
         <div className='flex justify-center'>
             <div className={`card relative w-[90%] xl:w-96 ${cardForClass && !overlay && 'lg:h-[480px] xl:h-[526px]'} shadow-xl ${overlay && 'image-full'} ${seats == 0 && cardForClass && 'opacity-60'}`}>
-                <figure className='xs:h-[130px] sm:h-[200px] md:h-[180px] lg:h-[200px] xl:h-[255px] overflow-hidden bg-base-200'><img src={image || noImg} className="hover:scale-105 ease-linear duration-300 w-full h-full object-cover" alt={cardForClass ? 'classImg' : 'instructor-Img'} /></figure>
+                <figure className='xs:h-[130px] sm:h-[200px] md:h-[180px] lg:h-[200px] xl:h-[255px] overflow-hidden bg-base-200'>
+                    <img src={image || noImg} className="hover:scale-105 ease-linear duration-300 w-full h-full object-cover" alt={cardForClass ? 'classImg' : 'instructor-Img'} />
+                </figure>
                 {price && <span className='bg-white xs:px-[3px] sm:px-2 lg:px-3 xs:py-[2px] sm:py-1 xs:text-sm sm:text-base rounded-lg text-center absolute right-2 top-3 z-30'>$ {price}</span>}
                 <div className="card-body xs:p-4 sm:p-6 lg:p-8 ">
                     <h2 className={`card-title ${!overlay && 'mb-auto'} xs:text-xs sm:text-base lg:text-xl`}>{name.length > 40 ? modifiedName : name}</h2>

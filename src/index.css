@@ -54,7 +54,7 @@ html {
     padding: 4px 4px !important;
 }
 
-.swal2-close:focus {
+.swal2-close:focus, .swal2-confirm:focus {
     box-shadow: none !important;
 }
 

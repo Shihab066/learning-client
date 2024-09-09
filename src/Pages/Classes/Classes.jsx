@@ -273,7 +273,7 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
 
         {/* Next button */}
         <Link
-            to={`/class/?page=${currentPage + 1}`}
+            to={`/class/?page=${(currentPage || 1) + 1}`}
             className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             NEXT

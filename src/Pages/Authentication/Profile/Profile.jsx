@@ -5,8 +5,6 @@ import dummyImg from '../../../assets/icon/user_icon.png';
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-
-// Get the image hosting secret key from environment variables
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const Profile = () => {

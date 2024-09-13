@@ -17,13 +17,13 @@ const JobPlacement = () => {
 
     return (
         <div className='lg-container '>
-            <div className='mt-28 sm:mt-36 lg:mt-48 grid sm:grid-cols-2 h-fit'>
+            <div className='mt-20 sm:mt-36 lg:mt-40 grid sm:grid-cols-2 h-fit'>
                 <div className='justify-self-start hidden sm:flex items-center'>
                     {View}
                 </div>
                 <div className='justify-self-center'>
-                    <div className='lg:w-[500px] text-center sm:text-left'>
-                        <h2 className='text-2xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-5'> Job Placement Assistance</h2>
+                    <div className='lg:w-[500px] text-center sm:text-left px-2 sm:px-0'>
+                        <h2 className='text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-5'> Job Placement Assistance</h2>
                         <div>
                             <h4 className='flex justify-center sm:justify-start items-center font-semibold md:text-base lg:text-lg gap-2 mb-3'><RiShieldCheckLine className='text-xl'></RiShieldCheckLine> Internship Programs</h4>
                             <p className='text-sm lg:text-base'>

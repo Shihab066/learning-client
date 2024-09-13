@@ -17,9 +17,9 @@ const ClassCard = ({ item, overlay, btn, cardForClass, selectClass, propularClas
                     <img src={image || noImg} className="hover:scale-105 ease-linear duration-300 w-full h-full object-cover" alt={cardForClass ? 'classImg' : 'instructor-Img'} />
                 </figure>
                 {price && <span className='bg-white xs:px-[3px] sm:px-2 lg:px-3 xs:py-[2px] sm:py-1 xs:text-sm sm:text-base rounded-lg text-center absolute right-2 top-3 z-30'>$ {price}</span>}
-                <div className="card-body xs:p-4 sm:p-6 lg:p-8 ">
-                    <h2 className={`card-title ${!overlay && 'mb-auto'} xs:text-xs sm:text-base lg:text-xl`}>{name.length > 40 ? modifiedName : name}</h2>
-                    {instructorName && <span className='xs:text-[11px] sm:text-sm lg:text-base'>Instructor: {instructorName}</span>}
+                <div className="card-body px-4 py-6 lg:p-8 ">
+                    <h2 className={`card-title ${!overlay && 'mb-auto'} xs:text-xs sm:text-base lg:text-xl ${overlay && 'h-8 sm:h-12 lg:h-14'}`}>{name.length > 40 ? modifiedName : name}</h2>
+                    {instructorName && <span className='xs:text-[11px] sm:text-sm lg:text-base'>{overlay ? 'by' : 'Instructor: '} {instructorName}</span>}
                     {showStudent && <span className='xs:text-[11px] sm:text-sm lg:text-base'>Students: {students}</span>}
                     {showSeats && !propularClass && <span className={`${seats == 0 && 'text-red-500'} xs:text-[11px] sm:text-sm lg:text-base`}>Available Seats: {seats}</span>}
                     {email && !cardForClass && <span className="text-gray-500 xs:text-[13px] lg:text-sm xl:text-base truncate">E-mail: {email}</span>}

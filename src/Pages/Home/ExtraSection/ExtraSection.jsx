@@ -15,10 +15,10 @@ const ExtraSection = () => {
    
     return (
         <div className='lg-container '>
-            <div className='mt-24 lg:mt-32 grid sm:grid-cols-2 h-fit content-center'>
+            <div className='mt-14 md:mt-20 lg:mt-24 grid sm:grid-cols-2 h-fit content-center'>
                 <div className='justify-self-center px-2 sm:pl-5 md:pl-10 xl:pl-0'>
                     <div className='text-center sm:text-left lg:w-[500px]'>
-                        <h2 className='text-2xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-5'>Why Choose Us!</h2>
+                        <h2 className='text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-5'>Why Choose Us!</h2>
                         <div>
                             <h4 className='flex justify-center sm:justify-start items-center font-semibold md:text-base lg:text-lg gap-2 mb-3'><RiShieldCheckLine className='text-xl'></RiShieldCheckLine> Expert Instructors</h4>
                             <p className='text-sm lg:text-base'>

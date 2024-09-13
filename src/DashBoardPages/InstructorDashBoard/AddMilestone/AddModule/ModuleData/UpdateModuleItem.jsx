@@ -50,14 +50,12 @@ const UpdateModuleItem = ({
      * Updates the module item data in the milestonesData state.
      */
     const updateModuleItem = () => {
-        // Create the updated module item object
         const updatedModuleItem = {
             ...moduleItem,
             itemName: newName,
             itemData: newData
         };
 
-        // Update the milestonesData with the modified module item
         const updatedMilestones = milestonesData.map(milestone => {
             if (milestone._id !== milestoneId) return milestone;
 
@@ -73,8 +71,6 @@ const UpdateModuleItem = ({
 
             return { ...milestone, milestoneModules: updatedModules };
         });
-
-        // Update the state with the new milestones data
         setMilestonesData(updatedMilestones);
 
         // Disable the Save button and close the modal

@@ -66,7 +66,7 @@ const CourseDetails = () => {
     return (
         <>
             <div className="bg-[#F8FAFC]">
-                <div className="lg-container px-4 xl:px-8 py-10 space-y-5 relative">
+                <div className="lg-container px-4 xl:px-6 py-10 space-y-5 relative">
                     {/* Breadcrumb */}
                     <p className="text-gray-900 text-base">
                         <Link to='/courses'>Courses</Link>
@@ -139,7 +139,7 @@ const CourseDetails = () => {
                                 {discount
                                     ? (
                                         <div className="flex justify-start items-start gap-x-3">
-                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price * discount).toFixed(1)}</p>
+                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * discount)).toFixed(1)}</p>
                                             <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
                                             <p className="text-green-600 text-xl font-medium">{discount * 100}% Off</p>
                                         </div>

@@ -112,7 +112,7 @@ const Navbar = () => {
         {/* Add theme change logic here if needed */}
       </Helmet>
       <nav className={`bg-white z-50 sticky drop-shadow ${stickyNav ? "fade-in" : "fade-out"}`}>
-        <div className="lg-container flex justify-between pr-2 sm:pl-1 xl:pl-6 sm:pr-3 md:pr-4 py-1 sm:py-2 lg:py-3">
+        <div className="lg-container flex justify-between pr-2 sm:pl-1 xl:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-2 lg:py-3">
           <div className="flex items-center z-20">
             {/* Hamburger icon */}
             <div className="md:pr-1 xl:hidden">

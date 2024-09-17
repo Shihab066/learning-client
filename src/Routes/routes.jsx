@@ -23,6 +23,7 @@ import Profile from "../Pages/Authentication/Profile/Profile";
 import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
 import AddNewPassword from "../Pages/Authentication/PassowrdReset/AddNewPassword";
 import CourseDetails from "../Pages/CourseDetailsPage/CourseDetails";
+import InstructorProfile from "../Pages/InstructorProfile/InstructorProfile";
 
 
 export const router = createBrowserRouter([
@@ -30,26 +31,26 @@ export const router = createBrowserRouter([
     path: "/",
     element:
       <>
-        <Main></Main>
+        <Main />
         <ScrollToTop />
       </>,
-    errorElement: <ErrorPage></ErrorPage>,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
-        element: <Home></Home>
+        element: <Home />
       },
       {
         path: 'login',
-        element: <Login></Login>
+        element: <Login />
       },
       {
         path: 'signup',
-        element: <SignUp></SignUp>
+        element: <SignUp />
       },
       {
         path: 'courses',
-        element: <Classes></Classes>,
+        element: <Classes />
       },
       {
         path: 'courseDetails',
@@ -57,7 +58,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'instructors',
-        element: <Instructors></Instructors>
+        element: <Instructors />
+      },
+      {
+        path: 'instructorProfile',
+        element: <InstructorProfile />
       },
       {
         path: 'profile',

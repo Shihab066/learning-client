@@ -22,6 +22,7 @@ import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import Profile from "../Pages/Authentication/Profile/Profile";
 import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
 import AddNewPassword from "../Pages/Authentication/PassowrdReset/AddNewPassword";
+import CourseDetails from "../Pages/CourseDetailsPage/CourseDetails";
 
 
 export const router = createBrowserRouter([
@@ -47,8 +48,12 @@ export const router = createBrowserRouter([
         element: <SignUp></SignUp>
       },
       {
-        path: 'class',
+        path: 'courses',
         element: <Classes></Classes>,
+      },
+      {
+        path: 'courseDetails',
+        element: <CourseDetails />
       },
       {
         path: 'instructors',

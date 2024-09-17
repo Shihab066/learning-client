@@ -1,4 +1,4 @@
-import noImg from '../../assets/img/image.png';
+import noImg from '../../assets/icon/image.png';
 import useUserRole from '../../hooks/useUserRole';
 
 const ClassCard = ({ item, overlay, btn, cardForClass, selectClass, propularClass }) => {

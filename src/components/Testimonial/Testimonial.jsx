@@ -134,7 +134,7 @@ const TestimonialCard = ({ item }) => {
             {isFeedbackOverflow ? (
                 <div className="w-full h-fit relative">
                     {!seeMoreEnabled && <div style={gradientToBottom} className="w-full h-4 absolute top-0"></div>}
-                    <p className="h-36 sm:h-36 md:h-32 lg:h-36 xl:h-[6.5rem] overflow-y-auto text-[0.938rem] sm:text-sm md:text-[0.938rem] px-4 md:px-6 hide-scrollbar">
+                    <p className="h-36 sm:h-36 md:h-32 lg:h-36 xl:h-[6.5rem] overflow-y-auto text-[0.938rem] sm:text-sm md:text-[0.938rem] px-4 md:px-6 thin-scrollbar">
                         {modifiedFeedback}
                         {seeMoreEnabled ? (
                             <span onClick={handleSeeMore} className="text-blue-600 cursor-pointer ml-1">

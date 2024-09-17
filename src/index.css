@@ -73,11 +73,11 @@ html {
 }
 
 /* hide scrollbar from specific div/section */
-.hide-scrollbar {    
+.thin-scrollbar {    
     scrollbar-width: 1px;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
+.thin-scrollbar::-webkit-scrollbar {
     width: 1px;    
 }
 
@@ -130,12 +130,7 @@ html {
 @media screen and (max-width:575px) {
     .change-shape {
         clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 0 0);
-    }
-
-    .hamburger-react{
-        /* width: 40px !important;  */
-        /* height: 40px !important;                            */
-    }
+    }   
 
     .hamburger-react div{
         height: 3px !important;    

@@ -36,7 +36,7 @@ const Navbar = () => {
   const navbarItem = (
     <>
       <li><NavLink to="/">Home</NavLink></li>
-      <li><NavLink to="/class">Classes</NavLink></li>
+      <li><NavLink to="/courses">Courses</NavLink></li>
       <li><NavLink to="/instructors">Instructors</NavLink></li>
       {user && (
         <li>
@@ -82,7 +82,7 @@ const Navbar = () => {
     event.preventDefault();
     const searchKey = event.target.search.value || "";
     setSearchValue(searchKey);
-    navigate("/class", { state: { search: searchKey } });
+    navigate("/courses", { state: { search: searchKey } });
     if (isSearchOpen) {
       setIsSearchOpen(false);
     }
@@ -96,7 +96,7 @@ const Navbar = () => {
 
   // Disable scroll when hamburger menu is open
   useEffect(() => {
-    document.body.style.overflow = isHamburgerOpen ? "hidden" : "auto";
+    document.body.style.overflowY = isHamburgerOpen ? "hidden" : "auto";
   }, [isHamburgerOpen]);
 
   // Close hamburger menu on dropdown item click
@@ -112,7 +112,7 @@ const Navbar = () => {
         {/* Add theme change logic here if needed */}
       </Helmet>
       <nav className={`bg-white z-50 sticky drop-shadow ${stickyNav ? "fade-in" : "fade-out"}`}>
-        <div className="lg-container flex justify-between pr-2 sm:pl-2 sm:pr-4 md:px-4 py-1 sm:py-2 lg:py-3">
+        <div className="lg-container flex justify-between pr-2 sm:pl-1 xl:pl-6 sm:pr-3 md:pr-4 py-1 sm:py-2 lg:py-3">
           <div className="flex items-center z-20">
             {/* Hamburger icon */}
             <div className="md:pr-1 xl:hidden">
@@ -144,7 +144,7 @@ const Navbar = () => {
             ></div>
 
             {/* Site Logo */}
-            <div onClick={() => navigate('/')} className="flex gap-x-1 sm:gap-x-2 items-center cursor-pointer">
+            <div onClick={() => navigate('/')} className="flex gap-x-1 items-center cursor-pointer">
               <img src={logo} className="w-8 sm:w-10" alt="Learning Point Logo" />
               <a className="text-gray-900 tracking-wide normal-case text-lg sm:text-2xl font-bold">
                 Learning Point
@@ -153,7 +153,7 @@ const Navbar = () => {
 
             {/* Search input */}
             <div className="absolute xl:static top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0">
-              <form onSubmit={handleSearch} className="xl:ml-10 w-fit h-fit relative">
+              <form onSubmit={handleSearch} className="xl:ml-8 w-fit h-fit relative">
                 <input
                   onChange={(e) => setSearchValue(e.target.value)}
                   type="text"
@@ -182,14 +182,14 @@ const Navbar = () => {
             {/* Profile / Login Buttons */}
             <div className="flex justify-center items-center gap-1 sm:gap-2">
               {/* Search icon for mobile */}
-              <span
+              <div
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`cursor-pointer md:w-[1.75rem] md:h-[1.75rem] xl:hidden ${isSearchOpen ? "text-blue-500" : "text-[#434343]"}`}
+                className={`cursor-pointer xl:hidden ${isSearchOpen ? "text-blue-500" : "text-[#434343]"}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 -960 960 960" width="1.5rem" fill="currentColor">
                   <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
                 </svg>
-              </span>
+              </div>
 
               {/* Profile or Login */}
               {loading ? (

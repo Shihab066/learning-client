@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import logo from '../../assets/img/Google.png'
+import logo from '../../assets/icon/google.png'
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 const SocialLogin = ({ from }) => {
@@ -18,7 +18,10 @@ const SocialLogin = ({ from }) => {
         <>
             <div className="divider">OR</div>
             <div onClick={handleSignIn} className='btn btn-ghost flex items-center justify-center gap-4 rounded-lg px-4 py-2 mt-3 border-t-base-200 shadow-md hover:bg-base-200 ease-linear duration-100'>
-                <img src={logo} alt="" />
+                <img
+                    className='w-6'
+                    src={logo}
+                    alt="" />
                 <span>Continue with google</span>
             </div>
         </>

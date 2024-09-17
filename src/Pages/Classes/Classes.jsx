@@ -53,7 +53,7 @@ const Classes = () => {
         if (currentPage) params.set('page', currentPage);
         if (sortValue) params.set('sort', sortValue === 1 ? 'price.ASC' : sortValue === -1 ? 'price.DESC' : '');
         if (searchValue) params.set('search', searchValue);
-        navigate(`/class?${params.toString()}`, {replace : true});        
+        navigate(`/courses?${params.toString()}`, {replace : true});        
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
 
@@ -148,7 +148,7 @@ const Classes = () => {
         <div>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Helmet>
-                <title>Learning Point | Classes</title>
+                <title>Learning Point | Courses</title>
             </Helmet>
             <Header
                 handlePageOptions={handleItemPerPageOptions}
@@ -178,7 +178,7 @@ const Classes = () => {
 // Header component with options for items per page and sorting
 const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, visiblePages }) => (
     <div className='lg-container flex justify-between px-10 py-6'>
-        <h2 className="text-lg font-medium">Classes</h2>
+        <h2 className="text-lg font-medium">Courses</h2>
         <div className={`flex items-center gap-4 text-sm ${!visiblePages.length && 'hidden'}`}>
             {/* Select item per page */}
             <div className='flex items-center gap-2'>

@@ -5,6 +5,10 @@ import dummyImg from '../../../assets/icon/user_icon.png';
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import { useLottie } from "lottie-react";
+import loadingAnimation from '../../../assets/loadingAnimation/loading3.json';
+import Select from 'react-select';
+import useUserRole from "../../../hooks/useUserRole";
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const Profile = () => {
@@ -14,6 +18,10 @@ const Profile = () => {
     // Custom hooks for authentication and secure axios instance
     const { user, updateUser, updateUserPassword, reAuthenticateUser, EmailAuthProvider } = useAuth();
     const [axiosSecure] = useAxiosSecure();
+
+    // Custom hooks to get user role
+    const [userRole] = useUserRole();
+
 
     // State variables
     const [name, setName] = useState('');
@@ -140,7 +148,7 @@ const Profile = () => {
                         });
                         reset();
                     })
-                    .catch((error) => {                        
+                    .catch((error) => {
                         console.error('Something went wrong in updateUserPassword', error);
                     });
             })
@@ -180,133 +188,303 @@ const Profile = () => {
         }
     }, [user]);
 
+    // loading animation
+    const options = {
+        animationData: loadingAnimation,
+        loop: true,
+
+    };
+
+    const { View, setSpeed } = useLottie(options);
+    setSpeed(1)
+
     return (
-        <div className="mt-10">
-            <div className="lg-container bg-indigo-50 drop-shadow-md px-20 py-20 rounded-2xl">
-                {/* Profile general section */}
-                <h3 className="text-xl font-medium mb-3">My Profile</h3>
-                <form onSubmit={handleUpdateProfile} className="grid grid-cols-2 gap-x-5 gap-y-8 mb-16">
-                    {/* Name field */}
-                    <div>
-                        <label className="label">Name</label>
-                        <input
-                            onChange={(e) => setName(e.target.value)}
-                            type="text"
-                            placeholder="Name"
-                            name="name"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            defaultValue={user?.displayName}
-                            autoComplete="off"
-                            required
-                        />
+        <div>
+            {
+                !user
+                    ?
+                    <div className="w-full h-[500px] flex flex-col justify-center items-center">
+                        <div className="w-40">
+                            {View}
+                        </div>
+                        <span className="mx-auto">
+                            loading...
+                        </span>
                     </div>
+                    :
+                    <div className="lg-container border px-10 py-10 rounded-2xl space-y-10">
+                        {/* Profile general section */}
+                        <div>
+                            <h3 className="text-xl font-medium mb-3">My Profile</h3>
+                            <form onSubmit={handleUpdateProfile} className="grid grid-cols-2 gap-x-5 gap-y-8">
+                                {/* Name field */}
+                                <div>
+                                    <label className="label">Name</label>
+                                    <input
+                                        onChange={(e) => setName(e.target.value)}
+                                        type="text"
+                                        placeholder="Name"
+                                        name="name"
+                                        className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                        defaultValue={user?.displayName}
+                                        autoComplete="off"
+                                        required
+                                    />
+                                </div>
 
-                    {/* Email field */}
-                    <div>
-                        <label className="label">Email</label>
-                        <input
-                            type="email"
-                            defaultValue={user?.email}
-                            disabled
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        />
-                    </div>
+                                {/* Email field */}
+                                <div>
+                                    <label className="label">Email</label>
+                                    <input
+                                        type="email"
+                                        defaultValue={user?.email}
+                                        disabled
+                                        className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                    />
+                                </div>
 
-                    {/* Image change */}
-                    <div className="flex items-center gap-4">
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            name="profileImg"
-                            className="hidden"
-                        />
-                        <img
-                            className="w-16 h-16 bg-white rounded-full object-cover drop-shadow-lg"
-                            src={img || user?.photoURL || dummyImg}
-                            alt="profile picture"
-                        />
-                        <button
-                            type="button"
-                            onClick={handleAddImage}
-                            className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700"
-                        >
-                            {user?.photoURL ? 'Change Profile Image' : 'Add Profile Image'}
-                        </button>
-                    </div>
+                                {/* Image change */}
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        name="profileImg"
+                                        className="hidden"
+                                    />
+                                    <img
+                                        className="w-16 h-16 bg-white rounded-full object-cover drop-shadow-lg"
+                                        src={img || user?.photoURL || dummyImg}
+                                        alt="profile picture"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAddImage}
+                                        className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700"
+                                    >
+                                        {user?.photoURL ? 'Change Profile Image' : 'Add Profile Image'}
+                                    </button>
+                                </div>
 
-                    <input
-                        type="submit"
-                        className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
-                        value="Update Profile"
-                        disabled={profileUpdateDisable}
-                    />
-                </form>
-
-                {/* Password change section */}
-                {isPasswordProvider && (
-                    <div>
-                        <h3 className="text-xl font-medium mb-3">Password</h3>
-                        <form onSubmit={handleSubmit(changePassword)} className="grid grid-cols-2 gap-x-5 gap-y-8">
-                            {/* Current password input field */}
-                            <div className="col-span-2">
-                                <label className="label">Current Password</label>
                                 <input
-                                    type="password"
-                                    placeholder="Current Password"
-                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                                    autoComplete="off"
-                                    {...register("currentPassword", { required: true })}
+                                    type="submit"
+                                    className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end my-auto"
+                                    value="Update Profile"
+                                    disabled={profileUpdateDisable}
                                 />
-                                {errors.currentPassword?.type === 'required' && <span className="text-red-600">Current password is required</span>}
-                            </div>
+                            </form>
+                        </div>
 
-                            {/* New password input field */}
+                        {/* Password change section */}
+                        {isPasswordProvider && (
                             <div>
-                                <label className="label">New Password</label>
-                                <input
-                                    type="text"
-                                    placeholder="New Password"
-                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                                    autoComplete="off"
-                                    {...register("newPassword", {
-                                        required: true,
-                                        minLength: 6,
-                                        pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
-                                    })}
-                                />
-                                {errors.newPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                                {((errors.newPassword?.type === 'minLength') || (errors.newPassword?.type === 'pattern')) && <span className="text-red-600">* New Password must be at least 6 characters long and contain at least one uppercase letter and a special character!</span>}
-                            </div>
+                                <h3 className="text-xl font-medium mb-3">Password</h3>
+                                <form onSubmit={handleSubmit(changePassword)} className="grid grid-cols-2 gap-x-5 gap-y-8">
+                                    {/* Current password input field */}
+                                    <div className="col-span-2">
+                                        <label className="label">Current Password</label>
+                                        <input
+                                            type="password"
+                                            placeholder="Current Password"
+                                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                            autoComplete="off"
+                                            {...register("currentPassword", { required: true })}
+                                        />
+                                        {errors.currentPassword?.type === 'required' && <span className="text-red-600">Current password is required</span>}
+                                    </div>
 
-                            {/* Confirm new password input field */}
-                            <div>
-                                <label className="label">Confirm New Password</label>
-                                <input
-                                    onChange={watch(handleConfirmPassword)}
-                                    type="password"
-                                    placeholder="Confirm New Password"
-                                    className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                                    autoComplete="off"
-                                    {...register("confirmNewPassword", { required: true })}
-                                />
-                                {errors.confirmNewPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                                {confirmError && <span className="text-red-600">The password and confirmation password do not match.</span>}
-                            </div>
+                                    {/* New password input field */}
+                                    <div>
+                                        <label className="label">New Password</label>
+                                        <input
+                                            type="text"
+                                            placeholder="New Password"
+                                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                            autoComplete="off"
+                                            {...register("newPassword", {
+                                                required: true,
+                                                minLength: 6,
+                                                pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
+                                            })}
+                                        />
+                                        {errors.newPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                                        {((errors.newPassword?.type === 'minLength') || (errors.newPassword?.type === 'pattern')) && <span className="text-red-600">* New Password must be at least 6 characters long and contain at least one uppercase letter and a special character!</span>}
+                                    </div>
 
-                            <input
-                                type="submit"
-                                className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
-                                value="Update Password"
-                                disabled={passwordUpdateDisable}
-                            />
-                        </form>
+                                    {/* Confirm new password input field */}
+                                    <div>
+                                        <label className="label">Confirm New Password</label>
+                                        <input
+                                            onChange={watch(handleConfirmPassword)}
+                                            type="password"
+                                            placeholder="Confirm New Password"
+                                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                                            autoComplete="off"
+                                            {...register("confirmNewPassword", { required: true })}
+                                        />
+                                        {errors.confirmNewPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                                        {confirmError && <span className="text-red-600">The password and confirmation password do not match.</span>}
+                                    </div>
+
+                                    <input
+                                        type="submit"
+                                        className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                                        value="Update Password"
+                                        disabled={passwordUpdateDisable}
+                                    />
+                                </form>
+                            </div>
+                        )}
+
+                        {/* Add additonal info */}
+                        {
+                            userRole === 'instructor' &&
+                            <AdditionalInfo />
+                        }
                     </div>
-                )}
-            </div>
+            }
         </div>
     );
 };
 
+const AdditionalInfo = () => {
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+
+    // Language Options
+    const languageOptions = [
+        { value: 'English', label: 'English' },
+        { value: 'Spanish', label: 'Spanish' },
+        { value: 'French', label: 'French' },
+        { value: 'German', label: 'German' },
+        { value: 'Chinese', label: 'Chinese' },
+        { value: 'Japanese', label: 'Japanese' },
+        { value: 'Arabic', label: 'Arabic' },
+        { value: 'Portuguese', label: 'Portuguese' },
+        { value: 'Russian', label: 'Russian' },
+        { value: 'Hindi', label: 'Hindi' },
+        { value: 'Bengali', label: 'Bengali' },
+        { value: 'Korean', label: 'Korean' },
+        { value: 'Italian', label: 'Italian' },
+        { value: 'Dutch', label: 'Dutch' },
+        { value: 'Turkish', label: 'Turkish' }
+    ];
+
+    const [selectedLanguage, setSelectedLanguage] = useState(null);
+
+    const handleAdditionalInfo = (data) => {
+        const { headline, website, Xprofile, youtubeProfile, facebookProfile } = data;
+        const languages = selectedLanguage?.map(language => language.value) || '';
+    }
+    return (
+        <div>
+            <h3 className="text-xl font-medium mb-3">Addtional Info</h3>
+            <form onSubmit={handleSubmit(handleAdditionalInfo)} className="grid grid-cols-2 gap-5">
+                {/* Headline field */}
+                <div>
+                    <label className="label">Headline</label>
+                    <input
+                        type="text"
+                        placeholder="Add Headline"
+                        className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                        autoComplete="off"
+                        {...register('headline')}
+                    />
+                </div>
+
+                {/* Language field */}
+                <div>
+                    <label className="label">Language</label>
+                    <Select
+                        isMulti
+                        name="language"
+                        options={languageOptions}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        placeholder="Select Language"
+                        defaultValue={selectedLanguage}
+                        onChange={setSelectedLanguage}
+                    />
+                </div>
+
+                {/* Description field */}
+                <div className="col-span-2">
+                    <label className="label">Description</label>
+                    <textarea
+                        rows="5"
+                        placeholder="Descripton"
+                        className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
+                        autoComplete="off"
+                        {...register('description')}
+                    />
+                </div>
+
+                {/* Links */}
+                <div className="col-span-2 border rounded-lg px-4 py-6">
+                    <label className="label text-lg font-medium">Links</label>
+                    <div>
+                        <label className="label">Website</label>
+                        <input
+                            type="text"
+                            placeholder="website link"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register('website')}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">X(Formerly twitter)</label>
+                        <input
+                            type="text"
+                            placeholder="add X profile"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register('Xprofile')}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">Linkdin</label>
+                        <input
+                            type="text"
+                            placeholder="add linkedin profile"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register('linkedinProfile')}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">Youtube</label>
+                        <input
+                            type="text"
+                            placeholder="add channel link"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register('youtubeProfile')}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">Facebook</label>
+                        <input
+                            type="text"
+                            placeholder="add facebook profile"
+                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            autoComplete="off"
+                            {...register('facebookProfile')}
+                        />
+                    </div>
+                </div>
+                <input
+                    type="submit"
+                    className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                    value="Update Info"
+                    disabled={false}
+                />
+            </form>
+        </div>
+    )
+}
 export default Profile;

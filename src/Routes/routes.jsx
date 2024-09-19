@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Main from "../Layout/Main";
 import Login from "../Pages/Authentication/Login/Login";
 import SignUp from "../Pages/Authentication/SignUp/SignUp";
@@ -24,6 +24,7 @@ import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
 import AddNewPassword from "../Pages/Authentication/PassowrdReset/AddNewPassword";
 import CourseDetails from "../Pages/CourseDetailsPage/CourseDetails";
 import InstructorProfile from "../Pages/InstructorProfile/InstructorProfile";
+import ProfileLayout from "../Layout/ProfileLayout";
 
 
 export const router = createBrowserRouter([
@@ -64,10 +65,10 @@ export const router = createBrowserRouter([
         path: 'instructorProfile',
         element: <InstructorProfile />
       },
-      {
-        path: 'profile',
-        element: <PrivateRoutes><Profile /></PrivateRoutes>
-      },
+      // {
+      //   path: 'profile',
+      //   element: <PrivateRoutes><Profile /></PrivateRoutes>
+      // },
       {
         path: 'account_recovery',
         element: <PasswordReset />
@@ -114,6 +115,20 @@ export const router = createBrowserRouter([
             path: 'manageUser',
             element: <AdminRoutes><ManageUser></ManageUser></AdminRoutes>
           }
+        ]
+      },
+      {
+        path: '/user',
+        element: <ProfileLayout />,
+        children: [
+          {
+            path: '/user',
+            element: <Navigate to='profile' />
+          },  
+          {
+            path: 'profile',
+            element: <Profile />
+          },          
         ]
       }
     ]

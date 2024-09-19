@@ -196,7 +196,7 @@ const Navbar = () => {
                 <span className="loading loading-ring loading-lg"></span>
               ) : user ? (
                 <div className="flex items-center gap-2">
-                  <Link to="/profile">
+                  <Link to="/user/profile">
                     <img
                       src={user.photoURL || dummyImg}
                       className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, updatePassword, reauthenticateWithCredential,EmailAuthProvider, sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
 import axios from "axios";
 
@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
     }
 
     const reAuthenticateUser = (credential) => {
-        return reauthenticateWithCredential(user, credential)            
+        return reauthenticateWithCredential(user, credential)
     }
 
     const sendAccountRecoveryEmail = (email) => {
@@ -56,7 +56,7 @@ const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, loggeduser => {
+        const unsubscribe = onAuthStateChanged(auth, loggeduser => {            
             setUser(loggeduser)
             // console.log('logged user ', loggeduser);
             if (loggeduser) {

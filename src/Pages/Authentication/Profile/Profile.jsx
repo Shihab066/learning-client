@@ -212,11 +212,11 @@ const Profile = () => {
                         </span>
                     </div>
                     :
-                    <div className="lg-container border px-10 py-10 rounded-2xl space-y-10">
+                    <div className="lg-container sm:border px-0 sm:px-4 md:px-6 py-6 lg:px-10 lg:py-10 rounded-2xl space-y-10">
                         {/* Profile general section */}
                         <div>
                             <h3 className="text-xl font-medium mb-3">My Profile</h3>
-                            <form onSubmit={handleUpdateProfile} className="grid grid-cols-2 gap-x-5 gap-y-8">
+                            <form onSubmit={handleUpdateProfile} className="grid sm:grid-cols-2 gap-x-5 gap-y-4 sm:gap-y-8">
                                 {/* Name field */}
                                 <div>
                                     <label className="label">Name</label>
@@ -269,7 +269,7 @@ const Profile = () => {
 
                                 <input
                                     type="submit"
-                                    className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end my-auto"
+                                    className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] sm:justify-self-end my-auto"
                                     value="Update Profile"
                                     disabled={profileUpdateDisable}
                                 />
@@ -280,7 +280,7 @@ const Profile = () => {
                         {isPasswordProvider && (
                             <div>
                                 <h3 className="text-xl font-medium mb-3">Password</h3>
-                                <form onSubmit={handleSubmit(changePassword)} className="grid grid-cols-2 gap-x-5 gap-y-8">
+                                <form onSubmit={handleSubmit(changePassword)} className="sm:grid grid-cols-2 gap-x-5 gap-y-8 space-y-4 sm:space-y-0">
                                     {/* Current password input field */}
                                     <div className="col-span-2">
                                         <label className="label">Current Password</label>
@@ -329,7 +329,7 @@ const Profile = () => {
 
                                     <input
                                         type="submit"
-                                        className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                                        className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end mt-4"
                                         value="Update Password"
                                         disabled={passwordUpdateDisable}
                                     />
@@ -379,7 +379,7 @@ const AdditionalInfo = () => {
     return (
         <div>
             <h3 className="text-xl font-medium mb-3">Addtional Info</h3>
-            <form onSubmit={handleSubmit(handleAdditionalInfo)} className="grid grid-cols-2 gap-5">
+            <form onSubmit={handleSubmit(handleAdditionalInfo)} className="sm:grid grid-cols-2 gap-5 space-y-4 sm:space-y-0">
                 {/* Headline field */}
                 <div>
                     <label className="label">Headline</label>
@@ -420,7 +420,7 @@ const AdditionalInfo = () => {
                 </div>
 
                 {/* Links */}
-                <div className="col-span-2 border rounded-lg px-4 py-6">
+                <div className="col-span-2 border rounded-lg px-2 sm:px-4 py-2 sm:py-6">
                     <label className="label text-lg font-medium">Links</label>
                     <div>
                         <label className="label">Website</label>

@@ -65,40 +65,41 @@ html {
 }
 
 /* change slick slider dot postion */
-.slick-dots{
+.slick-dots {
     bottom: -50px !important;
 }
-.slick-dots li.slick-active button:before{
+
+.slick-dots li.slick-active button:before {
     color: #3b5fe2 !important;
 }
 
 /* thin scrollbar for specific div/section */
-.thin-scrollbar {    
+.thin-scrollbar {
     scrollbar-width: 1px;
 }
 
 .thin-scrollbar::-webkit-scrollbar {
-    width: 1px;    
+    width: 1px;
 }
 
 /* react select input style */
-.css-19bb58m{
+.css-19bb58m {
     padding: 6px 2px !important;
-    margin-left: 0px !important;    
+    margin-left: 0px !important;
 }
 
 .css-13cymwt-control {
     border-radius: 8px !important;
 }
 
-.select__control--is-focused{
+.select__control--is-focused {
     border: none !important;
 }
 
 
 /* hamburger style */
-.hamburger-react div{
-    height: 3.5px !important;    
+.hamburger-react div {
+    height: 3.5px !important;
 }
 
 
@@ -124,15 +125,17 @@ html {
     }
 }
 
-.fade-in {
-    animation: navAnimation .5s ease-in-out;
-    top: 0;
-}
+@media screen and (min-width:1280px) {
+    .fade-in {
+        animation: navAnimation .5s ease-in-out;
+        top: 0;
+    }
 
-.fade-out {
-    /* animation: navAnimation2 .5s ease-in-out; */
-    top: -100%;
-    transition: all 1s ease-in-out;
+    .fade-out {
+        /* animation: navAnimation2 .5s ease-in-out; */
+        top: -100%;
+        transition: all 1s ease-in-out;
+    }
 }
 
 
@@ -145,9 +148,47 @@ html {
 @media screen and (max-width:575px) {
     .change-shape {
         clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 0 0);
-    }   
+    }
 
-    .hamburger-react div{
-        height: 3px !important;    
+    .hamburger-react div {
+        height: 3px !important;
     }
 }
+
+
+/* animated bg */
+.animate {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;    
+    background-color: #2563eb;
+    /* background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%); */
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
+    animation: morphing 10s infinite;
+    overflow: hidden;
+  }
+
+  @keyframes morphing {
+    0% {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
+    }
+    25% {
+      border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+    }
+    50% {
+      border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+      box-shadow: -10px -5px 50px rgba(0, 0, 0, 0.2);
+    }
+    75% {
+      border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+    }
+    100% {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
+    }
+  }

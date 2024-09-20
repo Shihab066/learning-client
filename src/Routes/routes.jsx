@@ -118,11 +118,11 @@ export const router = createBrowserRouter([
         ]
       },
       {
-        path: '/user',
+        path: 'user',
         element: <ProfileLayout />,
         children: [
           {
-            path: '/user',
+            path: 'user',
             element: <Navigate to='profile' />
           },  
           {

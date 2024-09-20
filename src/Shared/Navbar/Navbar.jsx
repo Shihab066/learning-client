@@ -111,7 +111,7 @@ const Navbar = () => {
       <Helmet>
         {/* Add theme change logic here if needed */}
       </Helmet>
-      <nav className={`bg-white z-50 sticky drop-shadow ${stickyNav ? "fade-in" : "fade-out"}`}>
+      <nav className={`bg-white z-50 fixed top-0 w-full xl:sticky drop-shadow ${stickyNav ? "fade-in" : "fade-out"}`}>
         <div className="lg-container flex justify-between pr-2 sm:pl-1 xl:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-2 lg:py-3">
           <div className="flex items-center z-20">
             {/* Hamburger icon */}
@@ -128,8 +128,8 @@ const Navbar = () => {
             {/* Dropdown menu */}
             <ul
               onClick={handleDropdownItemClick}
-              className={`menu absolute top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0 h-screen bg-stone-50 shadow-md z-50 border-t transition-all overflow-hidden xl:hidden ${
-                isHamburgerOpen ? "w-[17.5rem] duration-[400ms]" : "w-0 px-0 duration-300"
+              className={`menu absolute top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0 h-screen bg-stone-50 shadow-md z-50 border-t overflow-hidden xl:hidden duration-300 ${
+                isHamburgerOpen ? "w-[17.5rem]" : "w-0 px-0"
               }`}
             >
               {navbarItem}
@@ -152,14 +152,14 @@ const Navbar = () => {
             </div>
 
             {/* Search input */}
-            <div className="absolute xl:static top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0">
-              <form onSubmit={handleSearch} className="xl:ml-8 w-fit h-fit relative">
+            <div className={`absolute xl:static top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0`}>
+              <form onSubmit={handleSearch} className={`xl:ml-8 w-fit ${isSearchOpen ? 'h-fit' : 'h-0 xl:h-fit'} relative`}>
                 <input
                   onChange={(e) => setSearchValue(e.target.value)}
                   type="text"
                   name="search"
                   className={`w-screen xl:w-[450px] shadow-lg xl:shadow-none xl:border-2 xl:rounded-md xl:border-blue-400 focus:outline-none pl-3 pr-10 xl:py-2 overflow-hidden ${
-                    isSearchOpen ? "py-2 border-t transition-all" : "h-0 xl:h-fit py-0"
+                    isSearchOpen ? "py-2 border-t transition-all duration-100" : "h-0 xl:h-fit py-0"
                   }`}
                   placeholder="Search"
                   autoComplete="off"

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useLottie } from "lottie-react";
 import loadingAnimation from '../../../assets/loadingAnimation/loading3.json';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import useUserRole from "../../../hooks/useUserRole";
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
@@ -21,7 +22,6 @@ const Profile = () => {
 
     // Custom hooks to get user role
     const [userRole] = useUserRole();
-
 
     // State variables
     const [name, setName] = useState('');
@@ -194,12 +194,10 @@ const Profile = () => {
         loop: true,
 
     };
-
-    const { View, setSpeed } = useLottie(options);
-    setSpeed(1)
+    const { View } = useLottie(options);
 
     return (
-        <div>
+        <>
             {
                 !user
                     ?
@@ -344,12 +342,12 @@ const Profile = () => {
                         }
                     </div>
             }
-        </div>
+        </>
     );
 };
 
 const AdditionalInfo = () => {
-    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, reset } = useForm();
 
     // Language Options
     const languageOptions = [
@@ -371,6 +369,9 @@ const AdditionalInfo = () => {
     ];
 
     const [selectedLanguage, setSelectedLanguage] = useState(null);
+
+    // Add areas of expertise options
+    const [areasOfExpertise, setAreasOfExpertise] = useState(null);
 
     const handleAdditionalInfo = (data) => {
         const { headline, website, Xprofile, youtubeProfile, facebookProfile } = data;
@@ -416,6 +417,32 @@ const AdditionalInfo = () => {
                         className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
                         autoComplete="off"
                         {...register('description')}
+                    />
+                </div>
+
+                {/* Areas of Expertise field */}
+                <div className="col-span-2">
+                    <label className="label">Areas Of Expertise</label>
+                    <CreatableSelect
+                        isMulti
+                        name="expertise"                        
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        placeholder="Add"
+                        defaultValue={areasOfExpertise}
+                        onChange={setAreasOfExpertise}
+                    />
+                </div>
+
+                {/* Experience field */}
+                <div className="col-span-2">
+                    <label className="label">Professional Experience</label>
+                    <textarea
+                        rows="5"
+                        placeholder="Descripton"
+                        className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
+                        autoComplete="off"
+                        {...register('experience')}
                     />
                 </div>
 

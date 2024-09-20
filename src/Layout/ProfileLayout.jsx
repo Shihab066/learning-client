@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import shareIcon from '../assets/icon/shareicon.svg';
-import rightArrow from '../assets/icon/right-arrow.png';
-import leftArrow from '../assets/icon/left-arrow.png';
-import closeIcon from '../assets/icon/close.png';
 
 
 const ProfileLayout = () => {

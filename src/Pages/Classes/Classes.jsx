@@ -253,7 +253,7 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
     <div className={`flex justify-center items-center gap-2 mt-20 ${!data?.classes?.length && 'hidden'}`}>
         {/* Previous button */}
         <Link
-            to={`/class/?page=${currentPage - 1}`}
+            to={`/courses/?page=${currentPage - 1}`}
             className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[0] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             PREV
@@ -262,7 +262,7 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
         {/* Visible page numbers */}
         {visiblePages.map((pageNo) => (
             <Link
-                to={`/class/?page=${pageNo}`}
+                to={`/courses/?page=${pageNo}`}
                 key={pageNo}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${activePage === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
                 onClick={() => setCurrentPage(pageNo)}
@@ -273,7 +273,7 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
 
         {/* Next button */}
         <Link
-            to={`/class/?page=${(currentPage || 1) + 1}`}
+            to={`/courses/?page=${(currentPage || 1) + 1}`}
             className={`text-sm font-medium hover:bg-blue-700 hover:text-white hover:underline hover: px-3 py-2 rounded-lg  transition-colors duration-300 ${activePage === visiblePages[visiblePages.length - 1] ? 'text-gray-400 pointer-events-none' : 'text-gray-700'}`}
         >
             NEXT

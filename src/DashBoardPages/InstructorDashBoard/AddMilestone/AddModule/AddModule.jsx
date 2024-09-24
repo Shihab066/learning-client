@@ -2,10 +2,11 @@ import { useRef, useState } from "react";
 import generateMongoId from "../../../../utils/genarateID";
 
 const AddModule = ({ id, milestonesData, setMilestonesData }) => {
+
     // References to input and modal close button
     const moduleNameRef = useRef();
     const closeModalRef = useRef();
-    
+
     // State to manage validation error for module name
     const [moduleNameError, setModuleNameError] = useState(false);
 
@@ -51,7 +52,7 @@ const AddModule = ({ id, milestonesData, setMilestonesData }) => {
         <>
             {/* Modal to add a new module */}
             <input type="checkbox" id={`${id}addModule`} className="modal-toggle" />
-            <div className="modal mt-[0px!important]" role="dialog">
+            <div className="modal mt-[0px!important] text-gray-900" role="dialog">
                 <div className="modal-box w-11/12 max-w-5xl">
                     <div onClick={resetModalData} className="modal-action">
                         {/* Close modal button */}

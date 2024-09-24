@@ -56,15 +56,7 @@ const AddMilestone = ({ milestonesData, setMilestonesData }) => {
     };
 
     return (
-        <>
-            {/* Button to trigger modal */}
-            <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-700 text-white duration-300 absolute bottom-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add New Milestone
-            </label>
-
+        <>            
             {/* Modal for adding milestone */}
             <input type="checkbox" id="newMilestone" className="modal-toggle" />
             <div className="modal mt-0" role="dialog">

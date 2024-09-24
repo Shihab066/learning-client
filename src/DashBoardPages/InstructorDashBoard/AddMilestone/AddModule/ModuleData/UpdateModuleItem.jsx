@@ -100,7 +100,7 @@ const UpdateModuleItem = ({
                 className="modal-toggle"
             />
             <div className="modal" role="dialog">
-                <div className="modal-box w-11/12 max-w-5xl">
+                <div className="modal-box w-11/12 max-w-5xl text-gray-900">
                     {/* Modal Close Button */}
                     <div className="modal-action">
                         <label

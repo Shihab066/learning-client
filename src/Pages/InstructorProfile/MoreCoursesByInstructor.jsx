@@ -81,7 +81,7 @@ const MoreCoursesByInstructor = () => {
                 <div className="slider-container mt-10 px-2 sm:px-0 md:px-2 xl:px-2">
                     <Slider {...settings}>
                         {coursesData.map(item => (
-                            <TestimonialCard key={item._id} item={item} />
+                            <CourseCard key={item._id} item={item} />
                         ))}
                     </Slider>
                 </div>
@@ -107,7 +107,7 @@ const NextButton = ({ handleNextBtn }) => (
 );
 
 // Courses Card Component
-const TestimonialCard = ({ item }) => {
+const CourseCard = ({ item }) => {
     const { courseName, courseThumbnail, instructorName, rating, totalReviews, courseDuration, totalLectures, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
     console.log(modifiedCourseName);

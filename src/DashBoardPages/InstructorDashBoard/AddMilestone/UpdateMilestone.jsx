@@ -54,7 +54,7 @@ const UpdateMilestone = ({ id, name, details, milestonesData, setMilestonesData 
     return (
         <>
             <input type="checkbox" id={`${id}update`} className="modal-toggle" />
-            <div className="modal mt-[0px!important]" role="dialog">
+            <div className="modal mt-[0px!important] text-gray-900" role="dialog">
                 <div className="modal-box w-11/12 max-w-5xl">
                     {/* Modal actions */}
                     <div className="modal-action">

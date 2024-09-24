@@ -372,6 +372,8 @@ const AdditionalInfo = () => {
 
     // Add areas of expertise options
     const [areasOfExpertise, setAreasOfExpertise] = useState(null);
+    console.log(areasOfExpertise);
+    
 
     const handleAdditionalInfo = (data) => {
         const { headline, website, Xprofile, youtubeProfile, facebookProfile } = data;
@@ -439,7 +441,7 @@ const AdditionalInfo = () => {
                     <label className="label">Professional Experience</label>
                     <textarea
                         rows="5"
-                        placeholder="Descripton"
+                        placeholder="Add your professional experience"
                         className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
                         autoComplete="off"
                         {...register('experience')}

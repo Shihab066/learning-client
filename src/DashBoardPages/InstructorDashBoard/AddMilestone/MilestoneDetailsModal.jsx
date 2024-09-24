@@ -6,7 +6,7 @@ const MilestoneDetailsModal = ({ id, milestoneName, milestoneDetails }) => {
 
             {/* Modal content */}
             <div className="modal mt-0" role="dialog">
-                <div className="modal-box w-11/12 max-w-5xl h-full max-h-[30rem]">
+                <div className="modal-box w-11/12 max-w-5xl h-full max-h-[30rem] text-gray-900">
                     {/* Modal close button */}
                     <div className="modal-action">
                         <label

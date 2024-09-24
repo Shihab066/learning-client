@@ -25,6 +25,8 @@ import AddNewPassword from "../Pages/Authentication/PassowrdReset/AddNewPassword
 import CourseDetails from "../Pages/CourseDetailsPage/CourseDetails";
 import InstructorProfile from "../Pages/InstructorProfile/InstructorProfile";
 import ProfileLayout from "../Layout/ProfileLayout";
+import MyCourses from "../DashBoardPages/InstructorDashBoard/MyCourses/MyCourses";
+import CourseReviews from "../DashBoardPages/InstructorDashBoard/Reviews/CourseReviews";
 
 
 export const router = createBrowserRouter([
@@ -124,11 +126,24 @@ export const router = createBrowserRouter([
           {
             path: 'user',
             element: <Navigate to='profile' />
-          },  
+          },           
           {
             path: 'profile',
             element: <Profile />
-          },          
+          },
+          // INSTRUCTOR ROUTES
+          {
+            path: 'myCourses',
+            element: <MyCourses />
+          },
+          {
+            path: 'addCourse',
+            element: <AddClass />
+          },
+          {
+            path: 'courseReviews',
+            element: <CourseReviews />
+          }
         ]
       }
     ]

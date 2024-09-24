@@ -46,6 +46,11 @@ html {
     margin-right: 5px;
 }
 
+.profile a.active{
+    color: white;
+    background: #111827;
+}
+
 .change-shape {
     clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 25% 0);
 }
@@ -81,6 +86,16 @@ html {
 .thin-scrollbar::-webkit-scrollbar {
     width: 1px;
 }
+
+/* medium scrollbar */
+.md-scrollbar {
+    scrollbar-width: 4px;
+}
+
+.md-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
 
 /* react select input style */
 .css-19bb58m {

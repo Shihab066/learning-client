@@ -67,7 +67,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
         <>
             {/* Modal Input */}
             <input type="checkbox" id={`${moduleId}addModuleItem`} className="modal-toggle" />
-            <div className="modal mt-[0px!important]" role="dialog">
+            <div className="modal mt-[0px!important] text-gray-900" role="dialog">
                 <div className="modal-box w-11/12 max-w-5xl">
                     <div onClick={resetModalData} className="modal-action">
                         <label ref={closeModal} htmlFor={`${moduleId}addModuleItem`} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>

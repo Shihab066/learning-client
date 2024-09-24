@@ -38,7 +38,7 @@ const UpdateModule = ({ milestoneId, moduleId, name, milestonesData, setMileston
     return (
         <>
             <input type="checkbox" id={`${moduleId}moduleUpdate`} className="modal-toggle" />
-            <div className="modal mt-[0px!important]" role="dialog">
+            <div className="modal mt-[0px!important] text-gray-900" role="dialog">
                 <div className="modal-box w-11/12 max-w-5xl">
                     <div className="modal-action">
                         <label onClick={resetData} htmlFor={`${moduleId}moduleUpdate`} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>

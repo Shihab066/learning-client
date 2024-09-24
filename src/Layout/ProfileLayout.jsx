@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import shareIcon from '../assets/icon/shareicon.svg';
 
 
@@ -7,9 +7,9 @@ const ProfileLayout = () => {
     // link to navigate different section of this page
     const links = [
         { text: 'Profile', url: 'profile' },
-        { text: 'My Courses', url: '#instructor' },
-        { text: 'Add Course', url: '#course_outline' },
-        { text: 'Reviews', url: '#reviews' }
+        { text: 'My Courses', url: 'myCourses' },
+        { text: 'Add Course', url: 'addCourse' },
+        { text: 'Reviews', url: 'courseReviews' }
     ];
 
     // State to manage active link
@@ -33,10 +33,10 @@ const ProfileLayout = () => {
                         </svg>
                     </button>
                 </div>
-                <aside className={`fixed duration-300 top-14 sm:top-16 lg:top-[4.5rem] left-0 ${isAsideOpen ? 'w-[280px]' : 'w-0'} h-screen xl:static xl:w-[20rem] xl:h-fit text-gray-700 bg-[#F8FAFC] pt-6 overflow-hidden xl:rounded-xl z-10`}>
+                <aside className={`fixed duration-300 top-14 sm:top-16 lg:top-[4.5rem] left-0 ${isAsideOpen ? 'w-[17.5rem]' : 'w-0'} h-screen xl:static xl:w-[18rem] xl:h-fit text-gray-700 bg-[#F8FAFC] overflow-x-hidden overflow-y-auto pb-[4.1rem] lg:pb-0 pt-6 xl:rounded-xl z-10`}>
                     <article className="flex flex-col justify-center items-center gap-y-2 pb-6 relative min-w-[280px] xl:min-w-full">
                         <img
-                            className="w-40 h-40 rounded-full object-cover"
+                            className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover"
                             src="https://i.ibb.co.com/JmPSDz7/instructor-Profile1.jpg"
                             alt="profile image" />
                         <h2 className="text-gray-900 text-xl font-medium">
@@ -59,16 +59,17 @@ const ProfileLayout = () => {
                     </article>
 
                     {/* nav */}
-                    <ul className="min-w-[280px]">
+                    <ul className="min-w-[280px] profile">
                         {
                             links.map((link, index) =>
                                 <li key={index}>
-                                    <Link
+                                    <NavLink
                                         to={link.url}
                                         onClick={() => setActiveLink(index)}
-                                        className={`block w-full py-3 px-3 border-t duration-300 ${activeLink === index ? 'bg-gray-900 text-white' : 'hover:bg-[#0000001a]'}`}>
+                                        className={`block w-full py-3 px-3 border-t duration-300 ${activeLink !== index && 'hover:bg-[#0000001a]'}`}
+                                    >
                                         {link.text}
-                                    </Link>
+                                    </NavLink>
                                 </li>
                             )
                         }

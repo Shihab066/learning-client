@@ -61,7 +61,7 @@ const MilestoneSection = ({ id, milestoneName, milestoneDetails, milestonesData,
                     </div>
                 </div>
                 {/* milestone modify button */}
-                <div className="w-fit h-6 absolute right-10 top-5 z-50 cursor-pointer">
+                <div className="w-fit h-6 absolute right-10 top-5 z-30 cursor-pointer">
                     <svg
                         onClick={(e) => {
                             setIsMilestoneOptionOpen(!isMilestoneOptionOpen)

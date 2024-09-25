@@ -33,7 +33,7 @@ const PopularClasses = () => {
                     :
                     classes.length > 0
                         ?
-                        classes.map(item => (
+                        classes?.map(item => (
                         <PopularClassCard
                             key={item._id}
                             item={item}

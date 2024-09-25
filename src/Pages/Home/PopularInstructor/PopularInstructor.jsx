@@ -30,7 +30,7 @@ const PopularInstructor = () => {
                     :
                     instructors.length > 0
                         ?
-                        instructors.map((instructor) => (
+                        instructors?.map((instructor) => (
                             <PopularInstructorCard key={instructor._id} item={instructor} />
                         ))
                         :

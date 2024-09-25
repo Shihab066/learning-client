@@ -338,7 +338,10 @@ const Profile = () => {
                         {/* Add additonal info */}
                         {
                             userRole === 'instructor' &&
-                            <AdditionalInfo />
+                            <AdditionalInfo
+                                axiosSecure={axiosSecure}
+                                user={userData}
+                            />
                         }
                     </div>
             }
@@ -346,10 +349,10 @@ const Profile = () => {
     );
 };
 
-const AdditionalInfo = () => {
-    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+const AdditionalInfo = ({ axiosSecure, user }) => {
+    const { register, handleSubmit } = useForm();
 
-    // Language Options
+    // Language options available for selection
     const languageOptions = [
         { value: 'English', label: 'English' },
         { value: 'Spanish', label: 'Spanish' },
@@ -368,86 +371,130 @@ const AdditionalInfo = () => {
         { value: 'Turkish', label: 'Turkish' }
     ];
 
-    const [selectedLanguage, setSelectedLanguage] = useState(null);
+    // Local state management
+    const [formData, setFormData] = useState(user);
+    const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
+    const { headline, bioData, experience, website, Xprofile, linkedinProfile, youtubeProfile, facebookProfile, languages, expertise } = formData;
 
-    // Add areas of expertise options
-    const [areasOfExpertise, setAreasOfExpertise] = useState(null);
-    console.log(areasOfExpertise);
+    // Set default options for language and expertise selection
+    const selectedLanguageOptions = languages?.map(language => languageOptions.find(option => option.value === language)) || [];
+    const selectedExpertiseOptions = expertise?.map(value => ({ value, label: value })) || [];
 
-
-    const handleAdditionalInfo = (data) => {
-        const { headline, website, Xprofile, youtubeProfile, facebookProfile } = data;
-        const languages = selectedLanguage?.map(language => language.value) || '';
-    }
-
-    // biodata input length controll
-    const [bioDataValue, setBioDataValue] = useState('');
+    const [bioDataValue, setBioDataValue] = useState(bioData);
+    const [experienceInputValue, setExperienceInputValue] = useState(experience);
     const [isBioDataMaxLengthReached, setIsBioDataMaxLengthReached] = useState(false);
+    const [isExperienceMaxLengthReached, setIsExperienceMaxLengthReached] = useState(false);
 
-    const handleBioDataChange = (event) => {
-        const { value } = event.target;
+    const [selectedLanguage, setSelectedLanguage] = useState(selectedLanguageOptions);
+    const [areasOfExpertise, setAreasOfExpertise] = useState(selectedExpertiseOptions);
 
-        if (isBioDataMaxLengthReached && value > bioDataValue) {
-            return
+    const languageSelection = selectedLanguage?.map(language => language.value) || [];
+    const expertiseSelection = areasOfExpertise?.map(expertise => expertise.value) || [];
+
+    // Handle input change for general form fields
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+    };
+
+    // Handle selection changes (languages & expertise)
+    const handleArrayChange = (name, value) => {
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+    };
+
+    // Handle bioData input with max length control
+    const handleBioDataChange = (e) => {
+        const { value } = e.target;
+        if (!isBioDataMaxLengthReached || value.length <= bioDataValue.length) {
+            setBioDataValue(value);
+            setIsBioDataMaxLengthReached(value.length > 500);
         }
+    };
 
-        setBioDataValue(value)
-
-        if (value.length > 500) {
-            setIsBioDataMaxLengthReached(true)
-        } else {
-            setIsBioDataMaxLengthReached(false)
+    // Handle experience input with max length control
+    const handleExperienceDataChange = (e) => {
+        const { value } = e.target;
+        if (!isExperienceMaxLengthReached || value.length <= experienceInputValue.length) {
+            setExperienceInputValue(value);
+            setIsExperienceMaxLengthReached(value.length > 500);
         }
+    };
+
+    //handle BioData input
+    const handleBioDataInput = (e) => {
+        handleInputChange(e);
+        handleBioDataChange(e);
     }
 
-    // professional experience input length controll
-    const [experienceInputValue, setExperienceInputValue] = useState('');
-    const [isExperienceDataMaxLengthReached, setIsExperienceDataMaxLengthReached] = useState(false);
-
-    const handleExperienceDataChange = (event) => {
-        const { value } = event.target;
-
-        if (isBioDataMaxLengthReached && value > bioDataValue) {
-            return
-        }
-
-        setExperienceInputValue(value)
-
-        if (value.length > 500) {
-            setIsExperienceDataMaxLengthReached(true)
-        } else {
-            setIsExperienceDataMaxLengthReached(false)
-        }
+    //handle BioData input
+    const handleExperienceDataInput = (e) => {
+        handleInputChange(e);
+        handleExperienceDataChange(e);
     }
+
+    // Handle form submission
+    const handleAdditionalInfo = (data) => {
+        const payload = {
+            ...data,
+            bioData: bioDataValue,
+            experience: experienceInputValue,
+            languages: languageSelection,
+            expertise: expertiseSelection
+        };
+
+        axiosSecure.patch(`http://localhost:5000/updateInstructorProfile/${user?._id}`, payload)
+            .then(res => {
+                if (res.data.modifiedCount) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Profile Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    setIsUpdateBtnDisabled(true);
+                }
+            });
+    };
+
+    // Check if form data has changed to enable/disable update button
+    useEffect(() => {
+        const hasChanges = JSON.stringify(formData) !== JSON.stringify(user);
+        setIsUpdateBtnDisabled(!hasChanges);
+    }, [formData]);
 
     return (
         <div>
-            <h3 className="text-xl font-medium mb-3">Addtional Info</h3>
+            <h3 className="text-xl font-medium mb-3">Additional Info</h3>
             <form onSubmit={handleSubmit(handleAdditionalInfo)} className="sm:grid grid-cols-2 gap-5 space-y-4 sm:space-y-0">
+
                 {/* Headline field */}
-                <div>
+                <div className="col-span-2 md:col-span-1">
                     <label className="label">Headline</label>
                     <input
+                        value={headline}
                         type="text"
-                        placeholder="Add Headline"
-                        className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                        placeholder="Ex: Software Engineer"
+                        className="input input-info w-full border-base-300 focus:border-blue-500 focus:outline-0"
                         autoComplete="off"
-                        {...register('headline')}
+                        {...register('headline', { onChange: handleInputChange })}
                     />
                 </div>
 
                 {/* Language field */}
-                <div>
+                <div className="col-span-2 md:col-span-1">
                     <label className="label">Language</label>
                     <Select
                         isMulti
-                        name="language"
                         options={languageOptions}
                         className="basic-multi-select"
                         classNamePrefix="select"
                         placeholder="Select Language"
                         defaultValue={selectedLanguage}
-                        onChange={setSelectedLanguage}
+                        onChange={value => {
+                            setSelectedLanguage(value);
+                            handleArrayChange('languages', value.map(item => item.value));
+                        }}
                     />
                 </div>
 
@@ -456,32 +503,31 @@ const AdditionalInfo = () => {
                     <label className="label">Write About Yourself</label>
                     <div className="relative">
                         <textarea
-                            // onChange={(e) => console.log(e.target.value.length)}
                             rows="6"
-                            placeholder="type here..."
-                            className={`textarea textarea-info w-full ${isBioDataMaxLengthReached ? 'border-red-600 focus:border-red-600' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
-                            autoComplete="off"
+                            placeholder="Type here..."
+                            className={`textarea textarea-info w-full ${isBioDataMaxLengthReached ? 'border-red-600' : 'border-base-300'} focus:border-blue-500 focus:outline-0 resize-none`}
                             value={bioDataValue}
-                            {...register('bioData', { maxLength: 500, onChange: handleBioDataChange })}
+                            {...register('bioData', { maxLength: 500, onChange: handleBioDataInput })}
                         />
-                        <span className={`absolute bottom-4 right-4 text-xs ${isBioDataMaxLengthReached ? 'text-red-600 shake' : 'text-gray-600'}`}>
+                        <span className={`absolute bottom-4 right-4 text-xs ${isBioDataMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
                             {bioDataValue.length} / 500
                         </span>
                     </div>
                     {isBioDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
                 </div>
 
-                {/* Areas of Expertise field */}
+                {/* Expertise field */}
                 <div className="col-span-2">
-                    <label className="label">Areas Of Expertise</label>
+                    <label className="label">Areas of Expertise</label>
                     <CreatableSelect
                         isMulti
-                        name="expertise"
-                        className="basic-multi-select"
                         classNamePrefix="select"
-                        placeholder="Add"
+                        placeholder="Ex: Problem Solving"
                         defaultValue={areasOfExpertise}
-                        onChange={setAreasOfExpertise}
+                        onChange={value => {
+                            setAreasOfExpertise(value);
+                            handleArrayChange('expertise', value.map(item => item.value));
+                        }}
                     />
                 </div>
 
@@ -492,83 +538,97 @@ const AdditionalInfo = () => {
                         <textarea
                             rows="6"
                             placeholder="Add your professional experience"
-                            className={`textarea textarea-info w-full ${isExperienceDataMaxLengthReached ? 'border-red-600 focus:border-red-600' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
-                            autoComplete="off"
-                            {...register('experience', { maxLength: 500, onChange: handleExperienceDataChange })}
+                            className={`textarea textarea-info w-full ${isExperienceMaxLengthReached ? 'border-red-600' : 'border-base-300'} focus:border-blue-500 focus:outline-0 resize-none`}
+                            value={experienceInputValue}
+                            {...register('experience', { maxLength: 500, onChange: handleExperienceDataInput })}
                         />
-                        <span className={`absolute bottom-4 right-4 text-xs ${isExperienceDataMaxLengthReached ? 'text-red-600 shake' : 'text-gray-600'}`}>
+                        <span className={`absolute bottom-4 right-4 text-xs ${isExperienceMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
                             {experienceInputValue.length} / 500
                         </span>
                     </div>
-                    {isExperienceDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
+                    {isExperienceMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
                 </div>
 
                 {/* Links */}
                 <div className="col-span-2 border rounded-lg px-2 sm:px-4 py-2 sm:py-6">
                     <label className="label text-lg font-medium">Links</label>
-                    <div>
-                        <label className="label">Website</label>
-                        <input
-                            type="text"
-                            placeholder="website link"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register('website')}
-                        />
-                    </div>
 
-                    <div>
-                        <label className="label">X(Formerly twitter)</label>
-                        <input
-                            type="text"
-                            placeholder="add X profile"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register('Xprofile')}
-                        />
-                    </div>
+                    {/* Website */}
+                    <InputField
+                        label="Website"
+                        value={website}
+                        placeholder="Website link"
+                        register={register}
+                        name="website"
+                        handleInputChange={handleInputChange}
+                    />
 
-                    <div>
-                        <label className="label">Linkdin</label>
-                        <input
-                            type="text"
-                            placeholder="add linkedin profile"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register('linkedinProfile')}
-                        />
-                    </div>
+                    {/* X profile */}
+                    <InputField
+                        label="X (Formerly Twitter)"
+                        value={Xprofile}
+                        placeholder="X profile"
+                        register={register}
+                        name="Xprofile"
+                        handleInputChange={handleInputChange}
+                    />
 
-                    <div>
-                        <label className="label">Youtube</label>
-                        <input
-                            type="text"
-                            placeholder="add channel link"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register('youtubeProfile')}
-                        />
-                    </div>
+                    {/* LinkedIn */}
+                    <InputField
+                        label="LinkedIn"
+                        value={linkedinProfile}
+                        placeholder="LinkedIn profile"
+                        register={register}
+                        name="linkedinProfile"
+                        handleInputChange={handleInputChange}
+                    />
 
-                    <div>
-                        <label className="label">Facebook</label>
-                        <input
-                            type="text"
-                            placeholder="add facebook profile"
-                            className="input input-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            autoComplete="off"
-                            {...register('facebookProfile')}
-                        />
-                    </div>
+                    {/* YouTube */}
+                    <InputField
+                        label="YouTube"
+                        value={youtubeProfile}
+                        placeholder="YouTube channel link"
+                        register={register}
+                        name="youtubeProfile"
+                        handleInputChange={handleInputChange}
+                    />
+
+                    {/* Facebook */}
+                    <InputField
+                        label="Facebook"
+                        value={facebookProfile}
+                        placeholder="Facebook profile"
+                        register={register}
+                        name="facebookProfile"
+                        handleInputChange={handleInputChange}
+                    />
                 </div>
+
+                {/* Submit button */}
                 <input
                     type="submit"
                     className="col-span-2 btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
                     value="Update Info"
-                    disabled={false}
+                    disabled={isUpdateBtnDisabled}
                 />
             </form>
         </div>
-    )
-}
+    );
+};
+
+// Reusable InputField component
+const InputField = ({ label, value, placeholder, register, name, handleInputChange }) => (
+    <div>
+        <label className="label">{label}</label>
+        <input
+            value={value}
+            type="text"
+            placeholder={placeholder}
+            className="input input-info w-full border-base-300 focus:border-blue-500 focus:outline-0"
+            autoComplete="off"
+            {...register(name, { onChange: handleInputChange })}
+        />
+    </div>
+);
+
 export default Profile;

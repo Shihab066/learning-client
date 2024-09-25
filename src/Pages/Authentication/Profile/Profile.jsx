@@ -347,7 +347,7 @@ const Profile = () => {
 };
 
 const AdditionalInfo = () => {
-    const { register, handleSubmit, watch, reset } = useForm();
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
 
     // Language Options
     const languageOptions = [
@@ -373,12 +373,53 @@ const AdditionalInfo = () => {
     // Add areas of expertise options
     const [areasOfExpertise, setAreasOfExpertise] = useState(null);
     console.log(areasOfExpertise);
-    
+
 
     const handleAdditionalInfo = (data) => {
         const { headline, website, Xprofile, youtubeProfile, facebookProfile } = data;
         const languages = selectedLanguage?.map(language => language.value) || '';
     }
+
+    // biodata input length controll
+    const [bioDataValue, setBioDataValue] = useState('');
+    const [isBioDataMaxLengthReached, setIsBioDataMaxLengthReached] = useState(false);
+
+    const handleBioDataChange = (event) => {
+        const { value } = event.target;
+
+        if (isBioDataMaxLengthReached && value > bioDataValue) {
+            return
+        }
+
+        setBioDataValue(value)
+
+        if (value.length > 500) {
+            setIsBioDataMaxLengthReached(true)
+        } else {
+            setIsBioDataMaxLengthReached(false)
+        }
+    }
+
+    // professional experience input length controll
+    const [experienceInputValue, setExperienceInputValue] = useState('');
+    const [isExperienceDataMaxLengthReached, setIsExperienceDataMaxLengthReached] = useState(false);
+
+    const handleExperienceDataChange = (event) => {
+        const { value } = event.target;
+
+        if (isBioDataMaxLengthReached && value > bioDataValue) {
+            return
+        }
+
+        setExperienceInputValue(value)
+
+        if (value.length > 500) {
+            setIsExperienceDataMaxLengthReached(true)
+        } else {
+            setIsExperienceDataMaxLengthReached(false)
+        }
+    }
+
     return (
         <div>
             <h3 className="text-xl font-medium mb-3">Addtional Info</h3>
@@ -410,16 +451,24 @@ const AdditionalInfo = () => {
                     />
                 </div>
 
-                {/* Description field */}
+                {/* Bio Data field */}
                 <div className="col-span-2">
-                    <label className="label">Description</label>
-                    <textarea
-                        rows="5"
-                        placeholder="Descripton"
-                        className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
-                        autoComplete="off"
-                        {...register('description')}
-                    />
+                    <label className="label">Write About Yourself</label>
+                    <div className="relative">
+                        <textarea
+                            // onChange={(e) => console.log(e.target.value.length)}
+                            rows="6"
+                            placeholder="type here..."
+                            className={`textarea textarea-info w-full ${isBioDataMaxLengthReached ? 'border-red-600 focus:border-red-600' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
+                            autoComplete="off"
+                            value={bioDataValue}
+                            {...register('bioData', { maxLength: 500, onChange: handleBioDataChange })}
+                        />
+                        <span className={`absolute bottom-4 right-4 text-xs ${isBioDataMaxLengthReached ? 'text-red-600 shake' : 'text-gray-600'}`}>
+                            {bioDataValue.length} / 500
+                        </span>
+                    </div>
+                    {isBioDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
                 </div>
 
                 {/* Areas of Expertise field */}
@@ -427,7 +476,7 @@ const AdditionalInfo = () => {
                     <label className="label">Areas Of Expertise</label>
                     <CreatableSelect
                         isMulti
-                        name="expertise"                        
+                        name="expertise"
                         className="basic-multi-select"
                         classNamePrefix="select"
                         placeholder="Add"
@@ -439,13 +488,19 @@ const AdditionalInfo = () => {
                 {/* Experience field */}
                 <div className="col-span-2">
                     <label className="label">Professional Experience</label>
-                    <textarea
-                        rows="5"
-                        placeholder="Add your professional experience"
-                        className="textarea textarea-info w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
-                        autoComplete="off"
-                        {...register('experience')}
-                    />
+                    <div className="relative">
+                        <textarea
+                            rows="6"
+                            placeholder="Add your professional experience"
+                            className={`textarea textarea-info w-full ${isExperienceDataMaxLengthReached ? 'border-red-600 focus:border-red-600' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
+                            autoComplete="off"
+                            {...register('experience', { maxLength: 500, onChange: handleExperienceDataChange })}
+                        />
+                        <span className={`absolute bottom-4 right-4 text-xs ${isExperienceDataMaxLengthReached ? 'text-red-600 shake' : 'text-gray-600'}`}>
+                            {experienceInputValue.length} / 500
+                        </span>
+                    </div>
+                    {isExperienceDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
                 </div>
 
                 {/* Links */}

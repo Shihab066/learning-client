@@ -23,7 +23,7 @@ const ProfileLayout = () => {
     }
 
     return (
-        <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 pt-24 sm:pt-32 xl:pt-10 relative">
+        <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 relative">
             <div className="w-fit h-full absolute xl:static top-0 left-0">
                 <div className="relative w-full h-full">
                     {/* aside open icon */}

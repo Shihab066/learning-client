@@ -46,7 +46,7 @@ const AddClass = () => {
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
-        
+
         if (courseContentError) return;
 
         const { email } = user;
@@ -73,7 +73,7 @@ const AddClass = () => {
             }
         });
     };
-    
+
     const uploadThumbnail = async (img) => {
         if (img) {
             const formData = new FormData();
@@ -89,14 +89,14 @@ const AddClass = () => {
         }
         return null;
     };
-    
+
     const resetForm = () => {
         setThumbnail(null);
         setMilestonesData([]);
         setCheckCourseContentError(false);
         reset();
     };
-    
+
     const showSuccessMessage = () => {
         Swal.fire({
             position: 'center',
@@ -138,7 +138,7 @@ const AddClass = () => {
     ];
 
     return (
-        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg">
+        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 py-10 w-full xl:border rounded-lg">
             <h3 className="py-5 font-bold text-2xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 
@@ -162,8 +162,8 @@ const AddClass = () => {
                     <label className="label">
                         <span className="label-text">Course Thumbnail</span>
                     </label>
-                    <div className={`border p-4 rounded-lg ${errors.courseThumbnail ? 'border-red-500' : 'border-base-300'}`}>
-                        <div className="w-[425px] h-[255px] border rounded-xl p-4">
+                    <div className={`border p-2 sm:p-4 rounded-lg ${errors.courseThumbnail ? 'border-red-500' : 'border-base-300'}`}>
+                        <div className="sm:w-[26rem] sm:h-[16rem] border rounded-xl sm:p-4">
                             <img
                                 className="w-full h-full object-cover rounded-lg"
                                 src={thumbnail || dummyThumbnail}
@@ -173,7 +173,7 @@ const AddClass = () => {
                         <input
                             type="file"
                             accept="image/*"
-                            className="file-input file-input-bordered mt-4 focus:outline-0"
+                            className="file-input file-input-bordered mt-4 w-full focus:outline-0"
                             {...register('courseThumbnail', { required: true, onChange: handleCourseThumbnail })}
                         />
                     </div>
@@ -213,17 +213,34 @@ const AddClass = () => {
                     <label className="label">
                         <span className="label-text">Course Content</span>
                     </label>
-                    <div className={`w-full h-full border p-4 rounded-lg ${courseContentError ? 'border-red-500' : ''}`}>
-                        <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-500 normal-case text-white mb-2">
-                            Add Content
+                    <div className={`w-full h-full border ${courseContentError ? 'border-red-500' : ''} p-4 rounded-lg`}>
+                        {/* Button to trigger modal */}
+                        <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-700 text-white duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add New Milestone
                         </label>
-                        <AddMilestone setMilestonesData={setMilestonesData} />
-                        <MilestoneSection milestonesData={milestonesData} />
+                        <div className="space-y-2 mt-2">
+                            {milestonesData.map((milestone) => (
+                                <MilestoneSection
+                                    key={milestone._id}
+                                    id={milestone._id}
+                                    milestoneName={milestone.milestoneName}
+                                    milestoneDetails={milestone.milestoneDetails}
+                                    milestonesData={milestonesData}
+                                    setMilestonesData={setMilestonesData}
+                                />
+                            ))}
+                            <AddMilestone
+                                milestonesData={milestonesData}
+                                setMilestonesData={setMilestonesData}
+                            />
+                        </div>
                     </div>
                     {courseContentError && <span className="text-red-600">Add at least one module item</span>}
                 </div>
 
-                {/* Additional Form Fields */}
                 <div className="md:grid grid-cols-2 gap-5 space-y-4 md:space-y-0">
                     {/* Level */}
                     <div className="form-control">
@@ -231,10 +248,11 @@ const AddClass = () => {
                             <span className="label-text">Level</span>
                         </label>
                         <select
-                            className="select select-bordered focus:outline-0"
+                            defaultValue=''
+                            className={`select select-bordered ${errors.level ? 'border-red-500' : "focus:border-blue-500"} focus:outline-0`}
                             {...register('level', { required: true })}
                         >
-                            <option disabled defaultValue=''>Select Level</option>
+                            <option disabled value=''>Select Level</option>
                             {courseLevelOptions.map(level => (
                                 <option key={level.value} value={level.value}>{level.label}</option>
                             ))}
@@ -248,10 +266,11 @@ const AddClass = () => {
                             <span className="label-text">Category</span>
                         </label>
                         <select
-                            className="select select-bordered focus:outline-0"
+                            defaultValue=''
+                            className={`select select-bordered ${errors.category ? 'border-red-500' : "focus:border-blue-500"} focus:outline-0`}
                             {...register('category', { required: true })}
                         >
-                            <option disabled defaultValue=''>Select Category</option>
+                            <option disabled value=''>Select Category</option>
                             {courseCategories.map(category => (
                                 <option key={category.value} value={category.value}>{category.label}</option>
                             ))}
@@ -291,12 +310,12 @@ const AddClass = () => {
                 {/* Submit Button */}
                 <input
                     type="submit"
-                    value="Add Class"
-                    className="btn bg-blue-600 hover:bg-blue-500 text-white normal-case w-full md:w-52"
+                    value="Publish"
+                    className="btn bg-blue-600 hover:bg-blue-500 text-white normal-case w-full md:w-52 mt-[2rem!important]"
                     onClick={validateCourseContent}
                 />
-            </form>
-        </div>
+            </form >
+        </div >
     );
 };
 

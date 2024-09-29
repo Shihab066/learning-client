@@ -27,9 +27,9 @@ const MilestoneSection = ({ id, milestoneName, milestoneDetails, milestonesData,
     };
 
     // Find the modules for the current milestone
-    const currentMilestoneModules = milestonesData.find(item => item._id === id)?.milestoneModules || [];    
-    
-    const [isMilestoneOptionOpen, setIsMilestoneOptionOpen] = useState(false);    
+    const currentMilestoneModules = milestonesData.find(item => item._id === id)?.milestoneModules || [];
+
+    const [isMilestoneOptionOpen, setIsMilestoneOptionOpen] = useState(false);
 
     const handleOption = () => {
         if (isMilestoneOptionOpen) {
@@ -61,13 +61,17 @@ const MilestoneSection = ({ id, milestoneName, milestoneDetails, milestonesData,
                     </div>
                 </div>
                 {/* milestone modify button */}
-                <div className="w-fit h-6 absolute right-10 top-5 z-30 cursor-pointer">
+                <div className="w-fit h-fit absolute right-10 top-5 z-30 cursor-pointer">
                     <svg
                         onClick={(e) => {
                             setIsMilestoneOptionOpen(!isMilestoneOptionOpen)
                             e.stopPropagation();
                         }}
-                        xmlns="http://www.w3.org/2000/svg" className="h-6 text-gray-700 ml-auto" viewBox="0 0 256 256"><path fill="currentColor" d="M112 60a16 16 0 1 1 16 16a16 16 0 0 1-16-16m16 52a16 16 0 1 0 16 16a16 16 0 0 0-16-16m0 68a16 16 0 1 0 16 16a16 16 0 0 0-16-16"></path></svg>
+                        xmlns="http://www.w3.org/2000/svg" className="h-6 text-gray-700 ml-auto" viewBox="0 0 256 256"><path fill="currentColor" d="M112 60a16 16 0 1 1 16 16a16 16 0 0 1-16-16m16 52a16 16 0 1 0 16 16a16 16 0 0 0-16-16m0 68a16 16 0 1 0 16 16a16 16 0 0 0-16-16"></path>
+                    </svg>
+                </div>
+
+                <div>
                     {
                         isMilestoneOptionOpen &&
                         <OptionsBody
@@ -91,7 +95,7 @@ const OptionsBody = ({ id, deleteMilestoneData, milestoneName, milestoneDetails,
     // Handle clicks outside the options menu to close it
     useEffect(() => {
         const rootElement = document.getElementById('root');
-        
+
         // Function to check if the click is inside modal
         const handleClick = (event) => {
             if (optionsRef.current && optionsRef.current.contains(event.target)) {
@@ -108,7 +112,7 @@ const OptionsBody = ({ id, deleteMilestoneData, milestoneName, milestoneDetails,
         };
     }, [handleOption]);
     return (
-        <ul ref={optionsRef} onClick={(e) => e.stopPropagation()} className={`w-40 h-fit px-2 py-3 rounded-md shadow-md bg-white text-white space-y-1`}>
+        <ul ref={optionsRef} onClick={(e) => e.stopPropagation()} className={`absolute right-10 top-12 w-40 h-fit px-2 py-3 z-40 rounded-md shadow-md bg-white text-white space-y-1`}>
             {/* Button to create a new module */}
             <li>
                 <label htmlFor={`${id}addModule`} className='w-full flex gap-x-2 border rounded-md px-2 py-1.5 bg-blue-600 hover:shadow-lg duration-300 cursor-pointer' title='feedback'>

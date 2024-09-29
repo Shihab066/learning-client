@@ -1,57 +1,102 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import AddMilestone from "./AddMilestone/AddMilestone";
 import MilestoneSection from "./AddMilestone/MilestoneSection";
-import Select from 'react-select';
+import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 
-const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
+const imgHostingSecretKey = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const AddClass = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
-    const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
-    const [image, setImage] = useState('');
+    const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${imgHostingSecretKey}`;
+    const [thumbnail, setThumbnail] = useState(null);
+    const [milestonesData, setMilestonesData] = useState([]);
+    const [courseContentError, setCourseContentError] = useState(false);
+    const [checkCourseContentError, setCheckCourseContentError] = useState(false);
+
+    // Handle course thumbnail change
+    const handleCourseThumbnail = (event) => {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            setThumbnail(URL.createObjectURL(file));
+        } else {
+            setThumbnail(null);
+            alert('Please select a valid image file.');
+        }
+    };
+
+    // Validate course content (milestones)
+    const validateCourseContent = () => {
+        const courseContentLength = milestonesData[0]?.milestoneModules[0]?.moduleItems?.length ?? 0;
+        setCourseContentError(courseContentLength === 0);
+        setCheckCourseContentError(true);
+    };
+
+    useEffect(() => {
+        if (checkCourseContentError) {
+            validateCourseContent();
+        }
+    }, [milestonesData]);
 
     // Handle form submission
     const onSubmit = async (data) => {
-        const { name, description, seats, price } = data;
-        const { displayName, email } = user;
+        const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
+        
+        if (courseContentError) return;
+
+        const { email } = user;
+        const uploadedThumbnail = await uploadThumbnail(courseThumbnail[0]);
+
         const newClass = {
-            name,
-            description,
-            image,
-            instructorName: displayName,
-            seats: parseFloat(seats),
-            students: 0,
-            price: parseFloat(price),
             email,
-            status: 'pending',
-            feedback: ''
+            courseName,
+            courseThumbnail: uploadedThumbnail,
+            shortDescription,
+            description,
+            level,
+            category,
+            seats: parseInt(seats),
+            price: parseFloat(price),
+            courseContents: milestonesData,
+            publish: true
         };
 
-        // Uncomment the axios post request to send data to the server
-        /*
-        axiosSecure.post('/classes', newClass)
-            .then(res => {
-                if (res.data.insertedId) {
-                    resetForm();
-                    showSuccessMessage();
-                }
-            });
-        */
+        axiosSecure.post('/classes', newClass).then(res => {
+            if (res.data.insertedId) {
+                resetForm();
+                showSuccessMessage();
+            }
+        });
     };
-
-    // Reset form and clear the image state
+    
+    const uploadThumbnail = async (img) => {
+        if (img) {
+            const formData = new FormData();
+            formData.append('image', img);
+            const response = await fetch(imgHostingUrl, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) {
+                return data.data.display_url;
+            }
+        }
+        return null;
+    };
+    
     const resetForm = () => {
-        setImage('');
+        setThumbnail(null);
+        setMilestonesData([]);
+        setCheckCourseContentError(false);
         reset();
     };
-
-    // Show success message using SweetAlert2
+    
     const showSuccessMessage = () => {
         Swal.fire({
             position: 'center',
@@ -62,73 +107,21 @@ const AddClass = () => {
         });
     };
 
-    // Prevent form submission when pressing Enter key
+    // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
         }
     };
 
-    // Handle image upload to the hosting service
-    const handleImage = async (event) => {
-        const img = event.target.files[0];
-        if (img) {
-            const formData = new FormData();
-            formData.append('image', img);
-
-            const response = await fetch(img_hosting_url, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-
-            if (data.success) {
-                setImage(data.data.display_url);
-            } else {
-                setImage('');
-            }
-        }
-    };
-
-    // Dummy milestone data for demonstration purposes
-    const initialMilestones = [
-        {
-            _id: '4fd6s4fs4f65d46fa4',
-            milestoneName: 'Milestone1: Welcome',
-            milestoneDetails: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, accusamus.',
-            milestoneModules: [
-                {
-                    id: '4fd6s4fs4f65d46fa4fdsafada',
-                    moduleName: 'Module1: Basic HTML, CSS',
-                    moduleItems: [
-                        { id: '1', itemName: 'HTML Tags', itemData: '#' },
-                        { id: '2', itemName: 'CSS Basics', itemData: '#' }
-                    ]
-                },
-                {
-                    id: '4fd6s4fs4f65d46fa4hthtjhje',
-                    moduleName: 'Module2: JavaScript Fundamentals',
-                    moduleItems: [
-                        { id: '3', itemName: 'JavaScript Variables', itemData: '#' },
-                        { id: '4', itemName: 'Functions in JS', itemData: '#' }
-                    ]
-                }
-            ]
-        }
-    ];
-
-    const [milestonesData, setMilestonesData] = useState(initialMilestones);
-
-    // course level options
+    // Course level options
     const courseLevelOptions = [
         { value: "Beginner", label: "Beginner" },
         { value: "Intermediate", label: "Intermediate" },
         { value: "Advanced", label: "Advanced" },
-    ]
+    ];
 
-    const [selectedLevel, setSelectedLevel] = useState(null);
-
-    // course Type options
+    // Course category options
     const courseCategories = [
         { value: 'technology', label: 'Technology & Programming' },
         { value: 'business', label: 'Business & Management' },
@@ -144,12 +137,11 @@ const AddClass = () => {
         { value: 'teaching-academics', label: 'Teaching & Academics' }
     ];
 
-    const [selectedCategories, setSelectedCategories] = useState(null);
-
     return (
-        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg overflow-y-auto">
+        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg">
             <h3 className="py-5 font-bold text-2xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+
                 {/* Class Name */}
                 <div className="form-control">
                     <label className="label">
@@ -159,25 +151,36 @@ const AddClass = () => {
                         type="text"
                         autoComplete="off"
                         placeholder="Class Name"
-                        className="input input-info border-base-300 focus:border-blue-500 focus:outline-0"
-                        {...register('name', { required: true })}
+                        className={`input input-info ${errors.courseName ? 'border-red-500' : "border-base-300 focus:border-blue-500"} focus:outline-0`}
+                        {...register('courseName', { required: true })}
                     />
-                    {errors.name && <span className="text-red-600">Field is required</span>}
+                    {errors.courseName && <span className="text-red-600">Field is required</span>}
                 </div>
 
                 {/* Image Upload */}
                 <div className="form-control">
                     <label className="label">
-                        <span className="label-text">Image</span>
+                        <span className="label-text">Course Thumbnail</span>
                     </label>
-                    <input
-                        type="file"
-                        onChange={handleImage}
-                        className="file-input file-input-bordered border-base-300 focus:border-blue-500 focus:outline-0"
-                    />
+                    <div className={`border p-4 rounded-lg ${errors.courseThumbnail ? 'border-red-500' : 'border-base-300'}`}>
+                        <div className="w-[425px] h-[255px] border rounded-xl p-4">
+                            <img
+                                className="w-full h-full object-cover rounded-lg"
+                                src={thumbnail || dummyThumbnail}
+                                alt="course-thumbnail"
+                            />
+                        </div>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="file-input file-input-bordered mt-4 focus:outline-0"
+                            {...register('courseThumbnail', { required: true, onChange: handleCourseThumbnail })}
+                        />
+                    </div>
+                    {errors.courseThumbnail && <span className="text-red-600">Field is required</span>}
                 </div>
 
-                {/* short Description about course */}
+                {/* Short Description */}
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Short Description</span>
@@ -185,13 +188,13 @@ const AddClass = () => {
                     <textarea
                         rows="4"
                         placeholder="Short Description"
-                        className="textarea textarea-info border-base-300 focus:border-blue-500 focus:outline-0 resize-none"
-                        {...register('description', { required: true })}
+                        className={`textarea textarea-info ${errors.shortDescription ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
+                        {...register('shortDescription', { required: true })}
                     />
-                    {errors.description && <span className="text-red-600">Field is required</span>}
+                    {errors.shortDescription && <span className="text-red-600">Field is required</span>}
                 </div>
 
-                {/* Class Full Description */}
+                {/* Full Description */}
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Full Description</span>
@@ -199,107 +202,98 @@ const AddClass = () => {
                     <textarea
                         rows="5"
                         placeholder="Description"
-                        className="textarea textarea-info border-base-300 focus:border-blue-500 focus:outline-0 resize-none"
+                        className={`textarea textarea-info ${errors.description ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
                         {...register('description', { required: true })}
                     />
                     {errors.description && <span className="text-red-600">Field is required</span>}
                 </div>
 
-                {/* Course Outline */}
+                {/* Course Content */}
                 <div className="form-control">
                     <label className="label">
-                        <span className="label-text">Course Outline</span>
+                        <span className="label-text">Course Content</span>
                     </label>
-                    <div className="w-full h-full border p-4 rounded-lg">
-                        {/* Button to trigger modal */}
-                        <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-700 text-white duration-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Add New Milestone
+                    <div className={`w-full h-full border p-4 rounded-lg ${courseContentError ? 'border-red-500' : ''}`}>
+                        <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-500 normal-case text-white mb-2">
+                            Add Content
                         </label>
-                        <div className="space-y-2 mt-2">
-                            {milestonesData.map((milestone) => (
-                                <MilestoneSection
-                                    key={milestone._id}
-                                    id={milestone._id}
-                                    milestoneName={milestone.milestoneName}
-                                    milestoneDetails={milestone.milestoneDetails}
-                                    milestonesData={milestonesData}
-                                    setMilestonesData={setMilestonesData}
-                                />
-                            ))}
-                            <AddMilestone
-                                milestonesData={milestonesData}
-                                setMilestonesData={setMilestonesData}
-                            />
-                        </div>
+                        <AddMilestone setMilestonesData={setMilestonesData} />
+                        <MilestoneSection milestonesData={milestonesData} />
                     </div>
+                    {courseContentError && <span className="text-red-600">Add at least one module item</span>}
                 </div>
 
-                {/* Course level */}
-                <div>
-                    <label className="label">
-                        <span className="label-text">Course Level</span>
-                    </label>
-                    <Select
-                        options={courseLevelOptions}
-                        classNamePrefix="select"
-                        placeholder="Select Level"
-                        defaultValue={selectedLevel}
-                        onChange={setSelectedLevel}
-                    />
-                </div>
+                {/* Additional Form Fields */}
+                <div className="md:grid grid-cols-2 gap-5 space-y-4 md:space-y-0">
+                    {/* Level */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Level</span>
+                        </label>
+                        <select
+                            className="select select-bordered focus:outline-0"
+                            {...register('level', { required: true })}
+                        >
+                            <option disabled defaultValue=''>Select Level</option>
+                            {courseLevelOptions.map(level => (
+                                <option key={level.value} value={level.value}>{level.label}</option>
+                            ))}
+                        </select>
+                        {errors.level && <span className="text-red-600">Field is required</span>}
+                    </div>
 
-                {/* Course Type */}
-                <div>
-                    <label className="label">
-                        <span className="label-text">Course Type</span>
-                    </label>
-                    <Select
-                        isSearchable
-                        isClearable
-                        options={courseCategories}
-                        classNamePrefix="select"
-                        placeholder="Select Type"
-                        defaultValue={selectedCategories}
-                        onChange={setSelectedCategories}
-                    />
-                </div>
+                    {/* Category */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Category</span>
+                        </label>
+                        <select
+                            className="select select-bordered focus:outline-0"
+                            {...register('category', { required: true })}
+                        >
+                            <option disabled defaultValue=''>Select Category</option>
+                            {courseCategories.map(category => (
+                                <option key={category.value} value={category.value}>{category.label}</option>
+                            ))}
+                        </select>
+                        {errors.category && <span className="text-red-600">Field is required</span>}
+                    </div>
 
-                {/* Seats */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Seats</span>
-                    </label>
-                    <input
-                        type="number"
-                        autoComplete="off"
-                        className={`input input-info border-base-300 ${errors.seats?.type === 'min' ? 'border-red-500 text-red-500' : 'focus:border-blue-500'} focus:outline-0`}
-                        {...register('seats', { required: true, min: 0 })}
-                    />
-                    {errors.seats && errors.seats.type === 'min' && <span className="text-red-600">Seats number cannot be negative</span>}
-                </div>
+                    {/* Seats */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Seats</span>
+                        </label>
+                        <input
+                            type="number"
+                            placeholder="Available Seats"
+                            className={`input input-info ${errors.seats ? 'border-red-500' : "border-base-300 focus:border-blue-500"} focus:outline-0`}
+                            {...register('seats', { required: true })}
+                        />
+                        {errors.seats && <span className="text-red-600">Field is required</span>}
+                    </div>
 
-                {/* Price */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Price</span>
-                    </label>
-                    <input
-                        type="number"
-                        autoComplete="off"
-                        className={`input input-info border-base-300 ${errors.price?.type === 'min' ? 'border-red-500 text-red-500' : 'focus:border-blue-500'} focus:outline-0`}
-                        {...register('price', { required: true, min: 0 })}
-                    />
-                    {errors.price && errors.price.type === 'min' && <span className="text-red-600">Price cannot be negative</span>}
+                    {/* Price */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Price</span>
+                        </label>
+                        <input
+                            type="number"
+                            placeholder="Class Price"
+                            className={`input input-info ${errors.price ? 'border-red-500' : "border-base-300 focus:border-blue-500"} focus:outline-0`}
+                            {...register('price', { required: true })}
+                        />
+                        {errors.price && <span className="text-red-600">Field is required</span>}
+                    </div>
                 </div>
 
                 {/* Submit Button */}
                 <input
                     type="submit"
                     value="Add Class"
-                    className="mt-5 w-full btn bg-[#3b5fe2] text-white hover:bg-[#2a4ed1] normal-case"
+                    className="btn bg-blue-600 hover:bg-blue-500 text-white normal-case w-full md:w-52"
+                    onClick={validateCourseContent}
                 />
             </form>
         </div>

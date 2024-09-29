@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 const MyCourses = () => {
     const [courses, setCourses] = useState([]);
+    const [isUpdateCourseOpen, setIsUpdateCourseOpen] = useState(false);
     // const { courseThumbnail, courseName, shortDescription, fullDescription, rating, totalReviews, courseDuration, totalLectures, price, discount } = courses;
     console.log(courses);
 
@@ -16,7 +17,7 @@ const MyCourses = () => {
             .then(res => setCourses(res.data));
     }, [])
     return (
-        <div>
+        <div className='relative'>
             <div className="space-y-3">
                 <h2 className="text-lg font-medium">Courses</h2>
                 <div className="w-[18rem] h-fit relative">
@@ -36,13 +37,20 @@ const MyCourses = () => {
             </div>
 
             <div className='mt-8'>
-                <MyCourseCard />
+                {
+                    isUpdateCourseOpen
+                        ?
+                        <UpdateCourse setIsUpdateCourseOpen={setIsUpdateCourseOpen}/>
+                        :
+                        <MyCourseCard setIsUpdateCourseOpen={setIsUpdateCourseOpen} />
+                }
             </div>
+
         </div>
     );
 };
 
-const MyCourseCard = () => {
+const MyCourseCard = ({setIsUpdateCourseOpen}) => {
     const price = 105;
     const discount = 0.5;
     const rating = 4.6;
@@ -99,12 +107,12 @@ const MyCourseCard = () => {
                         <FeedbackModal />
 
                         {/* edit */}
-                        <label htmlFor='my-modal-2' className='w-fit border rounded-md px-2 py-1.5 bg-yellow-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='edit'>
+                        <button onClick={() => setIsUpdateCourseOpen(true)} className='w-fit border rounded-md px-2 py-1.5 bg-yellow-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='edit'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-6'><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}>
                                 <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"></path></g>
                             </svg>
-                        </label>
-                        <UpdateCourse />
+                        </button>
+
 
                         {/* watch */}
                         <Link to={'/courseDetails'} className='w-fit border rounded-md px-2 py-1.5 bg-blue-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='watch'>

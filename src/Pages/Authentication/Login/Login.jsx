@@ -62,7 +62,7 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* Remember me NOT FUNCTIONAL */}
+                {/* account recovery */}
                 <Link
                     to='/account_recovery'
                     className="flex mt-2 ml-1 text-blue-500 link">

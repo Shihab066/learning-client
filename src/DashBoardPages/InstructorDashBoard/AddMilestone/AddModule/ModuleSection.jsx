@@ -41,8 +41,7 @@ const ModuleSection = ({ item, milestoneId, milestonesData, setMilestonesData })
 
     const handleOption = () => {
         setIsMilestoneItemOptionOpen(false)
-    }
-
+    }    
 
     return (
         <>
@@ -102,6 +101,7 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
 
     // Function to handle and update the position of the options menu
     const handlePosition = () => {
+        console.log('scrolling')
         if (optionsRef.current) {
             const rect = optionsRef.current.getBoundingClientRect();
             setPosition({
@@ -114,10 +114,10 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
     // Attach scroll event listener to update position dynamically
     useEffect(() => {
         handlePosition();
-        window.addEventListener('scroll', handlePosition);
+        window.addEventListener('scroll', handlePosition);    
 
         return () => {
-            window.removeEventListener('scroll', handlePosition);
+            window.removeEventListener('scroll', handlePosition);            
         };
     }, []);
 
@@ -141,7 +141,7 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
         <ul
             onClick={(e) => e.stopPropagation()}
             style={optionsStyle}
-            className="fixed w-40 z-40 h-fit px-2 py-3 space-y-1 bg-white text-white rounded-md shadow-md"
+            className="fixed w-40 z-30 h-fit px-2 py-3 space-y-1 bg-white text-white rounded-md shadow-md"
         >
             {/* Button to create a new module item */}
             <li onClick={(e) => e.stopPropagation()}>

@@ -27,6 +27,7 @@ import InstructorProfile from "../Pages/InstructorProfile/InstructorProfile";
 import ProfileLayout from "../Layout/ProfileLayout";
 import MyCourses from "../DashBoardPages/InstructorDashBoard/MyCourses/MyCourses";
 import CourseReviews from "../DashBoardPages/InstructorDashBoard/Reviews/CourseReviews";
+import UpdateCourse from "../DashBoardPages/InstructorDashBoard/MyCourses/UpdateCourse";
 
 
 export const router = createBrowserRouter([
@@ -139,6 +140,10 @@ export const router = createBrowserRouter([
           {
             path: 'addCourse',
             element: <AddClass />
+          },
+          {
+            path: 'updateCourse',
+            element: <UpdateCourse />
           },
           {
             path: 'courseReviews',

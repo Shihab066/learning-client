@@ -42,13 +42,13 @@ const ProfileLayout = () => {
                         <h2 className="text-gray-900 text-xl font-medium">
                             John Doe
                         </h2>
-                        <button className="btn btn-md bg-white hover:bg-white capitalize px-6">
+                        <Link to={'/instructorProfile'} className="btn btn-md bg-white hover:bg-white capitalize px-6">
                             Share Profile
                             <img
                                 className="w-4"
                                 src={shareIcon}
                                 alt="share icon" />
-                        </button>
+                        </Link>
 
                         {/* icon for close */}
                         <button onClick={handleAside} className="absolute -top-5 right-1 w-10 h-10 flex justify-center items-center xl:hidden">

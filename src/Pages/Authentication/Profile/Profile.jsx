@@ -405,18 +405,18 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     // Handle bioData input with max length control
     const handleBioDataChange = (e) => {
         const { value } = e.target;
-        if (!isBioDataMaxLengthReached || value.length <= bioDataValue.length) {
+        if (!isBioDataMaxLengthReached || value?.length <= bioDataValue?.length) {
             setBioDataValue(value);
-            setIsBioDataMaxLengthReached(value.length > 500);
+            setIsBioDataMaxLengthReached(value?.length > 500);
         }
     };
 
     // Handle experience input with max length control
     const handleExperienceDataChange = (e) => {
         const { value } = e.target;
-        if (!isExperienceMaxLengthReached || value.length <= experienceInputValue.length) {
+        if (!isExperienceMaxLengthReached || value?.length <= experienceInputValue?.length) {
             setExperienceInputValue(value);
-            setIsExperienceMaxLengthReached(value.length > 500);
+            setIsExperienceMaxLengthReached(value?.length > 500);
         }
     };
 
@@ -442,7 +442,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
             expertise: expertiseSelection
         };
 
-        axiosSecure.patch(`http://localhost:5000/updateInstructorProfile/${user?._id}`, payload)
+        axiosSecure.patch(`https://learning-info-bd.vercel.app/updateInstructorProfile/${user?._id}`, payload)
             .then(res => {
                 if (res.data.modifiedCount) {
                     Swal.fire({
@@ -510,7 +510,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                             {...register('bioData', { maxLength: 500, onChange: handleBioDataInput })}
                         />
                         <span className={`absolute bottom-4 right-4 text-xs ${isBioDataMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
-                            {bioDataValue.length} / 500
+                            {bioDataValue?.length} / 500
                         </span>
                     </div>
                     {isBioDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
@@ -543,7 +543,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                             {...register('experience', { maxLength: 500, onChange: handleExperienceDataInput })}
                         />
                         <span className={`absolute bottom-4 right-4 text-xs ${isExperienceMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
-                            {experienceInputValue.length} / 500
+                            {experienceInputValue?.length} / 500
                         </span>
                     </div>
                     {isExperienceMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}

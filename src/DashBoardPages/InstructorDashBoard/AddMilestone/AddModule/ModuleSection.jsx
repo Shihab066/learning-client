@@ -41,19 +41,19 @@ const ModuleSection = ({ item, milestoneId, milestonesData, setMilestonesData })
 
     const handleOption = () => {
         setIsMilestoneItemOptionOpen(false)
-    }    
+    }
 
     return (
         <>
             <div className="relative">
-                <div className="collapse collapse-arrow bg-gray-100 duration-300">
+                <div className="collapse collapse-arrow bg-gray-100 duration-300 rounded-md">
                     <input type="checkbox" name="moduleAccordion" />
-                    <div className="collapse-title text-lg font-medium">
+                    <div className="collapse-title sm:text-lg font-medium pl-2 sm:pl-4 truncate pr-16">
                         {item.moduleName}
                     </div>
 
                     {/* Render the list of module items */}
-                    <div className="collapse-content space-y-2">
+                    <div className="collapse-content pl-2 sm:pl-4 space-y-2 overflow-hidden">
                         {moduleItems.map(moduleItem => (
                             <ModuleItemSection
                                 key={moduleItem.id}
@@ -100,8 +100,7 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
     const [position, setPosition] = useState({ top: -100, left: -100 });
 
     // Function to handle and update the position of the options menu
-    const handlePosition = () => {
-        console.log('scrolling')
+    const handlePosition = () => {       
         if (optionsRef.current) {
             const rect = optionsRef.current.getBoundingClientRect();
             setPosition({
@@ -114,10 +113,10 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
     // Attach scroll event listener to update position dynamically
     useEffect(() => {
         handlePosition();
-        window.addEventListener('scroll', handlePosition);    
+        window.addEventListener('scroll', handlePosition);
 
         return () => {
-            window.removeEventListener('scroll', handlePosition);            
+            window.removeEventListener('scroll', handlePosition);
         };
     }, []);
 

@@ -55,7 +55,7 @@ const ModuleItemSection = ({ moduleItem, moduleId, milestoneId, milestonesData, 
         <>
             {/* Display Module Item with Edit and Delete Options */}
             <div className="relative">
-                <div className="text-lg font-medium rounded-lg bg-blue-100 py-2 px-3">
+                <div className="sm:text-lg font-medium rounded-lg bg-blue-100 py-2 px-3 pr-8 truncate">
                     {moduleItem.itemName}
                 </div>
                 {/* module item modify button */}

@@ -10,7 +10,7 @@ const SocialLogin = ({ from }) => {
         googleSignIn()
             .then(result => {
                 const user = result.user;
-                axios.post('https://learning-info-bd.vercel.app/users', { name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                axios.post('https://learning-info-bd.vercel.app/users', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
                 navigate(from, { replace: true })
             })
     }

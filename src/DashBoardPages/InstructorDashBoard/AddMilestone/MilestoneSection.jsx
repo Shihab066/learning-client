@@ -43,8 +43,8 @@ const MilestoneSection = ({ id, milestoneName, milestoneDetails, milestonesData,
             <div className="relative">
                 <div className="collapse collapse-arrow border bg-white duration-[400ms] rounded-lg">
                     <input type="checkbox" name="milestoneAccordion" />
-                    <div className="collapse-title text-lg font-medium">
-                        {milestoneName}
+                    <div className="collapse-title sm:text-lg font-medium pl-2 sm:pl-4 pr-16 truncate">
+                        {milestoneName}                                            
                     </div>
 
                     {/* Module sections */}

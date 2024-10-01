@@ -10,10 +10,7 @@ const ProfileLayout = () => {
         { text: 'My Courses', url: 'myCourses' },
         { text: 'Add Course', url: 'addCourse' },
         { text: 'Reviews', url: 'courseReviews' }
-    ];
-
-    // State to manage active link
-    const [activeLink, setActiveLink] = useState(0);
+    ];    
 
     // state to manage the aside section in mobile device
     const [isAsideOpen, setIsAsideOpen] = useState(false);
@@ -23,7 +20,7 @@ const ProfileLayout = () => {
     }
 
     return (
-        <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 relative">
+        <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 xl:pt-10 relative">
             <div className="w-fit h-full absolute xl:static top-0 left-0">
                 <div className="relative w-full h-full">
                     {/* aside open icon */}
@@ -64,9 +61,8 @@ const ProfileLayout = () => {
                             links.map((link, index) =>
                                 <li key={index}>
                                     <NavLink
-                                        to={link.url}
-                                        onClick={() => setActiveLink(index)}
-                                        className={`block w-full py-3 px-3 border-t duration-300 ${activeLink !== index && 'hover:bg-[#0000001a]'}`}
+                                        to={link.url}                                        
+                                        className={`block w-full py-3 px-3 border-t duration-300 hover:bg-[#0000001a]`}
                                     >
                                         {link.text}
                                     </NavLink>

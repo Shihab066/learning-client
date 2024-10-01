@@ -5,11 +5,10 @@ import dummyImg from '../../../assets/icon/user_icon.png';
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import { useLottie } from "lottie-react";
-import loadingAnimation from '../../../assets/loadingAnimation/loading3.json';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import useUserRole from "../../../hooks/useUserRole";
+import Loading from "../../../components/Loading/Loading";
 const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
 const Profile = () => {
@@ -186,29 +185,14 @@ const Profile = () => {
         } else {
             setPasswordProvider(false);
         }
-    }, [user]);
-
-    // loading animation
-    const options = {
-        animationData: loadingAnimation,
-        loop: true,
-
-    };
-    const { View } = useLottie(options);
+    }, [user]);   
 
     return (
         <>
             {
                 !user
                     ?
-                    <div className="w-full h-[500px] flex flex-col justify-center items-center">
-                        <div className="w-40">
-                            {View}
-                        </div>
-                        <span className="mx-auto">
-                            loading...
-                        </span>
-                    </div>
+                    <Loading />
                     :
                     <div className="lg-container sm:border px-0 sm:px-4 md:px-6 py-6 lg:px-10 lg:py-10 rounded-2xl space-y-10">
                         {/* Profile general section */}

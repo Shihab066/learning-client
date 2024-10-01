@@ -19,7 +19,13 @@ const AddClass = () => {
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
 
-    // Handle course thumbnail change
+    // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
+    const handleEnterButton = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    };
+
     const handleCourseThumbnail = (event) => {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -28,50 +34,6 @@ const AddClass = () => {
             setThumbnail(null);
             alert('Please select a valid image file.');
         }
-    };
-
-    // Validate course content (milestones)
-    const validateCourseContent = () => {
-        const courseContentLength = milestonesData[0]?.milestoneModules[0]?.moduleItems?.length ?? 0;
-        setCourseContentError(courseContentLength === 0);
-        setCheckCourseContentError(true);
-    };
-
-    useEffect(() => {
-        if (checkCourseContentError) {
-            validateCourseContent();
-        }
-    }, [milestonesData]);
-
-    // Handle form submission
-    const onSubmit = async (data) => {
-        const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
-
-        if (courseContentError) return;
-
-        const { email } = user;
-        const uploadedThumbnail = await uploadThumbnail(courseThumbnail[0]);
-
-        const newClass = {
-            email,
-            courseName,
-            courseThumbnail: uploadedThumbnail,
-            shortDescription,
-            description,
-            level,
-            category,
-            seats: parseInt(seats),
-            price: parseFloat(price),
-            courseContents: milestonesData,
-            publish: true
-        };
-
-        axiosSecure.post('/classes', newClass).then(res => {
-            if (res.data.insertedId) {
-                resetForm();
-                showSuccessMessage();
-            }
-        });
     };
 
     const uploadThumbnail = async (img) => {
@@ -90,35 +52,24 @@ const AddClass = () => {
         return null;
     };
 
-    const resetForm = () => {
-        setThumbnail(null);
-        setMilestonesData([]);
-        setCheckCourseContentError(false);
-        reset();
+    const validateCourseContent = () => {
+        const courseContentLength = milestonesData[0]?.milestoneModules[0]?.moduleItems?.length ?? 0;
+        setCourseContentError(courseContentLength === 0);
+        setCheckCourseContentError(true);
     };
 
-    const showSuccessMessage = () => {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Class Added Successfully',
-            showConfirmButton: false,
-            timer: 2000
-        });
-    };
-
-    // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
-    const handleEnterButton = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
+    useEffect(() => {
+        if (checkCourseContentError) {
+            validateCourseContent();
         }
-    };
+    }, [milestonesData]);
+
 
     // Course level options
     const courseLevelOptions = [
-        { value: "Beginner", label: "Beginner" },
-        { value: "Intermediate", label: "Intermediate" },
-        { value: "Advanced", label: "Advanced" },
+        { value: "beginner", label: "Beginner" },
+        { value: "intermediate", label: "Intermediate" },
+        { value: "advanced", label: "Advanced" },
     ];
 
     // Course category options
@@ -136,6 +87,55 @@ const AddClass = () => {
         { value: 'lifestyle', label: 'Lifestyle' },
         { value: 'teaching-academics', label: 'Teaching & Academics' }
     ];
+
+    // Handle form submission
+    const onSubmit = async (data) => {
+        const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
+
+        if (courseContentError) return;
+
+        const { uid } = user;
+        const uploadedThumbnail = await uploadThumbnail(courseThumbnail[0]);
+
+        const newClass = {
+            _instructorId: uid,
+            courseName,
+            courseThumbnail: uploadedThumbnail,
+            shortDescription,
+            description,
+            level,
+            category,
+            seats: parseInt(seats),
+            price: parseFloat(price),
+            discount: 0,
+            courseContents: milestonesData,
+            publish: true
+        };
+
+        axiosSecure.post('/classes', newClass).then(res => {
+            if (res.data.insertedId) {
+                resetForm();
+                showSuccessMessage();
+            }
+        });
+    };
+
+    const resetForm = () => {
+        setThumbnail(null);
+        setMilestonesData([]);
+        setCheckCourseContentError(false);
+        reset();
+    };
+
+    const showSuccessMessage = () => {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Class Added Successfully',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    };
 
     return (
         <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 py-10 w-full xl:border rounded-lg">
@@ -163,6 +163,7 @@ const AddClass = () => {
                         <span className="label-text">Course Thumbnail</span>
                     </label>
                     <div className={`border p-2 sm:p-4 rounded-lg ${errors.courseThumbnail ? 'border-red-500' : 'border-base-300'}`}>
+                        <p className="font-medium mb-2">Image Preview</p>
                         <div className="sm:w-[26rem] sm:h-[16rem] border rounded-xl sm:p-4">
                             <img
                                 className="w-full h-full object-cover rounded-lg"
@@ -213,7 +214,7 @@ const AddClass = () => {
                     <label className="label">
                         <span className="label-text">Course Content</span>
                     </label>
-                    <div className={`w-full h-full border ${courseContentError ? 'border-red-500' : ''} p-4 rounded-lg`}>
+                    <div className={`w-full h-full border ${courseContentError ? 'border-red-500' : ''} p-2 sm:p-4 rounded-lg`}>
                         {/* Button to trigger modal */}
                         <label htmlFor="newMilestone" className="btn bg-blue-600 hover:bg-blue-700 text-white duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

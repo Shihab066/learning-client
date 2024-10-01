@@ -22,11 +22,19 @@ const SignUp = () => {
     const onSubmit = async (data) => {
         const { name, email, password } = data;
         await createUser(email, password)
-            .then(() => {
+            .then((result) => {
                 updateUser(name, image)
                     .then(() => {
                         setImage('')
-                        axios.post('https://learning-info-bd.vercel.app/users', { name: name || "anonymous", email, image, role: 'student', signupMethod: 'password'  })
+                        const userData = {
+                            _id: result?.user?.uid,
+                            name: name || "anonymous",
+                            email,
+                            image,
+                            role: 'student',
+                            signupMethod: 'password'
+                        }
+                        axios.post('https://learning-info-bd.vercel.app/users', userData)
                             .then(data => {
                                 if (data.data.insertedId) {
                                     reset()

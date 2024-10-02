@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import searchIcon from '../../../assets/icon/search_icon.svg'
-import axios from 'axios';
 import GenerateDynamicStar from '../../../components/GenerateDynamicStar/GenerateDynamicStar';
 import UpdateCourse from './UpdateCourse';
 import { Link } from 'react-router-dom';
@@ -8,6 +7,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useAuth from '../../../hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/Loading/Loading';
+import Swal from 'sweetalert2';
 
 
 const MyCourses = () => {
@@ -21,11 +21,43 @@ const MyCourses = () => {
         queryKey: ['courses', user?.uid],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5874/courses/${user?.uid}`);
+            const res = await axiosSecure.get(`/courses/${user?.uid}`);
             return res.data;
         }
     })
     console.log(courses)
+
+    const handlePublishStatus = ({ insturctorId, courseId, publishStatus, refetchCourses }) => {
+        const confirmBtnText = publishStatus ? 'Publish' : 'Unpublish';
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: confirmBtnText
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosSecure.patch(`/updatePublishStatus?id=${insturctorId}&courseId=${courseId}`, { publish: publishStatus }).then(res => {
+                    if (res.data.modifiedCount) {
+                        toast('Publish Status Updated');
+                        refetchCourses();
+                    }
+                })
+            }
+        });
+
+    }
+
+    const toast = (message) => {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 2000
+        });
+    };
     return (
         <div className='relative pt-14 xl:pt-0'>
             <div className="space-y-3">
@@ -56,7 +88,8 @@ const MyCourses = () => {
                         <UpdateCourse
                             setIsUpdateCourseOpen={setIsUpdateCourseOpen}
                             courseId={courseId}
-                            setCourseId={setCourseId}                            
+                            setCourseId={setCourseId}
+                            refetchCourses={refetch}
                         />
                         :
                         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -66,6 +99,8 @@ const MyCourses = () => {
                                     course={course}
                                     setCourseId={setCourseId}
                                     setIsUpdateCourseOpen={setIsUpdateCourseOpen}
+                                    handlePublishStatus={handlePublishStatus}
+                                    refetchCourses={refetch}
                                 />
                             )}
                         </div>
@@ -76,7 +111,7 @@ const MyCourses = () => {
     );
 };
 
-const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId }) => {
+const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, refetchCourses }) => {
     const rating = 4.6;
     const totalReviews = 1456;
     const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish } = course;
@@ -103,6 +138,14 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId }) => {
                         {level}
                     </p>
 
+                    {/* status */}
+                    <p>
+                        Status:
+                        <span className={`ml-2 font-medium capitalize ${status === 'pending' ? 'text-blue-600' : status === 'active' ? 'text-green-600' : status === 'reject' ? 'text-red-600' : ''}`}>
+                            {status}
+                        </span>
+                    </p>
+
                     {/* rating */}
                     <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
                         <GenerateDynamicStar rating={rating} />
@@ -116,7 +159,13 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId }) => {
                         {discount
                             ? (
                                 <div className="flex justify-start items-start gap-x-3">
-                                    <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
+                                    {
+                                        discount < 100
+                                            ?
+                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(2)}</p>
+                                            :
+                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">Free</p>
+                                    }
                                     <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
                                     <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
                                 </div>
@@ -162,6 +211,23 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId }) => {
                             </svg>
                         </label>
                     </div>
+
+                    {/* course publish control */}
+                    <button
+                        onClick={() => {
+                            handlePublishStatus(
+                                {
+                                    insturctorId: _instructorId,
+                                    courseId: _id,
+                                    publishStatus: !publish,
+                                    refetchCourses
+                                }
+                            )
+                        }
+                        }
+                        className='btn text-white bg-black hover:bg-black hover:shadow-lg duration-300 capitalize'>
+                        {publish ? 'Unpublish' : 'Publish'}
+                    </button>
                 </div>
             </div>
         </>

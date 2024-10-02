@@ -21,7 +21,7 @@ const ProfileLayout = () => {
 
     return (
         <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 xl:pt-10 relative">
-            <div className="w-fit h-full absolute xl:static top-0 left-0">
+            <div className="w-fit h-full absolute xl:sticky top-0 xl:top-24 left-0">
                 <div className="relative w-full h-full">
                     {/* aside open icon */}
                     <button onClick={handleAside} className="w-10 h-10 sticky top-16 sm:top-[4.4rem] lg:top-[4.7rem] ml-3.5 xl:hidden animate text-white z-10">

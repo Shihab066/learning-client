@@ -11,18 +11,18 @@ import Loading from "../../../components/Loading/Loading";
 
 const imgHostingSecretKey = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 
-const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
+const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCourses }) => {
 
     const { data: course, refetch, isLoading } = useQuery({
         queryKey: ['course', courseId],
         enabled: true,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5874/course?${courseId}`);
+            const res = await axiosSecure.get(`/course?${courseId}`);
             return res.data;
         }
     })
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();    
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [formData, setFormData] = useState(course);
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
     const [axiosSecure] = useAxiosSecure();
@@ -41,7 +41,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
 
     const handleNumberInput = (e) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({ ...prevData, [name]: value && parseFloat(value)  }));
+        setFormData(prevData => ({ ...prevData, [name]: value && parseFloat(value) }));
     }
 
     useEffect(() => {
@@ -151,14 +151,14 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
             price: parseFloat(price),
             discount: parseFloat(discount) || 0,
             courseContents: milestonesData,
-        };        
+        };
 
-        axiosSecure.patch(`http://localhost:5874/updateCourse?${courseId}`, updatedCourse).then(res => {
-            if (res.data.modifiedCount) {
-                console.log('updated')
+        axiosSecure.patch(`/updateCourse?${courseId}`, updatedCourse).then(res => {
+            if (res.data.modifiedCount) {                
                 resetForm();
                 showSuccessMessage();
                 refetch();
+                refetchCourses();
             }
         });
     };
@@ -173,7 +173,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
         Swal.fire({
             position: 'center',
             icon: 'success',
-            title: 'Class Added Successfully',
+            title: 'Course Update Successfully',
             showConfirmButton: false,
             timer: 2000
         });
@@ -184,14 +184,14 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
             {
                 (!isLoading && formData && milestonesData)
                     ?
-                    <div onKeyDown={handleEnterButton} id="addCourse" className={`md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg relative ${isLoading ? 'hidden' : 'block'}`}>
-                        <h3 className="py-5 font-bold text-xl">Update Course</h3>
+                    <div onKeyDown={handleEnterButton} id="addCourse" className={`px-0 xl:px-8 pb-10 w-full xl:border rounded-lg relative ${isLoading ? 'hidden' : 'block'}`}>
+                        <h3 className="py-2 md:py-5 font-bold text-xl">Update Course</h3>
                         <button
                             onClick={() => {
                                 setIsUpdateCourseOpen(false)
                                 setCourseId('')
                             }}
-                            className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4">✕</button>
+                            className="btn btn-sm btn-circle btn-ghost bg-base-300 absolute top-0 right-0 sm:top-2 sm:right-2 xl:right-4 xl:top-4">✕</button>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 
                             {/* Class Name */}
@@ -237,7 +237,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        className="file-input file-input-bordered mt-4 w-full focus:outline-0"
+                                        className="file-input file-input-sm sm:file-input-md file-input-bordered mt-4 w-full focus:outline-0"
                                         {...register('courseThumbnail', { onChange: handleCourseThumbnail })}
                                     />
                                 </div>
@@ -358,11 +358,11 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
                                                 isInteger: (value) => {
                                                     Number.isInteger(Number(value))
                                                 }
-                                            },                                            
+                                            },
                                         })}
                                     />
                                     {errors.seats?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                                    {errors.seats?.type === 'min' && <span className="text-red-600">Seats must be a positive</span>}                                    
+                                    {errors.seats?.type === 'min' && <span className="text-red-600">Seats must be a positive</span>}
                                 </div>
 
                                 {/* Price */}
@@ -378,10 +378,10 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
                                         {...register('price', { required: true, min: 0, onChange: handleNumberInput })}
                                     />
                                     {errors.price?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                                    {errors.price?.type === 'min' && <span className="text-red-600">Price must be a positive</span>}
+                                    {errors.price?.type === 'min' && <span className="text-red-600">Price must be a positive</span>}                                    
                                 </div>
 
-                                {/* Discount Price */}
+                                {/* Discount */}
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text">Discount %</span>
@@ -394,6 +394,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId }) => {
                                         {...register('discount', { min: 0, max: 100, onChange: handleNumberInput })}
                                     />
                                     {errors.discount?.type === 'min' && <span className="text-red-600">Discount must be a positive</span>}
+                                    {errors.discount?.type === 'max' && <span className="text-red-600">Discount must be less or equal to 100</span>}
                                 </div>
                             </div>
 

@@ -494,7 +494,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                             {...register('bioData', { maxLength: 500, onChange: handleBioDataInput })}
                         />
                         <span className={`absolute bottom-4 right-4 text-xs ${isBioDataMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
-                            {bioDataValue?.length} / 500
+                            {bioDataValue?.length || 0} / 500
                         </span>
                     </div>
                     {isBioDataMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}
@@ -527,7 +527,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                             {...register('experience', { maxLength: 500, onChange: handleExperienceDataInput })}
                         />
                         <span className={`absolute bottom-4 right-4 text-xs ${isExperienceMaxLengthReached ? 'text-red-600' : 'text-gray-600'}`}>
-                            {experienceInputValue?.length} / 500
+                            {experienceInputValue?.length || 0} / 500
                         </span>
                     </div>
                     {isExperienceMaxLengthReached && <span className="text-red-600">You have reached the maximum character limit.</span>}

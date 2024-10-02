@@ -296,11 +296,11 @@ const AddClass = () => {
                     {/* Price */}
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text">Price</span>
+                            <span className="label-text">Price $</span>
                         </label>
                         <input
                             type="number"
-                            placeholder="Class Price"
+                            placeholder="Course Price"
                             className={`input input-info ${errors.price ? 'border-red-500' : "border-base-300 focus:border-blue-500"} focus:outline-0`}
                             {...register('price', { required: true })}
                         />

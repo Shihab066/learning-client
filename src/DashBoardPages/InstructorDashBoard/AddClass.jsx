@@ -6,14 +6,13 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import AddMilestone from "./AddMilestone/AddMilestone";
 import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
-
-const imgHostingSecretKey = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
+import useUploadImage from "../../hooks/useUploadImage";
 
 const AddClass = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
-    const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${imgHostingSecretKey}`;
+    const { uploadImage } = useUploadImage();    
     const [thumbnail, setThumbnail] = useState(null);
     const [milestonesData, setMilestonesData] = useState([]);
     const [courseContentError, setCourseContentError] = useState(false);
@@ -34,22 +33,6 @@ const AddClass = () => {
             setThumbnail(null);
             alert('Please select a valid image file.');
         }
-    };
-
-    const uploadThumbnail = async (img) => {
-        if (img) {
-            const formData = new FormData();
-            formData.append('image', img);
-            const response = await fetch(imgHostingUrl, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.success) {
-                return data.data.display_url;
-            }
-        }
-        return null;
     };
 
     const validateCourseContent = () => {
@@ -95,7 +78,7 @@ const AddClass = () => {
         if (courseContentError) return;
 
         const { uid } = user;
-        const uploadedThumbnail = await uploadThumbnail(courseThumbnail[0]);
+        const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
 
         const newClass = {
             _instructorId: uid,

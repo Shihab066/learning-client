@@ -7,9 +7,7 @@ import AddMilestone from "../AddMilestone/AddMilestone";
 import dummyThumbnail from '../../../assets/images/dummyCourseThumbnail.png';
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../components/Loading/Loading";
-
-
-const imgHostingSecretKey = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
+import useUploadImage from "../../../hooks/useUploadImage";
 
 const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCourses }) => {
 
@@ -26,7 +24,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     const [formData, setFormData] = useState(course);
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
     const [axiosSecure] = useAxiosSecure();
-    const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${imgHostingSecretKey}`;
+    const { uploadImage } = useUploadImage();
     const [thumbnail, setThumbnail] = useState(null);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
@@ -68,7 +66,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     };
 
     const handleCourseThumbnail = (event) => {
-        setFormData(prevData => ({ ...prevData, courseThumbnail: event.target.value || course?.courseThumbnail }))
+        setFormData(prevData => ({ ...prevData, courseThumbnail: event.target.files[0] || course?.courseThumbnail }))
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setThumbnail(URL.createObjectURL(file));
@@ -76,22 +74,6 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             setThumbnail(null);
             alert('Please select a valid image file.');
         }
-    };
-
-    const uploadThumbnail = async (img) => {
-        if (img) {
-            const formData = new FormData();
-            formData.append('image', img);
-            const response = await fetch(imgHostingUrl, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.success) {
-                return data.data.display_url;
-            }
-        }
-        return null;
     };
 
     const resetImagePreview = () => {
@@ -142,7 +124,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
 
         if (courseContentError) return;
 
-        const uploadedThumbnail = await uploadThumbnail(courseThumbnail[0]);
+        const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
 
         const updatedCourse = {
             ...data,

@@ -34,7 +34,7 @@ const ProfileLayout = () => {
                     <article className="flex flex-col justify-center items-center gap-y-2 pb-6 relative min-w-[280px] xl:min-w-full">
                         <img
                             className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover"
-                            src="https://i.ibb.co.com/JmPSDz7/instructor-Profile1.jpg"
+                            src="https://res.cloudinary.com/dg1rgmkkb/image/upload/v1727972591/ik2d3ysomiajfxb85ifq.jpg"
                             alt="profile image" />
                         <h2 className="text-gray-900 text-xl font-medium">
                             John Doe

@@ -9,15 +9,16 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import useUserRole from "../../../hooks/useUserRole";
 import Loading from "../../../components/Loading/Loading";
-const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
+import useUploadImage from "../../../hooks/useUploadImage";
 
 const Profile = () => {
     // React Hook Form setup
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
 
-    // Custom hooks for authentication and secure axios instance
+    // Custom hooks for authentication, image upload and secure axios instance
     const { user, updateUser, updateUserPassword, reAuthenticateUser, EmailAuthProvider } = useAuth();
     const [axiosSecure] = useAxiosSecure();
+    const { uploadImage } = useUploadImage();
 
     // Custom hooks to get user role
     const [userRole] = useUserRole();
@@ -30,9 +31,7 @@ const Profile = () => {
     const [passwordUpdateDisable, setPasswordUpdateDisable] = useState(true);
     const [confirmError, setConfirmError] = useState(false);
     const [isPasswordProvider, setPasswordProvider] = useState(false);
-
-    // Image hosting URL
-    const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
+    
 
     // Fetch user data using react-query
     const { data: userData = {} } = useQuery({
@@ -69,40 +68,12 @@ const Profile = () => {
     const handleUpdateProfile = async (event) => {
         event.preventDefault();
         const form = event.target;
-        const name = form.name.value;
-        const image = form.profileImg.files;
-        const formData = new FormData();
-        formData.append('image', image[0]);
+        const name = form.name.value || user?.displayName;
+        const image = await uploadImage(form.profileImg.files[0]) || user?.photoURL;
 
-        // If a new image is provided, upload it
-        if (image[0]) {
-            await fetch(img_hosting_url, {
-                method: 'post',
-                body: formData
-            })
-                .then(res => res.json())
-                .then(async (data) => {
-                    if (data.success) {
-                        const newName = name || user?.displayName;
-                        const imgUrl = data.data.display_url;
-                        await updateUser(newName, imgUrl);
-                        axiosSecure.patch(`https://learning-info-bd.vercel.app/updateUser/${userData?._id}`, { name: newName || user?.displayName || 'anonymous', image: imgUrl })
-                            .then(res => {
-                                if (res.data.modifiedCount) {
-                                    Swal.fire({
-                                        position: 'center',
-                                        icon: 'success',
-                                        title: 'Profile Update Successfully',
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    });
-                                }
-                            });
-                    }
-                });
-        } else { // If no new image, update profile with existing data
-            await updateUser(name, user?.photoURL);
-            axiosSecure.patch(`https://learning-info-bd.vercel.app/updateUser/${userData?._id}`, { name: name || 'anonymous', image: user?.photoURL })
+        try {
+            await updateUser(name, image);
+            axiosSecure.patch(`https://learning-info-bd.vercel.app/updateUser/${userData?._id}`, { name, image })
                 .then(res => {
                     if (res.data.modifiedCount) {
                         Swal.fire({
@@ -114,6 +85,9 @@ const Profile = () => {
                         });
                     }
                 });
+        } catch (error) {
+            console.log("Something went wrong while updating profile data:", error);
+
         }
 
         form.reset();
@@ -185,7 +159,7 @@ const Profile = () => {
         } else {
             setPasswordProvider(false);
         }
-    }, [user]);   
+    }, [user]);
 
     return (
         <>

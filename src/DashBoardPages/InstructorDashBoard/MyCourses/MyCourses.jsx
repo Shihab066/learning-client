@@ -17,6 +17,7 @@ const MyCourses = () => {
     const [isUpdateCourseOpen, setIsUpdateCourseOpen] = useState(false);
     // const { courseThumbnail, courseName, shortDescription, fullDescription, rating, totalReviews, courseDuration, totalLectures, price, discount } = courses;
 
+    // fetch all courses
     const { data: courses = [], refetch, isLoading } = useQuery({
         queryKey: ['courses', user?.uid],
         enabled: !loading,
@@ -25,8 +26,8 @@ const MyCourses = () => {
             return res.data;
         }
     })
-    console.log(courses)
 
+    // change publish status
     const handlePublishStatus = ({ insturctorId, courseId, publishStatus, refetchCourses }) => {
         const confirmBtnText = publishStatus ? 'Publish' : 'Unpublish';
         Swal.fire({
@@ -46,7 +47,27 @@ const MyCourses = () => {
                 })
             }
         });
+    }
 
+    const deleteCourse = ({ insturctorId, courseId, refetchCourses }) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosSecure.delete(`/deleteCourse?id=${insturctorId}&courseId=${courseId}`).then(res => {
+                    if (res.data.deletedCount) {
+                        toast('Course Deleted');
+                        refetchCourses();
+                    }
+                })
+            }
+        });
     }
 
     const toast = (message) => {
@@ -100,6 +121,7 @@ const MyCourses = () => {
                                     setCourseId={setCourseId}
                                     setIsUpdateCourseOpen={setIsUpdateCourseOpen}
                                     handlePublishStatus={handlePublishStatus}
+                                    deleteCourse={deleteCourse}
                                     refetchCourses={refetch}
                                 />
                             )}
@@ -111,7 +133,7 @@ const MyCourses = () => {
     );
 };
 
-const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, refetchCourses }) => {
+const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {
     const rating = 4.6;
     const totalReviews = 1456;
     const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish } = course;
@@ -205,7 +227,17 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                         </Link>
 
                         {/* delete */}
-                        <label className='w-fit border rounded-md px-2 py-1.5 bg-red-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='delete'>
+                        <label
+                            onClick={() => {
+                                deleteCourse(
+                                    {
+                                        insturctorId: _instructorId,
+                                        courseId: _id,
+                                        refetchCourses
+                                    }
+                                )
+                            }}
+                            className='w-fit border rounded-md px-2 py-1.5 bg-red-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='delete'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-6'>
                                 <path fill="currentColor" d="M6.187 8h11.625l-.695 11.125A2 2 0 0 1 15.121 21H8.879a2 2 0 0 1-1.996-1.875zM19 5v2H5V5h3V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1zm-9 0h4V4h-4z"></path>
                             </svg>

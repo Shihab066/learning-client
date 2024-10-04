@@ -22,7 +22,7 @@ const MyCourses = () => {
         queryKey: ['courses', user?.uid],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/courses/${user?.uid}`);
+            const res = await axiosSecure.get(`http://localhost:5000/courses/${user?.uid}`);
             return res.data;
         }
     })
@@ -133,10 +133,11 @@ const MyCourses = () => {
     );
 };
 
-const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {
-    const rating = 4.6;
-    const totalReviews = 1456;
-    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish } = course;
+const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {    
+    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, reviews } = course;
+    const totalReviews = reviews.length;
+    const rating = parseFloat((reviews.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / totalReviews).toFixed(1));
+
     return (
         <>
             <div className="w-full xl:w-[18rem] 2xl:w-[20rem] bg-white border border-[#E2E8F0] shadow-[0px_0px_8px_0px] shadow-[#3b82f61f] rounded-2xl justify-self-center">
@@ -170,7 +171,12 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
 
                     {/* rating */}
                     <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
-                        <GenerateDynamicStar rating={rating} />
+                        <div className='flex items-center gap-x-1'>
+                            <span className='font-medium text-gray-700'>
+                                {rating}
+                            </span>
+                            <GenerateDynamicStar rating={rating} />
+                        </div>
                         <span>
                             ({totalReviews} Ratings)
                         </span>

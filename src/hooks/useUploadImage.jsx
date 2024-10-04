@@ -7,7 +7,7 @@ const useUploadImage = () => {
   const uploadImage = async (image) => {
     if (image) {
       // Request upload signature from your backend
-      const { data } = await axiosSecure.get('http://localhost:5000/get-signature');
+      const { data } = await axiosSecure.get('/get-signature');
 
       const formData = new FormData();
       formData.append('file', image);

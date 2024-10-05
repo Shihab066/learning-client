@@ -53,7 +53,7 @@ const Classes = () => {
         if (currentPage) params.set('page', currentPage);
         if (sortValue) params.set('sort', sortValue === 1 ? 'price.ASC' : sortValue === -1 ? 'price.DESC' : '');
         if (searchValue) params.set('search', searchValue);
-        navigate(`/courses?${params.toString()}`, {replace : true});        
+        navigate(`/courses?${params.toString()}`, { replace: true });
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
 

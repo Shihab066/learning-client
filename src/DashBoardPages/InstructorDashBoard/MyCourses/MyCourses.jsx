@@ -15,17 +15,23 @@ const MyCourses = () => {
     const { user, loading } = useAuth();
     const [courseId, setCourseId] = useState('');
     const [isUpdateCourseOpen, setIsUpdateCourseOpen] = useState(false);
-    // const { courseThumbnail, courseName, shortDescription, fullDescription, rating, totalReviews, courseDuration, totalLectures, price, discount } = courses;
+    const [searchValue, setSearchValue] = useState('');
 
     // fetch all courses
     const { data: courses = [], refetch, isLoading } = useQuery({
-        queryKey: ['courses', user?.uid],
+        queryKey: ['courses', user?.uid, searchValue],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/courses/${user?.uid}`);
+            const res = await axiosSecure.get(`http://localhost:5000/courses/${user?.uid}?search=${searchValue}`);
             return res.data;
         }
     })
+
+    // handleSearch
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSearchValue(e.target.search.value);
+    }
 
     // change publish status
     const handlePublishStatus = ({ insturctorId, courseId, publishStatus, refetchCourses }) => {
@@ -83,20 +89,22 @@ const MyCourses = () => {
         <div className='relative pt-14 xl:pt-0'>
             <div className="space-y-3">
                 <h2 className="text-lg font-medium">Courses</h2>
-                <div className="sm:w-[18rem] h-fit relative">
+                <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                     <input
+                        autoComplete='off'
+                        name='search'
                         type="text"
                         placeholder="Search Course"
                         className="w-full border py-1.5 rounded-md pl-2 pr-10 focus:outline-none"
                     />
                     {/* search icon */}
-                    <button>
+                    <button type='submit'>
                         <img
                             className='w-6 absolute right-2 top-1/2 -translate-y-1/2'
                             src={searchIcon}
                             alt="search icon" />
                     </button>
-                </div>
+                </form>
             </div>
 
             <div className='mt-8'>
@@ -133,10 +141,8 @@ const MyCourses = () => {
     );
 };
 
-const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {    
-    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, reviews } = course;
-    const totalReviews = reviews.length;
-    const rating = parseFloat((reviews.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / totalReviews).toFixed(1));
+const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {
+    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, rating, totalReviews } = course;    
 
     return (
         <>
@@ -172,9 +178,15 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                     {/* rating */}
                     <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
                         <div className='flex items-center gap-x-1'>
-                            <span className='font-medium text-gray-700'>
-                                {rating}
-                            </span>
+                            {
+                                rating
+                                    ?
+                                    <span className='font-medium text-gray-700'>
+                                        {rating}
+                                    </span>
+                                    :
+                                    ''
+                            }
                             <GenerateDynamicStar rating={rating} />
                         </div>
                         <span>

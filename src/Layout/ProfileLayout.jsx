@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import shareIcon from '../assets/icon/shareicon.svg';
-
+import useAuth from "../hooks/useAuth";
+import dummyProfile from '../assets/icon/user_icon.png';
 
 const ProfileLayout = () => {
+    const { user } = useAuth();
     // link to navigate different section of this page
     const links = [
         { text: 'Profile', url: 'profile' },
@@ -14,14 +16,26 @@ const ProfileLayout = () => {
 
     // state to manage the aside section in mobile device
     const [isAsideOpen, setIsAsideOpen] = useState(false);
-
+   
     const handleAside = () => {
         setIsAsideOpen(!isAsideOpen);
     }
 
+    const [stickyNav, setStickyNav] = useState(false);
+    useEffect(() => {
+      const handleScroll = () => {
+        setStickyNav(window.scrollY > 800);
+      };
+      window.addEventListener("scroll", handleScroll);
+  
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+
     return (
         <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 xl:pt-10 relative">
-            <div className="w-fit h-full absolute xl:sticky top-0 xl:top-24 left-0">
+            <div className={`w-fit h-full absolute xl:sticky top-0 xl:${stickyNav ? 'top-24' : 'top-4'} left-0 duration-300`}>
                 <div className="relative w-full h-full">
                     {/* aside open icon */}
                     <button onClick={handleAside} className="w-10 h-10 sticky top-16 sm:top-[4.4rem] lg:top-[4.7rem] ml-3.5 xl:hidden animate text-white z-10">
@@ -34,7 +48,7 @@ const ProfileLayout = () => {
                     <article className="flex flex-col justify-center items-center gap-y-2 pb-6 relative min-w-[280px] xl:min-w-full">
                         <img
                             className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover"
-                            src="https://res.cloudinary.com/dg1rgmkkb/image/upload/v1727972591/ik2d3ysomiajfxb85ifq.jpg"
+                            src={user?.photoURL || dummyProfile}
                             alt="profile image" />
                         <h2 className="text-gray-900 text-xl font-medium">
                             John Doe

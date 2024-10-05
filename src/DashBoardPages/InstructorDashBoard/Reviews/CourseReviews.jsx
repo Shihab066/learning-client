@@ -1,53 +1,80 @@
 import { useEffect, useState } from "react";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import searchIcon from '../../../assets/icon/search_icon.svg';
+import CourseReviewsSkeleton from "./CourseReviewsSkeleton";
 
 const CourseReviews = () => {
-    const reviews = [
-        {
-            id: 'ggasdgsad4g6d4gag4a65g46',
-            userName: "Jhon Doe jhon ddflsf kfdaslfkas",
-            userImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            courseName: 'Beginners Guide to Design ',
-            rating: 4,
-            review: 'I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.'
-        },
-        {
-            id: 'ggasdgsad4dgfggag4a65g46',
-            userName: "Jhon Doe",
-            userImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            courseName: 'Beginners Guide to Design',
-            rating: 4,
-            review: 'I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.'
-        },
-        {
-            id: 'gghghgfdgsad4g6d4gag4a65g46',
-            userName: "Jhon Doe",
-            userImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            courseName: 'Beginners Guide to Design',
-            rating: 4,
-            review: 'I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.'
-        },
-        {
-            id: 'hgfdgsad4g6dfsdffa4gag4a65g46',
-            userName: "Jhon Doe",
-            userImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            courseName: 'Beginners Guide to Design',
-            rating: 4,
-            review: 'I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding. I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding.'
+    const { user, loading } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
+    const [searchValue, setSearchValue] = useState('');
+    const [limit, setLimit] = useState(4);
+
+    // fetch all courses
+    const { data, isLoading } = useQuery({
+        queryKey: ['reviews', user?.uid, searchValue, limit],
+        enabled: !loading,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`http://localhost:5000/instructorCoursesReviews/4x73dGvWwvdU3A9yZovjDao7ZeF2?search=${searchValue}&limit=${limit}`);
+            return res.data;
         }
-    ]
+    })
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSearchValue(e.target.search.value);
+    }
 
     return (
         <div className="space-y-6">
-            <h2 className="text-lg font-medium">Reviews</h2>
+            <div className="flex justify-between items-top">
+                <h2 className="text-lg font-medium">Reviews</h2>
+                <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
+                    <input
+                        autoComplete="off"
+                        name="search"
+                        type="text"
+                        placeholder="Search Review"
+                        className="w-full border py-1.5 rounded-md pl-2 pr-10 focus:outline-none"
+                    />
+                    {/* search icon */}
+                    <button type="submit">
+                        <img
+                            className='w-6 absolute right-2 top-1/2 -translate-y-1/2'
+                            src={searchIcon}
+                            alt="search icon" />
+                    </button>
+                </form>
+            </div>
             <div className="space-y-4">
                 {
-                    reviews?.map((reviewData, index) =>
-                        <CourseReviewCard
-                            key={index}
-                            reviewData={reviewData}
-                        />
-                    )
+                    isLoading
+                        ?
+                        <CourseReviewsSkeleton />
+                        : data?.reviews.length
+                            ?
+                            <>
+                                {
+                                    data?.reviews?.map((reviewData, index) =>
+                                        <CourseReviewCard
+                                            key={index}
+                                            reviewData={reviewData}
+                                        />
+                                    )
+                                }
+                                {
+                                    data?.totalReviews > 4 && data?.totalReviews !== data?.reviews.length &&
+                                    <button onClick={() => setLimit(limit + 6)} className={`btn btn-md capitalize outline outline-1 outline-gray-900  text-sm sm:text-base text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300`}>
+                                        View more Reviews
+                                    </button>
+                                }
+                            </>
+                            :
+                            <div className="h-[500px] flex items-center justify-center">
+                                <p className="text-gray-400 text-lg font-medium">No Review Found</p>
+                            </div>
                 }
             </div>
         </div>
@@ -60,8 +87,7 @@ const CourseReviewCard = ({ reviewData }) => {
     const [isReviewOverflow, setIsReviewOverflow] = useState(false);
     const [modifiedReview, setModifiedReview] = useState('');
     const [seeMoreEnabled, setSeeMoreEnabled] = useState(false);
-    console.log(reviewTextLength);
-    
+
 
     const handleReviewTextLength = () => {
         const screenSize = window.innerWidth;
@@ -99,12 +125,12 @@ const CourseReviewCard = ({ reviewData }) => {
 
     useEffect(() => {
         handleReviewTextLength()
-    }, [window.innerWidth])
+    }, [])
 
     useEffect(() => {
-        setIsReviewOverflow(review.length > reviewTextLength);
-        setModifiedReview(review.slice(0, reviewTextLength) + '...')
-    }, [reviewTextLength])
+        setIsReviewOverflow(review?.length > reviewTextLength);
+        setModifiedReview(review?.slice(0, reviewTextLength) + '...')
+    }, [review, reviewTextLength])
     return (
         <div className="w-full space-y-2 border  px-4 py-4 rounded-xl">
             {/* reviewer info */}
@@ -133,7 +159,7 @@ const CourseReviewCard = ({ reviewData }) => {
                     {isReviewOverflow ? (
                         <div className="h-fit relative">
                             {seeMoreEnabled && <div style={gradientToBottom} className="w-full h-4 absolute top-0"></div>}
-                            <p className="h-40 sm:h-20 overflow-y-auto text-[0.938rem] md:pr-4 thin-scrollbar">
+                            <p className="h-40 sm:h-fit sm:max-h-20 overflow-y-auto text-[0.938rem] md:pr-4 thin-scrollbar">
                                 {modifiedReview}
                                 {seeMoreEnabled ? (
                                     <span onClick={handleSeeLess} className="text-blue-600 cursor-pointer ml-1">
@@ -148,7 +174,7 @@ const CourseReviewCard = ({ reviewData }) => {
                             {seeMoreEnabled && <div style={gradientToTop} className="w-full h-[0.375rem] absolute bottom-0"></div>}
                         </div>
                     ) : (
-                        <p className="h-40 sm:h-20 text-[0.938rem] md:pr-4">
+                        <p className="h-40 sm:h-fit sm:max-h-20 text-[0.938rem] md:pr-4">
                             {review}
                         </p>
                     )}

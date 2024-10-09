@@ -22,7 +22,7 @@ const MyCourses = () => {
         queryKey: ['courses', user?.uid, searchValue],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/courses/${user?.uid}?search=${searchValue}`);
+            const res = await axiosSecure.get(`/courses/${user?.uid}?search=${searchValue}`);
             return res.data;
         }
     })

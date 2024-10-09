@@ -6,6 +6,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import useAuth from "../../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Login = () => {
     const location = useLocation();
@@ -13,16 +14,21 @@ const Login = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const { signIn, setloading } = useAuth();
+    const { signIn, setloading, setJwtToken } = useAuth();
     const onSubmit = data => {
         const { email, password } = data;
         signIn(email, password)
-            .then(() => {
-                reset()
-                navigate(from, { replace: true })
+            .then(async (result) => {
+                const user = result.user;
+                const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: user.accessToken });
+                const token = await res.data.token;
+                setJwtToken(token);
+                localStorage.setItem('access-token', token);
+                reset();
+                navigate(from, { replace: true });
             })
             .catch(() => {
-                setloading(false)
+                setloading(false);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',

@@ -6,6 +6,7 @@ import dummyProfile from '../assets/icon/user_icon.png';
 
 const ProfileLayout = () => {
     const { user } = useAuth();
+    
     // link to navigate different section of this page
     const links = [
         { text: 'Profile', url: 'profile' },
@@ -21,7 +22,7 @@ const ProfileLayout = () => {
         setIsAsideOpen(!isAsideOpen);
     }
 
-    const [stickyNav, setStickyNav] = useState(false);
+    const [stickyNav, setStickyNav] = useState(false);    
     useEffect(() => {
       const handleScroll = () => {
         setStickyNav(window.scrollY > 800);
@@ -35,7 +36,7 @@ const ProfileLayout = () => {
 
     return (
         <div className="lg-container h-fit px-4 xl:px-6 xl:flex gap-x-6 xl:gap-x-10 xl:pt-10 relative">
-            <div className={`w-fit h-full absolute xl:sticky top-0 xl:${stickyNav ? 'top-24' : 'top-4'} left-0 duration-300`}>
+            <div className={`w-fit h-full absolute xl:sticky xl:${stickyNav ? 'top-0 xl:top-24' : 'top-0 xl:top-4'} left-0 duration-300`}>
                 <div className="relative w-full h-full">
                     {/* aside open icon */}
                     <button onClick={handleAside} className="w-10 h-10 sticky top-16 sm:top-[4.4rem] lg:top-[4.7rem] ml-3.5 xl:hidden animate text-white z-10">

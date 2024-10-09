@@ -14,7 +14,7 @@ const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
 const SignUp = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const [confirmPassword, setConfirmPassword] = useState(null);
-    const { createUser, updateUser } = useAuth();
+    const { createUser, updateUser, setJwtToken } = useAuth();
     const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
     const [image, setImage] = useState('');
     const navigate = useNavigate();
@@ -22,7 +22,11 @@ const SignUp = () => {
     const onSubmit = async (data) => {
         const { name, email, password } = data;
         await createUser(email, password)
-            .then((result) => {
+            .then(async (result) => {
+                const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: result.user.accessToken });
+                const token = await res.data.token;
+                setJwtToken(token);
+                localStorage.setItem('access-token', token);
                 updateUser(name, image)
                     .then(() => {
                         setImage('')

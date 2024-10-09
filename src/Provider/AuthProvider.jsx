@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
 import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -55,26 +56,69 @@ const AuthProvider = ({ children }) => {
         return signOut(auth)
     }
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, loggeduser => {            
-            setUser(loggeduser)
-            // console.log('logged user ', loggeduser);
-            if (loggeduser) {
-                axios.post('https://learning-info-bd.vercel.app/jwt', { email: loggeduser.email })
-                    .then(res => {
-                        localStorage.setItem('access-token', res.data.token)
-                        setloading(false);
-                    })
+    const [jwtToken, setJwtToken] = useState(localStorage.getItem('access-token'));
+
+    // Function to check if the token is expired or about to expire
+    const isTokenExpiringSoon = (token) => {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000; // Current time in seconds
+
+        // Refresh if token will expire in the next 5 minutes
+        return decodedToken.exp - currentTime < 300; // 300 seconds = 5 minutes
+    };
+
+    const verifyAccessToken = async (token) => {
+        try {
+            const res = await axios.post('http://localhost:5000/api/v1/token/verify', { token })
+            return res.data.valid;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    const refreshAccessToken = async (firebaseToken) => {
+        try {
+            const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: firebaseToken })
+            const token = await res.data.token;
+            if (token) {
+                localStorage.setItem('access-token', token);
+                console.log('refresh token', token);
             }
-            else {
-                localStorage.removeItem('access-token');
-                setloading(false)
+        } catch (error) {
+            console.error('Failed to refresh token', error);
+        }
+    }
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (loggeduser) => {
+            if (jwtToken) {
+                const isTokenValid = await verifyAccessToken(jwtToken);
+                if (loggeduser && isTokenValid) {
+                    setUser(loggeduser)
+                    setloading(false)
+
+                    // Periodically check token expiration
+                    setInterval(() => {
+
+                        if (jwtToken && isTokenExpiringSoon(jwtToken)) {
+                            refreshAccessToken(loggeduser.accessToken);
+                        }
+                    }, 5 * 60 * 1000); // Check every 5 minutes
+                }
+                else {
+                    setUser(null);
+                    logOut();
+                    localStorage.removeItem('access-token');
+                    setloading(false)
+                }
+            } else {
+                setloading(false);
             }
         })
         return () => {
             return unsubscribe();
         }
-    }, [])
+    }, [jwtToken])
 
     const authInfo = {
         auth,
@@ -82,6 +126,7 @@ const AuthProvider = ({ children }) => {
         user,
         loading,
         setloading,
+        setJwtToken,
         createUser,
         updateUser,
         updateUserPassword,

@@ -1,22 +1,17 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import PopularInstructorSkeleton from "../../../components/PopularInstructorsSkeleton.jsx/PopularInstructorSkeleton";
+import { useQuery } from "@tanstack/react-query";
 
-const PopularInstructor = () => {
-    const [instructors, setInstructors] = useState([]);
-    const [loading, setLoading] = useState(true);
+const PopularInstructor = () => {  
 
-    useEffect(() => {
-        axios.get('https://learning-info-bd.vercel.app/topinstructors')
-            .then((res) => {
-                setInstructors(res.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching popularInstructors:", error);
-                setLoading(false);
-            });
-    }, []);
+    // Fetch popular instructor data
+    const { data: instructors = [], isLoading } = useQuery({
+        queryKey: ['popularInstructor'],
+        queryFn: async () => {
+            const res = await axios.get(`https://learning-info-bd.vercel.app/topinstructors`);            
+            return res.data;
+        },
+    });
 
     return (
         <div className="lg-container">
@@ -24,7 +19,7 @@ const PopularInstructor = () => {
                 Popular Instructors
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-6 xl:gap-y-10 sm:px-2 2xl:px-0">
-                {loading
+                {isLoading
                     ?
                     <PopularInstructorSkeleton />
                     :

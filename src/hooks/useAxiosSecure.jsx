@@ -8,7 +8,7 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-  const { logOut } = useAuth(); 
+  const { logOut, loading } = useAuth(); 
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const useAxiosSecure = () => {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
-    });
+    },[loading]);
 
     axiosSecure.interceptors.response.use(
       (response) => response,
@@ -30,7 +30,7 @@ const useAxiosSecure = () => {
         return Promise.reject(error);
       }
     );
-  }, [logOut, navigate]);
+  }, [logOut, navigate, loading]);
 
   return [axiosSecure];
 };

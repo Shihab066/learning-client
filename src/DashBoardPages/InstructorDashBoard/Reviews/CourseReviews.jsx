@@ -17,7 +17,7 @@ const CourseReviews = () => {
         queryKey: ['reviews', user?.uid, searchValue, limit],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/instructorCoursesReviews/4x73dGvWwvdU3A9yZovjDao7ZeF2?search=${searchValue}&limit=${limit}`);
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/review/instructor/${user?.uid}?search=${searchValue}&limit=${limit}`);
             return res.data;
         }
     })
@@ -73,7 +73,7 @@ const CourseReviews = () => {
                             </>
                             :
                             <div className="h-[500px] flex items-center justify-center">
-                                <p className="text-gray-400 text-lg font-medium">No Review Found</p>
+                                <p className="text-gray-400 text-lg font-medium">No Reviews Found</p>
                             </div>
                 }
             </div>

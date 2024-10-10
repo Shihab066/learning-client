@@ -13,9 +13,8 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
 
     const { data: course, refetch, isLoading } = useQuery({
         queryKey: ['course', courseId],
-        enabled: true,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/course?${courseId}`);
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/course/instructorCourse?${courseId}`);
             return res.data;
         }
     })
@@ -70,8 +69,11 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setThumbnail(URL.createObjectURL(file));
-        } else {
+        }
+        else if (!file) {
             setThumbnail(null);
+        }
+        else {
             alert('Please select a valid image file.');
         }
     };
@@ -135,8 +137,8 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             courseContents: milestonesData,
         };
 
-        axiosSecure.patch(`/updateCourse?${courseId}`, updatedCourse).then(res => {
-            if (res.data.modifiedCount) {                
+        axiosSecure.patch(`http://localhost:5000/api/v1/course/update?${courseId}`, updatedCourse).then(res => {
+            if (res.data.result.modifiedCount) {
                 resetForm();
                 showSuccessMessage();
                 refetch();
@@ -360,7 +362,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                                         {...register('price', { required: true, min: 0, onChange: handleNumberInput })}
                                     />
                                     {errors.price?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                                    {errors.price?.type === 'min' && <span className="text-red-600">Price must be a positive</span>}                                    
+                                    {errors.price?.type === 'min' && <span className="text-red-600">Price must be a positive</span>}
                                 </div>
 
                                 {/* Discount */}
@@ -383,7 +385,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                             {/* Submit Button */}
                             <input
                                 type="submit"
-                                value="Update"
+                                value="Save Change"
                                 className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case w-full md:w-52 mt-[2rem!important]"
                                 onClick={validateCourseContent}
                                 disabled={isUpdateBtnDisabled}

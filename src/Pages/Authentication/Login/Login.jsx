@@ -64,7 +64,7 @@ const Login = () => {
                             {...register("password", { required: true })}
                         />
                         {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
-                        <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <BsEye></BsEye> : <BsEyeSlash></BsEyeSlash>}</span>
+                        <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <BsEyeSlash /> : <BsEye />}</span>
                     </div>
                 </div>
 

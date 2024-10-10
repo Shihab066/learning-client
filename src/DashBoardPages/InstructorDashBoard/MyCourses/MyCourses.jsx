@@ -22,16 +22,16 @@ const MyCourses = () => {
         queryKey: ['courses', user?.uid, searchValue],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/courses/${user?.uid}?search=${searchValue}`);
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/course/instructorCourses/${user?.uid}?search=${searchValue}`);
             return res.data;
         }
-    })
+    });
 
     // handleSearch
     const handleSubmit = (e) => {
         e.preventDefault();
         setSearchValue(e.target.search.value);
-    }
+    };
 
     // change publish status
     const handlePublishStatus = ({ insturctorId, courseId, publishStatus, refetchCourses }) => {
@@ -45,15 +45,15 @@ const MyCourses = () => {
             confirmButtonText: confirmBtnText
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.patch(`/updatePublishStatus?id=${insturctorId}&courseId=${courseId}`, { publish: publishStatus }).then(res => {
-                    if (res.data.modifiedCount) {
+                axiosSecure.patch(`http://localhost:5000/api/v1/course/updatePublishStatus?id=${insturctorId}&courseId=${courseId}`, { publish: publishStatus }).then(res => {
+                    if (res.data.result.modifiedCount) {
                         toast('Publish Status Updated');
                         refetchCourses();
                     }
                 })
             }
         });
-    }
+    };
 
     const deleteCourse = ({ insturctorId, courseId, refetchCourses }) => {
         Swal.fire({
@@ -66,15 +66,15 @@ const MyCourses = () => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.delete(`/deleteCourse?id=${insturctorId}&courseId=${courseId}`).then(res => {
-                    if (res.data.deletedCount) {
+                axiosSecure.delete(`http://localhost:5000/api/v1/course/delete?id=${insturctorId}&courseId=${courseId}`).then(res => {
+                    if (res.data.result.deletedCount) {
                         toast('Course Deleted');
                         refetchCourses();
                     }
                 })
             }
         });
-    }
+    };
 
     const toast = (message) => {
         Swal.fire({
@@ -121,19 +121,27 @@ const MyCourses = () => {
                             refetchCourses={refetch}
                         />
                         :
-                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                            {courses.map((course, index) =>
-                                <MyCourseCard
-                                    key={index}
-                                    course={course}
-                                    setCourseId={setCourseId}
-                                    setIsUpdateCourseOpen={setIsUpdateCourseOpen}
-                                    handlePublishStatus={handlePublishStatus}
-                                    deleteCourse={deleteCourse}
-                                    refetchCourses={refetch}
-                                />
-                            )}
-                        </div>
+                        <>
+                            {courses.length > 0 ?
+                                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                                    {courses.map((course, index) =>
+                                        <MyCourseCard
+                                            key={index}
+                                            course={course}
+                                            setCourseId={setCourseId}
+                                            setIsUpdateCourseOpen={setIsUpdateCourseOpen}
+                                            handlePublishStatus={handlePublishStatus}
+                                            deleteCourse={deleteCourse}
+                                            refetchCourses={refetch}
+                                        />
+                                    )}
+                                </div>
+                                :
+                                <div className="h-[500px] flex items-center justify-center">
+                                    <p className="text-gray-400 text-lg font-medium">No Courses Found</p>
+                                </div>
+                            }
+                        </>
                 }
             </div>
 
@@ -142,7 +150,7 @@ const MyCourses = () => {
 };
 
 const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {
-    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, rating, totalReviews } = course;    
+    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, rating, totalReviews } = course;
 
     return (
         <>

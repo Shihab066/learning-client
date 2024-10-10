@@ -12,11 +12,12 @@ const AddClass = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
-    const { uploadImage } = useUploadImage();    
+    const { uploadImage } = useUploadImage();
     const [thumbnail, setThumbnail] = useState(null);
     const [milestonesData, setMilestonesData] = useState([]);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
+    const [isCoursePublishing, setIsCoursePublishing] = useState(false);
 
     // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {
@@ -29,8 +30,11 @@ const AddClass = () => {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setThumbnail(URL.createObjectURL(file));
-        } else {
+        }
+        else if (!file) {
             setThumbnail(null);
+        }
+        else {
             alert('Please select a valid image file.');
         }
     };
@@ -74,8 +78,8 @@ const AddClass = () => {
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
-
         if (courseContentError) return;
+        setIsCoursePublishing(true)
 
         const { uid } = user;
         const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
@@ -95,10 +99,11 @@ const AddClass = () => {
             publish: true
         };
 
-        axiosSecure.post('/classes', newClass).then(res => {
-            if (res.data.insertedId) {
+        axiosSecure.post('http://localhost:5000/api/v1/course/add', newClass).then(res => {
+            if (res.data.result.insertedId) {
                 resetForm();
                 showSuccessMessage();
+                setIsCoursePublishing(false);
             }
         });
     };
@@ -293,8 +298,9 @@ const AddClass = () => {
 
                 {/* Submit Button */}
                 <input
+                    disabled={isCoursePublishing}
                     type="submit"
-                    value="Publish"
+                    value={`${isCoursePublishing ? 'Publishing...' : 'Publish'}`}
                     className="btn bg-blue-600 hover:bg-blue-500 text-white normal-case w-full md:w-52 mt-[2rem!important]"
                     onClick={validateCourseContent}
                 />

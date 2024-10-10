@@ -16,7 +16,7 @@ const Profile = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
 
     // Custom hooks for authentication, image upload and secure axios instance
-    const { user, updateUser, updateUserPassword, reAuthenticateUser, EmailAuthProvider } = useAuth();
+    const { user, loading, updateUser, updateUserPassword, reAuthenticateUser, EmailAuthProvider } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const { uploadImage } = useUploadImage();
 
@@ -31,13 +31,14 @@ const Profile = () => {
     const [passwordUpdateDisable, setPasswordUpdateDisable] = useState(true);
     const [confirmError, setConfirmError] = useState(false);
     const [isPasswordProvider, setPasswordProvider] = useState(false);
-    
+
 
     // Fetch user data using react-query
     const { data: userData = {} } = useQuery({
-        queryKey: ['user', user?.email],
+        queryKey: ['user', user?.uid],
+        enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`https://learning-info-bd.vercel.app/user/${user?.email}`);
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/user/get/${user?.uid}`);
             return res.data;
         }
     });
@@ -47,7 +48,11 @@ const Profile = () => {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setImg(URL.createObjectURL(file));
-        } else {
+        }
+        else if (!file) {
+            setImg(null);
+        }
+        else {
             alert('Please select a valid image file.');
         }
     };
@@ -73,9 +78,9 @@ const Profile = () => {
 
         try {
             await updateUser(name, image);
-            axiosSecure.patch(`https://learning-info-bd.vercel.app/updateUser/${userData?._id}`, { name, image })
+            axiosSecure.patch(`http://localhost:5000/api/v1/user/update/${user?.uid}`, { name, image })
                 .then(res => {
-                    if (res.data.modifiedCount) {
+                    if (res.data.result.modifiedCount) {
                         Swal.fire({
                             position: 'center',
                             icon: 'success',
@@ -295,7 +300,7 @@ const Profile = () => {
 
                         {/* Add additonal info */}
                         {
-                            userRole === 'instructor' &&
+                            userData && userRole === 'instructor' &&
                             <AdditionalInfo
                                 axiosSecure={axiosSecure}
                                 user={userData}
@@ -307,7 +312,7 @@ const Profile = () => {
     );
 };
 
-const AdditionalInfo = ({ axiosSecure, user }) => {
+const AdditionalInfo = ({ axiosSecure, user }) => {  
     const { register, handleSubmit } = useForm();
 
     // Language options available for selection
@@ -400,9 +405,9 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
             expertise: expertiseSelection
         };
 
-        axiosSecure.patch(`https://learning-info-bd.vercel.app/updateInstructorProfile/${user?._id}`, payload)
+        axiosSecure.patch(`http://localhost:5000/api/v1/user/updateInstructorProfile/${user?._id}`, payload)
             .then(res => {
-                if (res.data.modifiedCount) {
+                if (res.data.result.modifiedCount) {
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
@@ -419,8 +424,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     useEffect(() => {
         const hasChanges = JSON.stringify(formData) !== JSON.stringify(user);
         setIsUpdateBtnDisabled(!hasChanges);
-    }, [formData]);
-
+    }, [formData, user]);    
     return (
         <div>
             <h3 className="text-xl font-medium mb-3">Additional Info</h3>

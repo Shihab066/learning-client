@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from './useAuth';
 
 const axiosSecure = axios.create({
-  baseURL: 'https://learning-info-bd.vercel.app', 
+  baseURL: 'https://learning-info-bd.vercel.app',
 });
 
 const useAxiosSecure = () => {
-  const { logOut, loading } = useAuth(); 
-  const navigate = useNavigate(); 
+  const { logOut, loading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosSecure.interceptors.request.use((config) => {
@@ -18,13 +18,14 @@ const useAxiosSecure = () => {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
-    },[loading]);
+    }, [loading]);
 
     axiosSecure.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           await logOut();
+          localStorage.removeItem('access-token');
           navigate('/login');
         }
         return Promise.reject(error);

@@ -8,17 +8,16 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-  const { logOut, loading } = useAuth();
+  const { logOut, loading, jwtToken } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    axiosSecure.interceptors.request.use((config) => {
-      const token = localStorage.getItem('access-token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    axiosSecure.interceptors.request.use((config) => {      
+      if (jwtToken) {
+        config.headers.Authorization = `Bearer ${jwtToken}`;
       }
       return config;
-    }, [loading]);
+    }, [loading, jwtToken]);
 
     axiosSecure.interceptors.response.use(
       (response) => response,
@@ -31,7 +30,7 @@ const useAxiosSecure = () => {
         return Promise.reject(error);
       }
     );
-  }, [logOut, navigate, loading]);
+  }, [loading, jwtToken]);
 
   return [axiosSecure];
 };

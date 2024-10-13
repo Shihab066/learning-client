@@ -15,48 +15,49 @@ const AuthProvider = ({ children }) => {
     const createUser = (email, password) => {
         setloading(true)
         return createUserWithEmailAndPassword(auth, email, password)
-    }
+    };
 
     const updateUser = (name, image) => {
         return updateProfile(auth.currentUser, {
             displayName: name, photoURL: image
         })
-    }
+    };
 
     const updateUserPassword = (newPassword) => {
         return updatePassword(user, newPassword)
-    }
+    };
 
     const reAuthenticateUser = (credential) => {
         return reauthenticateWithCredential(user, credential)
-    }
+    };
 
     const sendAccountRecoveryEmail = (email) => {
         return sendPasswordResetEmail(auth, email)
-    }
+    };
 
     const passwordReset = (oobCode, newPassword) => {
         return confirmPasswordReset(auth, oobCode, newPassword)
-    }
+    };
 
     const verifyOobCode = (oobCode) => {
         return verifyPasswordResetCode(auth, oobCode)
-    }
+    };
 
     const signIn = (email, password) => {
         setloading(true)
         return signInWithEmailAndPassword(auth, email, password)
-    }
+    };
 
     const googleSignIn = () => {
         return signInWithPopup(auth, googleProvider)
-    }
+    };
 
     const logOut = () => {
         return signOut(auth)
-    }
+    };
 
     const [jwtToken, setJwtToken] = useState(localStorage.getItem('access-token'));
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     // Function to check if the token is expired or about to expire
     const isTokenExpiringSoon = (token) => {
@@ -74,23 +75,22 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
             return false;
         }
-    }
+    };
 
     const refreshAccessToken = async (firebaseToken) => {
         try {
             const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: firebaseToken })
             const token = await res.data.token;
             if (token) {
-                localStorage.setItem('access-token', token);
-                console.log('refresh token', token);
+                localStorage.setItem('access-token', token);                
             }
         } catch (error) {
             console.error('Failed to refresh token', error);
         }
-    }
+    };
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (loggeduser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (loggeduser) => {            
             if (jwtToken) {
                 const isTokenValid = await verifyAccessToken(jwtToken);
                 if (loggeduser && isTokenValid) {
@@ -99,7 +99,6 @@ const AuthProvider = ({ children }) => {
 
                     // Periodically check token expiration
                     setInterval(() => {
-
                         if (jwtToken && isTokenExpiringSoon(jwtToken)) {
                             refreshAccessToken(loggeduser.accessToken);
                         }
@@ -109,7 +108,8 @@ const AuthProvider = ({ children }) => {
                     setUser(null);
                     logOut();
                     localStorage.removeItem('access-token');
-                    setloading(false)
+                    setJwtToken(null);
+                    setloading(false);
                 }
             } else {
                 setloading(false);
@@ -118,15 +118,17 @@ const AuthProvider = ({ children }) => {
         return () => {
             return unsubscribe();
         }
-    }, [jwtToken])
+    }, [jwtToken, isLoggedIn])
 
     const authInfo = {
         auth,
         EmailAuthProvider,
         user,
         loading,
+        jwtToken,
         setloading,
         setJwtToken,
+        setIsLoggedIn,
         createUser,
         updateUser,
         updateUserPassword,
@@ -137,7 +139,7 @@ const AuthProvider = ({ children }) => {
         signIn,
         googleSignIn,
         logOut
-    }
+    };
 
     return (
         <AuthContext.Provider value={authInfo}>

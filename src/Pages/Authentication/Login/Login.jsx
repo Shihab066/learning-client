@@ -14,7 +14,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const { signIn, setloading, setJwtToken } = useAuth();
+    const { signIn, setloading, setJwtToken, setIsLoggedIn } = useAuth();
     const onSubmit = data => {
         const { email, password } = data;
         signIn(email, password)
@@ -22,8 +22,9 @@ const Login = () => {
                 const user = result.user;
                 const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: user.accessToken });
                 const token = await res.data.token;
-                setJwtToken(token);
                 localStorage.setItem('access-token', token);
+                setJwtToken(token);
+                setIsLoggedIn(true),
                 reset();
                 navigate(from, { replace: true });
             })

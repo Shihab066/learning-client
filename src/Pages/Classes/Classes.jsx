@@ -56,12 +56,11 @@ const Classes = () => {
         navigate(`/courses?${params.toString()}`, { replace: true });
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
-
-    // Fetch classes data
+    // Fetch courses data
     const { data, isLoading } = useQuery({
-        queryKey: ['classes', itemPerPage, currentPage, sortValue, searchValue],
+        queryKey: ['courses', itemPerPage, currentPage, sortValue, searchValue],
         queryFn: async () => {
-            const res = await axios.get(`https://learning-info-bd.vercel.app/classes?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
+            const res = await axios.get(`http://localhost:5000/api/v1/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
     });
@@ -107,7 +106,7 @@ const Classes = () => {
         }
     };
 
-    const totalItems = data?.classesCount;
+    const totalItems = data?.coursesCount;
     const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
     const [visiblePages, setVisiblePages] = useState([]);
 
@@ -123,14 +122,14 @@ const Classes = () => {
         }
     }, [totalPages, activePage]);
 
-    // Handle case when no classes are found
+    // Handle case when no courses are found
     useEffect(() => {
-        if (data?.classes.length === 0) {
+        if (data?.courses.length === 0) {
             setTimeout(() => {
                 setCurrentPage(visiblePages[visiblePages.length - 1]);
-            }, 50);
+            }, 100);
         }
-    }, [data?.classes.length, visiblePages]);
+    }, [data?.courses.length, visiblePages]);
 
     // Handlers for item per page and sort options
     const handleItemPerPageOptions = (event) => {
@@ -210,13 +209,13 @@ const LoadingSpinner = () => (
     </div>
 );
 
-// Content component displaying classes and pagination
+// Content component displaying courses and pagination
 const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon }) => (
     <div className='lg-container'>
         {visiblePages.length ?
             <div>
                 <div className="lg-container min-h-[650px] grid grid-cols-2 md:grid-cols-3 gap-y-10">
-                    {data?.classes.map(classData => (
+                    {data?.courses.map(classData => (
                         <ClassCard
                             key={classData._id}
                             item={classData}
@@ -250,7 +249,7 @@ const ItemNotFound = ({ notFoundIcon }) => (
 
 // Pagination component
 const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, data }) => (
-    <div className={`flex justify-center items-center gap-2 mt-20 ${!data?.classes?.length && 'hidden'}`}>
+    <div className={`flex justify-center items-center gap-2 mt-20 ${!data?.courses?.length && 'hidden'}`}>
         {/* Previous button */}
         <Link
             to={`/courses/?page=${currentPage - 1}`}

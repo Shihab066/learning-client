@@ -4,7 +4,7 @@ import logo from '../../assets/icon/google.png'
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 const SocialLogin = ({ from }) => {
-    const { googleSignIn, setJwtToken } = useAuth();
+    const { googleSignIn, setJwtToken, setIsLoggedIn } = useAuth();
     const navigate = useNavigate();
     const handleSignIn = () => {
         googleSignIn()
@@ -12,10 +12,11 @@ const SocialLogin = ({ from }) => {
                 const user = result.user;
                 const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: user.accessToken });
                 const token = await res.data.token;
-                setJwtToken(token);
                 localStorage.setItem('access-token', token);
+                setJwtToken(token);
+                setIsLoggedIn(true),
 
-                axios.post('https://learning-info-bd.vercel.app/users', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                    axios.post('https://learning-info-bd.vercel.app/users', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
                 navigate(from, { replace: true })
             })
     }

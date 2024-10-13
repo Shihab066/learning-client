@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
 import PopularClassSkeleton from "../../../components/PopularClassSkeleton/PopularClassSkeleton";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const PopularClasses = () => {
-    const [classes, setClasses] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {        
-        axios.get('https://learning-info-bd.vercel.app/topclass')
-            .then((res) => {
-                setClasses(res.data);
-                setLoading(false); 
-            })
-            .catch((error) => {
-                console.error("Error fetching popularClasses:", error);
-                setLoading(false);
-            });            
-    }, []);
+    // Fetch popular courses
+    const { data: courses = [], isLoading } = useQuery({
+        queryKey: ['popularCourses'],
+        queryFn: async () => {
+            const res = await axios.get('http://localhost:5000/api/v1/course/top');
+            return res.data;
+        },
+    });
 
     return (
         <div className="lg-container">
@@ -27,18 +21,18 @@ const PopularClasses = () => {
 
             {/* Grid layout for class cards or skeleton loader */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-y-4 sm:gap-y-6 xl:gap-y-10 sm:px-2 2xl:px-0">
-                {loading
+                {isLoading
                     ?
                     <PopularClassSkeleton />
                     :
-                    classes.length > 0
+                    courses.length > 0
                         ?
-                        classes?.map(item => (
-                        <PopularClassCard
-                            key={item._id}
-                            item={item}
-                        />
-                        ))                        
+                        courses?.map(item => (
+                            <PopularClassCard
+                                key={item._id}
+                                item={item}
+                            />
+                        ))
                         :
                         <p>No Class Found</p>
                 }

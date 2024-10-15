@@ -27,7 +27,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     const [thumbnail, setThumbnail] = useState(null);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
-    const { courseName, courseThumbnail, shortDescription, description, courseContents, level, category, seats, price, discount } = formData || {};
+    const { courseName, courseThumbnail, summary, description, courseContents, level, category, seats, price, discount } = formData || {};
     const [milestonesData, setMilestonesData] = useState(courseContents);
 
     // Handle input change for general form fields
@@ -227,19 +227,19 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                                 </div>
                             </div>
 
-                            {/* Short Description */}
+                            {/* Summary */}
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text">Short Description</span>
+                                    <span className="label-text">Summary</span>
                                 </label>
                                 <textarea
-                                    value={shortDescription}
+                                    value={summary}
                                     rows="4"
-                                    placeholder="Short Description"
-                                    className={`textarea textarea-info ${errors.shortDescription ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
-                                    {...register('shortDescription', { required: true, onChange: handleInputChange })}
+                                    placeholder="Summary"
+                                    className={`textarea textarea-info ${errors.summary ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
+                                    {...register('summary', { required: true, onChange: handleInputChange })}
                                 />
-                                {errors.shortDescription && <span className="text-red-600">Field is required</span>}
+                                {errors.summary && <span className="text-red-600">Field is required</span>}
                             </div>
 
                             {/* Full Description */}

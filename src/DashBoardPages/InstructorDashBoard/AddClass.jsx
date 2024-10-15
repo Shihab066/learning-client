@@ -77,7 +77,7 @@ const AddClass = () => {
 
     // Handle form submission
     const onSubmit = async (data) => {
-        const { courseName, courseThumbnail, shortDescription, description, level, category, seats, price } = data;
+        const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
         if (courseContentError) return;
         setIsCoursePublishing(true)
 
@@ -88,7 +88,7 @@ const AddClass = () => {
             _instructorId: uid,
             courseName,
             courseThumbnail: uploadedThumbnail,
-            shortDescription,
+            summary,
             description,
             level,
             category,
@@ -169,18 +169,18 @@ const AddClass = () => {
                     {errors.courseThumbnail && <span className="text-red-600">Field is required</span>}
                 </div>
 
-                {/* Short Description */}
+                {/* summury*/}
                 <div className="form-control">
                     <label className="label">
-                        <span className="label-text">Short Description</span>
+                        <span className="label-text">Summary</span>
                     </label>
                     <textarea
                         rows="4"
-                        placeholder="Short Description"
-                        className={`textarea textarea-info ${errors.shortDescription ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
-                        {...register('shortDescription', { required: true })}
+                        placeholder="summary"
+                        className={`textarea textarea-info ${errors.summary ? 'border-red-500' : 'border-base-300 focus:border-blue-500'} focus:outline-0 resize-none`}
+                        {...register('summary', { required: true })}
                     />
-                    {errors.shortDescription && <span className="text-red-600">Field is required</span>}
+                    {errors.summary && <span className="text-red-600">Field is required</span>}
                 </div>
 
                 {/* Full Description */}

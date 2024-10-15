@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import facebookLogo from '../../assets/icon/facebook.png';
 import googleLogo from '../../assets/icon/google.png';
 import xLogo from '../../assets/icon/x_logo.png';
@@ -9,6 +9,8 @@ import awardLogo from '../../assets/icon/award.svg';
 import grauationLogo from '../../assets/icon/graduation.svg';
 import playLogo from '../../assets/icon/play.svg';
 import Testimonial from "../../components/Testimonial/Testimonial";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const CourseDetails = () => {
     const courseDetails = {
@@ -24,8 +26,20 @@ const CourseDetails = () => {
         price: 105,
         discount: 0.5 || 0
     }
+    const { courseId } = useParams();
+    // Fetch popular courses
+    const { data = {}, isLoading } = useQuery({
+        queryKey: ['courseDetails'],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/api/v1/course/details/${courseId}`);
+            return res.data;
+        },
+    });
 
-    const { courseThumbnail, courseName, shortDescription, fullDescription, rating, totalReviews, courseDuration, totalLectures, price, discount } = courseDetails;
+    const {_instructorId, courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents } = data;
+    const { courseDuration, totalLectures } = courseDetails;
+    const totalModules = courseContents?.map(({ totalModules }) => totalModules).reduce((acc, curr) => acc + curr, 0);
+
 
     // Store the star ratings in state
     const [starTypes, setStarTypes] = useState([]);
@@ -83,18 +97,18 @@ const CourseDetails = () => {
 
                     {/* Course Short Description */}
                     <p className="w-full lg:w-[65%] xl:w-[50rem] text-gray-700">
-                        {shortDescription}
+                        {summary}
                     </p>
 
                     {/* Rating, Duration, and Lectures */}
                     <div className="text-gray-700 font-medium flex flex-wrap justify-start items-center gap-x-2">
-                        <p className="text-[#FEC84B]">{rating}</p>
+                        <p className={`text-[#FEC84B] ${rating ? 'block' : ' hidden'}`}>{rating}</p>
                         <div className="flex">
                             {starTypes.map((starType, index) => <Star key={index} starType={starType} />)}
                         </div>
-                        <span>({totalReviews} ratings)</span>
+                        <span>({totalReviews} reviews)</span>
                         <p>|</p>
-                        <p>{courseDuration} Total Hours. {totalLectures} Lectures. All levels</p>
+                        <p>{courseDuration} Total Hours. {totalModules} Modules. {level}</p>
                     </div>
 
                     {/* Instructor Info */}
@@ -139,9 +153,9 @@ const CourseDetails = () => {
                                 {discount
                                     ? (
                                         <div className="flex justify-start items-start gap-x-3">
-                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * discount)).toFixed(1)}</p>
+                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(2)}</p>
                                             <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
-                                            <p className="text-green-600 text-xl font-medium">{discount * 100}% Off</p>
+                                            <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
                                         </div>
                                     ) : (
                                         <p className="text-gray-900 text-2xl font-medium">${price}</p>
@@ -169,7 +183,8 @@ const CourseDetails = () => {
                     </div>
                 </div>
             </div>
-            
+
+            {/* navigation for different seciton on this page */}
             <div className="lg-container px-4 md:px-6">
                 <div className="xl:w-[65%] mr-auto">
                     {/* Navigation Section */}
@@ -192,10 +207,10 @@ const CourseDetails = () => {
 
                     {/* Description Section */}
                     <section id="description" className="space-y-6 pt-6">
-                        <hr className="lg:w-[65%]" />
+                        <hr />
                         <div className="space-y-1">
                             <h2 className="text-xl font-semibold text-gray-900">Course Description</h2>
-                            <p className="text-gray-700">{fullDescription}</p>
+                            <p className="text-gray-700">{description}</p>
                         </div>
 
                         <div className="space-y-1">
@@ -251,7 +266,7 @@ const CourseDetails = () => {
                         <hr />
                         <h2 className="text-xl font-semibold text-gray-900">Course Outline</h2>
                         <div>
-                            <CourseOutline />
+                            <CourseOutline courseInfo={courseContents} />
                         </div>
                         <hr />
                     </section>
@@ -260,7 +275,7 @@ const CourseDetails = () => {
                 {/* Reviews Section */}
                 <section id="reviews" className="space-y-6 pt-6">
                     <h2 className="text-xl font-semibold text-gray-900">Learner Reviews</h2>
-                    <Reviews rating={rating} totalReviews={totalReviews} />
+                    <Reviews courseId={courseId} rating={rating} totalReviews={totalReviews} />
                 </section>
             </div>
 
@@ -323,7 +338,7 @@ const ShareLinks = () => {
 };
 
 // CourseOutline Components: Renders Course Outline section
-const CourseOutline = () => {
+const CourseOutline = ({ courseInfo }) => {
     // Dummy milestone data for demonstration purposes
     const milestonesData = [
         {
@@ -345,10 +360,10 @@ const CourseOutline = () => {
     return (
         <>
             {
-                milestonesData?.map((milestone, index) =>
+                courseInfo?.map((milestone, index) =>
                     <CourseOutlineItem
                         key={index}
-                        className={`collapse collapse-arrow duration-300 border rounded-none ${index === 0 ? 'rounded-t-md border-b-0' : index === milestonesData.length - 1 ? 'rounded-b-md border-b' : 'border-b-0'} `}
+                        className={`collapse collapse-arrow duration-300 border rounded-none ${courseInfo?.length === 1 ? 'border rounded-t-md rounded-b-md' : index === 0 ? 'rounded-t-md border-b-0' : index === courseInfo.length - 1 ? 'rounded-b-md border-b' : 'border-b-0'} `}
                         milestoneData={milestone}
                     />
                 )
@@ -358,7 +373,7 @@ const CourseOutline = () => {
 };
 
 const CourseOutlineItem = ({ className, milestoneData }) => {
-    const { milestoneName, milestoneDetails } = milestoneData;
+    const { milestoneName, milestoneDetails, totalModules } = milestoneData;
     return (
         <div className={className}>
             <input type="checkbox" name="courseOutline" />
@@ -367,7 +382,7 @@ const CourseOutlineItem = ({ className, milestoneData }) => {
                     {milestoneName}
                 </span>
                 <span className="text-sm text-gray-900 font-normal">
-                    5&nbsp;Modules&nbsp;30&nbsp;Videos&nbsp;12&nbsp;hours
+                    {totalModules}&nbsp;Modules&nbsp;12&nbsp;hours
                 </span>
             </div>
             <div className="collapse-content">
@@ -378,35 +393,18 @@ const CourseOutlineItem = ({ className, milestoneData }) => {
 };
 
 // Reviews Comoponent: Renders review section 
-const Reviews = ({ rating = 'not rated yet', totalReviews = 0 }) => {
+const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
+    const [limit, setLimit] = useState(3);
     const totalReviewsArray = totalReviews?.toString().split('').reverse();
     const modifiedTotalReviews = totalReviewsArray?.map((n, i) => ((i !== totalReviewsArray.length - 1) && (i + 1) % 3 === 0) ? ',' + n : n).reverse().join('');
-    const reviews = [
-        {
-            id: 1,
-            userName: "Mark Doe",
-            userProfileImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            rating: 5.0,
-            reviewDate: "15 September 2024",
-            reviewData: "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules."
-        },
-        {
-            id: 2,
-            userName: "Mark Doe",
-            userProfileImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            rating: 5.0,
-            reviewDate: "15 September 2024",
-            reviewData: "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding."
-        },
-        {
-            id: 3,
-            userName: "Mark Doe",
-            userProfileImage: "https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg",
-            rating: 5.0,
-            reviewDate: "15 September 2024",
-            reviewData: "I was initially apprehensive, having no prior design experience. But the instructor, John Doe, did an amazing job of breaking down complex concepts into easily digestible modules. The video lectures were engaging, and the real-world examples really helped solidify my understanding."
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['courseReviews', limit],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/api/v1/review/get/${courseId}?limit=${limit}`);
+            return res.data;
         }
-    ];
+    })   
 
     return (
         <div className="flex flex-col md:flex-row justify-between items-start gap-y-6">
@@ -422,21 +420,36 @@ const Reviews = ({ rating = 'not rated yet', totalReviews = 0 }) => {
                         {modifiedTotalReviews} reviews
                     </span>
                 </p>
-                <StarRating />
+                <StarRating courseId={courseId} />
             </div>
 
-            <div className="basis-[75%] space-y-4">
-                {
-                    reviews.map((review, index) =>
-                        <ReviewCard
-                            key={index}
-                            review={review}
-                        />
-                    )
+            <div className="w-full md:basis-[75%] space-y-4">
+                {isLoading
+                    ?
+                    <ReviewsSkeleton />
+                    : data?.reviews?.length > 0
+                        ?
+                        <>
+                            {
+                                data?.reviews?.map((review, index) =>
+                                    <ReviewCard
+                                        key={index}
+                                        review={review}
+                                    />
+                                )
+                            }
+                            {
+                                data?.totalReviews > 4 && data?.totalReviews !== data?.reviews.length &&
+                                <button onClick={() => setLimit(limit + 4)} className={`btn btn-md capitalize outline outline-1 outline-gray-900  text-sm sm:text-base text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300`}>
+                                    View more Reviews
+                                </button>
+                            }
+                        </>
+                        :
+                        <div className="h-[400px] flex items-center justify-center">
+                            <p className="text-gray-400 text-lg font-medium">No Reviews Found</p>
+                        </div>
                 }
-                <button className="btn btn-md capitalize outline outline-1 outline-gray-900  text-sm sm:text-base text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300">
-                    View more Reviews
-                </button>
             </div>
         </div>
     )
@@ -452,7 +465,14 @@ const GenerateStar = ({ fill }) => (
     </svg>
 );
 
-const StarRating = () => {
+const StarRating = ({ courseId }) => {
+    const { data: ratingPercentages = {} } = useQuery({
+        queryKey: ['ratingPercentages'],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/api/v1/review/ratings/${courseId}`);
+            return res.data;
+        }
+    })
     return (
         <div className="text-gray-700">
             {/* Full 5 stars */}
@@ -460,7 +480,7 @@ const StarRating = () => {
                 {[...Array(5)].map((_, i) => (
                     <GenerateStar key={i} fill={fullStarFill} />
                 ))}
-                <p className="pl-2">80%</p>
+                <p className="pl-2">{ratingPercentages['5'] || 0}%</p>
             </div>
 
             {/* 4 full stars and 1 empty star */}
@@ -469,7 +489,7 @@ const StarRating = () => {
                     <GenerateStar key={i} fill={fullStarFill} />
                 ))}
                 <GenerateStar fill={emptyStarFill} />
-                <p className="pl-2">10%</p>
+                <p className="pl-2">{ratingPercentages['4'] || 0}%</p>
             </div>
 
             {/* 3 full stars and 2 empty stars */}
@@ -480,7 +500,7 @@ const StarRating = () => {
                 {[...Array(2)].map((_, i) => (
                     <GenerateStar key={i} fill={emptyStarFill} />
                 ))}
-                <p className="pl-2">5%</p>
+                <p className="pl-2">{ratingPercentages['3'] || 0}%</p>
             </div>
 
             {/* 2 full stars and 3 empty stars */}
@@ -491,7 +511,7 @@ const StarRating = () => {
                 {[...Array(3)].map((_, i) => (
                     <GenerateStar key={i} fill={emptyStarFill} />
                 ))}
-                <p className="pl-2">3%</p>
+                <p className="pl-2">{ratingPercentages['2'] || 0}%</p>
             </div>
 
             {/* 1 full star and 4 empty stars */}
@@ -500,20 +520,71 @@ const StarRating = () => {
                 {[...Array(4)].map((_, i) => (
                     <GenerateStar key={i} fill={emptyStarFill} />
                 ))}
-                <p className="pl-2">2%</p>
+                <p className="pl-2">{ratingPercentages['1'] || 0}%</p>
             </div>
         </div>
     );
 };
 
-const ReviewCard = ({ review }) => {
-    const { userName, userProfileImage, rating, reviewDate, reviewData } = review;
+const ReviewCard = ({ review: reviewData }) => {
+    const { userName, userImage, rating, date, review } = reviewData;
+    const [reviewTextLength, setReviewTextLength] = useState(null);
+    const [isReviewOverflow, setIsReviewOverflow] = useState(false);
+    const [modifiedReview, setModifiedReview] = useState('');
+    const [seeMoreEnabled, setSeeMoreEnabled] = useState(false);
+
+
+    const handleReviewTextLength = () => {
+        const screenSize = window.innerWidth;
+        if (screenSize >= 1280) {
+            setReviewTextLength(300);
+        }
+        else if (screenSize >= 1024 && screenSize < 1280) {
+            setReviewTextLength(200)
+        }
+        else if (screenSize >= 768 && screenSize < 1024) {
+            setReviewTextLength(230)
+        }
+        else if (screenSize >= 576 && screenSize < 768) {
+            setReviewTextLength(230)
+        }
+        else if (screenSize >= 0 && screenSize < 576) {
+            setReviewTextLength(120)
+        }
+    };
+
+    const handleSeeMore = () => {
+        setModifiedReview(review);
+        setSeeMoreEnabled(true);
+    };
+
+    const handleSeeLess = () => {
+        setModifiedReview(review.slice(0, reviewTextLength) + '...');
+        setSeeMoreEnabled(false);
+    };
+
+    const gradientToBottom = {
+        background: 'linear-gradient(to bottom, rgba(255,255,255, 1), rgba(255,255,255, 0))'
+    };
+
+    const gradientToTop = {
+        background: 'linear-gradient(to top, rgba(255,255,255, 1), rgba(255,255,255, 0))'
+    };
+
+    useEffect(() => {
+        handleReviewTextLength()
+    }, [])
+
+    useEffect(() => {
+        setIsReviewOverflow(review?.length > reviewTextLength);
+        setModifiedReview(review?.slice(0, reviewTextLength) + '...')
+    }, [review, reviewTextLength])
     return (
-        <div className="p-3 sm:p-4 lg:p-6 rounded-2xl border border-[#E2E8F0] grid sm:grid-cols-3 gap-y-3 sm:gap-x-2 lg:gap-x-8">
+        <div className="p-3 sm:p-4 lg:p-6 rounded-2xl border border-[#E2E8F0] grid grid-cols-1 lg:grid-cols-3 gap-y-3 lg:gap-x-4">
             <div className="flex items-center gap-x-2 h-fit truncate">
                 <img
                     className="w-[2.5rem] h-[2.5rem] lg:w-[3.75rem] lg:h-[3.75rem] object-cover rounded-full"
-                    src={userProfileImage}
+                    src={userImage}
                     alt="user profile image" />
                 <p className="w-[calc(100%-2.5rem-.5rem)] lg:w-[calc(100%-3.75rem-.5rem)] text-gray-900 lg:text-lg font-semibold truncate">{userName}</p>
             </div>
@@ -522,18 +593,69 @@ const ReviewCard = ({ review }) => {
                 <div className="flex justify-start items-center gap-x-2 sm:gap-x-6">
                     <span className="flex items-center gap-x-1 text-gray-900 text-lg font-semibold">
                         <GenerateStar fill={fullStarFill} />
-                        {parseInt(rating)}
+                        {rating}
                     </span>
                     <span className="text-sm">
-                        Reviewed on {reviewDate}
+                        Reviewed on {date}
                     </span>
                 </div>
-                <p className="h-24 lg:h-28 overflow-y-auto thin-scrollbar pr-1 lg:pr-4 text-sm lg:text-base">
-                    {reviewData}
-                </p>
+                <div className="h-24 lg:h-28 overflow-y-auto thin-scrollbar pr-1 lg:pr-4 text-sm sm:text-[0.938rem] lg:leading-6">
+                    {isReviewOverflow ? (
+                        <div className="h-fit relative">
+                            {seeMoreEnabled && <div style={gradientToBottom} className="w-full h-4 absolute top-0"></div>}
+                            <p className="">
+                                {modifiedReview}
+                                {seeMoreEnabled ? (
+                                    <span onClick={handleSeeLess} className="text-blue-600 cursor-pointer ml-1">
+                                        See Less
+                                    </span>
+                                ) : (
+                                    <span onClick={handleSeeMore} className="text-blue-600 cursor-pointer ml-1">
+                                        See More
+                                    </span>
+                                )}
+                            </p>
+                            {seeMoreEnabled && <div style={gradientToTop} className="w-full h-[0.375rem] absolute bottom-0"></div>}
+                        </div>
+                    ) : (
+                        <p className="">
+                            {review}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     )
+};
+
+const ReviewsSkeleton = () => {
+    const SkeletonCount = new Array(3).fill(0);
+    return (
+        <>
+            {
+                SkeletonCount.map((item, index) => <ReviewsSkeletonCard key={index} />)
+            }
+        </>
+    );
+};
+
+const ReviewsSkeletonCard = () => {
+    return (
+        <div className="w-full h-48 md:h-40 py-6 px-4 lg:p-6 rounded-lg bg-gray-50">
+            <div className={`animate-pulse flex flex-col md:flex-row items-start gap-4 lg:gap-x-10`}>
+                <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-gray-300" />
+                    <div className="w-20 lg:w-28 h-3 rounded-full bg-gray-300" />
+                </div>
+                <div className="space-y-2 w-full">
+                    <div className="w-[90%] h-3 rounded-full bg-gray-300" />
+                    <div className="w-[80%] h-3 rounded-full bg-gray-300" />
+                    <div className="w-[75%] h-3 rounded-full bg-gray-300" />
+                    <div className="w-[70%] h-3 rounded-full bg-gray-300" />
+                </div>
+            </div>
+        </div>
+    );
 };
 
 

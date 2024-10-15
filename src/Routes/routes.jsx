@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
         element: <Classes />
       },
       {
-        path: 'courseDetails',
+        path: 'course/:courseId',
         element: <CourseDetails />
       },
       {

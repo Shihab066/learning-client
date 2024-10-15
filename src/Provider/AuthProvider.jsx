@@ -64,8 +64,8 @@ const AuthProvider = ({ children }) => {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000; // Current time in seconds
 
-        // Refresh if token will expire in the next 5 minutes
-        return decodedToken.exp - currentTime < 300; // 300 seconds = 5 minutes
+        // Refresh if token will expire in the next 30 minutes
+        return decodedToken.exp - currentTime < 30 * 60; //  30 minutes
     };
 
     const verifyAccessToken = async (token) => {
@@ -82,7 +82,8 @@ const AuthProvider = ({ children }) => {
             const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: firebaseToken })
             const token = await res.data.token;
             if (token) {
-                localStorage.setItem('access-token', token);                
+                localStorage.setItem('access-token', token);  
+                setJwtToken(token);
             }
         } catch (error) {
             console.error('Failed to refresh token', error);

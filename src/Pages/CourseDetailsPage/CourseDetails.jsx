@@ -11,6 +11,7 @@ import playLogo from '../../assets/icon/play.svg';
 import Testimonial from "../../components/Testimonial/Testimonial";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
 
 const CourseDetails = () => {
     const courseDetails = {
@@ -36,9 +37,11 @@ const CourseDetails = () => {
         },
     });
 
-    const {_instructorId, courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents } = data;
-    const { courseDuration, totalLectures } = courseDetails;
+    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, experience } = data;
+    const { courseDuration } = courseDetails;
     const totalModules = courseContents?.map(({ totalModules }) => totalModules).reduce((acc, curr) => acc + curr, 0);
+    const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
+    const totalStudentsWithCommas = formatNumberWithCommas(totalStudents);
 
 
     // Store the star ratings in state
@@ -115,11 +118,11 @@ const CourseDetails = () => {
                     <div className="flex justify-start items-center gap-x-2">
                         <img
                             className="w-12 h-12 rounded-full object-cover"
-                            src="https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg"
-                            alt="Instructor profile"
+                            src={instructorImage}
+                            alt="Instructor profile Image"
                         />
                         <p className="text-gray-700">
-                            Created by <Link className="text-blue-600 ml-1" to={'#instructorProfile'}>Ronal Richhards</Link>
+                            Created by <Link className="text-blue-600 ml-1" to={'#instructorProfile'}>{instructorName}</Link>
                         </p>
                     </div>
 
@@ -228,36 +231,34 @@ const CourseDetails = () => {
                         <hr />
                         <h2 className="text-xl font-semibold text-gray-900">Instructor</h2>
                         <div>
-                            <Link className="text-lg font-medium text-blue-600">Ronald Richards</Link>
-                            <p>UI/UX Designer</p>
+                            <Link className="text-lg font-medium text-blue-600">{instructorName}</Link>
+                            <p>{headline}</p>
                         </div>
                         <div className="flex items-center gap-5">
                             <img
                                 className="w-[5.5rem] h-[5.5rem] sm:w-[6.5rem] sm:h-[6.5rem] md:w-[7.5rem] md:h-[7.5rem] object-cover rounded-full"
-                                src="https://i.ibb.co.com/kGv0Tm3/8dea41640a5ab81ddcbcee903ed2450e.jpg"
-                                alt="Instructor profile"
+                                src={instructorImage}
+                                alt="Instructor profile Image"
                             />
                             <ul className="space-y-1">
                                 <li className="flex items-center gap-1">
                                     <img className="w-5 h-5" src={awardLogo} alt="Award logo" />
-                                    <p>40,445 Reviews</p>
+                                    <p>{totalInstructorReviewsWithCommas} Reviews</p>
                                 </li>
                                 <li className="flex items-center gap-1">
                                     <img className="w-5 h-5" src={grauationLogo} alt="Graduation logo" />
-                                    <p>500 Students</p>
+                                    <p>{totalStudentsWithCommas} Students</p>
                                 </li>
                                 <li className="flex items-center gap-1">
                                     <img className="w-5 h-5" src={playLogo} alt="Play logo" />
-                                    <p>15 Courses</p>
+                                    <p>{totalCoursesCount} Courses</p>
                                 </li>
                             </ul>
                         </div>
 
                         {/* Instructor Bio */}
                         <p>
-                            With over a decade of industry experience, Ronald brings a wealth of practical knowledge to the classroom.
-                            He has played a pivotal role in designing user-centric interfaces for renowned tech companies, ensuring
-                            seamless and engaging user experiences.
+                            {experience}
                         </p>
                     </section>
 
@@ -395,8 +396,7 @@ const CourseOutlineItem = ({ className, milestoneData }) => {
 // Reviews Comoponent: Renders review section 
 const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
     const [limit, setLimit] = useState(3);
-    const totalReviewsArray = totalReviews?.toString().split('').reverse();
-    const modifiedTotalReviews = totalReviewsArray?.map((n, i) => ((i !== totalReviewsArray.length - 1) && (i + 1) % 3 === 0) ? ',' + n : n).reverse().join('');
+    const totalReviewsWithCommas = formatNumberWithCommas(totalReviews);
 
     const { data, isLoading } = useQuery({
         queryKey: ['courseReviews', limit],
@@ -404,7 +404,7 @@ const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
             const res = await axios.get(`http://localhost:5000/api/v1/review/get/${courseId}?limit=${limit}`);
             return res.data;
         }
-    })   
+    })
 
     return (
         <div className="flex flex-col md:flex-row justify-between items-start gap-y-6">
@@ -417,7 +417,7 @@ const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
                         </span>
                     </span>
                     <span className="text-gray-700 text-sm ">
-                        {modifiedTotalReviews} reviews
+                        {totalReviewsWithCommas} reviews
                     </span>
                 </p>
                 <StarRating courseId={courseId} />

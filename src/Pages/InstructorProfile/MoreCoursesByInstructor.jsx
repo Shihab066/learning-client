@@ -5,8 +5,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
 
-const MoreCoursesByInstructor = () => {
+const MoreCoursesByInstructor = () => {    
     const [coursesData, setCoursesData] = useState([]);
+    
+    useEffect(() => {
+        axios.get('/src/Pages/InstructorProfile/MoreCourses.json')
+            .then(res => setCoursesData(res.data));
+    }, []);
 
     // Slider settings
     const settings = {
@@ -16,7 +21,7 @@ const MoreCoursesByInstructor = () => {
         autoplaySpeed: 4000,
         pauseOnHover: true,
         slidesToShow: 4,
-        slidesToScroll: 1,
+        slidesToScroll: 2,
         centerMode: true,
         centerPadding: '10px',
         responsive: [
@@ -42,12 +47,7 @@ const MoreCoursesByInstructor = () => {
             }
 
         ]
-    };
-
-    useEffect(() => {
-        axios.get('/src/Pages/InstructorProfile/MoreCourses.json')
-            .then(res => setCoursesData(res.data));
-    }, []);
+    };   
 
     const handlePrevBtn = () => {
         const prevButton = document.querySelector('.slick-prev');
@@ -109,8 +109,7 @@ const NextButton = ({ handleNextBtn }) => (
 // Courses Card Component
 const CourseCard = ({ item }) => {
     const { courseName, courseThumbnail, instructorName, rating, totalReviews, courseDuration, totalLectures, price, discount } = item;
-    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
-    console.log(modifiedCourseName);
+    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;    
 
 
     return (

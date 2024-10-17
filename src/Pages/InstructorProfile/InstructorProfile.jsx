@@ -1,7 +1,24 @@
+import { useParams } from "react-router-dom";
 import MoreCoursesByInstructor from "./MoreCoursesByInstructor";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 
 const InstructorProfile = () => {
+    const { instructorId } = useParams();
+    const [axiosSecure] = useAxiosSecure();
+
+    // Fetch instructor data
+    const { data: instructorDetails = {}, isLoading, isError } = useQuery({
+        queryKey: ['instructorDetails'],
+        queryFn: async () => {
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/instructor/details/${instructorId}`);
+            return res.data;
+        }
+    });
+
+    const { name, image, headline, bioData, expertise, experience, socialLinks, totalCoursesCount, totalReviewsCount, totalStudents } = instructorDetails;
+
     return (
         <>
             <section className="lg-container px-4 lg:px-6 md:flex justify-between items-start gap-x-20 lg:gap-x-44 xl:gap-x-60 pt-10">
@@ -9,17 +26,22 @@ const InstructorProfile = () => {
                     <article className="space-y-6">
                         <section className="space-y-2">
                             <p>Instructor</p>
-                            <h2 className="text-2xl font-bold text-gray-900">Ronald Richards</h2>
-                            <p>Web developer, UX/UI Designer, and Teacher</p>
+                            <h2 className="text-2xl font-bold text-gray-900">{name}</h2>
+                            <p>{headline}</p>
                             <div className="flex items-center gap-x-20">
                                 <article>
                                     <p>Total Students</p>
-                                    <p className="text-xl text-gray-900 font-bold ">1000</p>
+                                    <p className="text-xl text-gray-900 font-bold ">{totalStudents}</p>
+                                </article>
+
+                                <article>
+                                    <p>Total Courses</p>
+                                    <p className="text-xl text-gray-900 font-bold ">{totalCoursesCount}</p>
                                 </article>
 
                                 <article>
                                     <p>Reviews</p>
-                                    <p className="text-xl text-gray-900 font-bold ">154</p>
+                                    <p className="text-xl text-gray-900 font-bold ">{totalReviewsCount}</p>
                                 </article>
                             </div>
                         </section>
@@ -27,35 +49,38 @@ const InstructorProfile = () => {
                     </article>
 
                     <article className="space-y-2">
-                        <header className="text-lg text-gray-900 font-bold">About Ronald Richard</header>
+                        <header className="text-lg text-gray-900 font-bold">About {name}</header>
                         <p>
-                            Ronald Richard is a highly skilled UX/UI Designer with over a decade of experience in crafting user-centric digital solutions. With a background in graphic design and a keen eye for detail, Ronald specializes in creating intuitive interfaces that delight users and drive business results.
+                            {bioData}
                         </p>
                     </article>
 
                     <article className="space-y-2">
                         <header className="text-lg text-gray-900 font-bold">Areas of Expertise</header>
                         <ul className="list-disc pl-6 ">
-                            <li>User Experience (UX) Design</li>
-                            <li>User Interface (UI) Design</li>
-                            <li>Information Architecture</li>
-                            <li>Interaction Design</li>
-                            <li>Visual Design</li>
-                            <li>Usability Testing</li>
-                            <li>Wireframing and Prototyping </li>
-                            <li>Design Thinking</li>
+                            {
+                                expertise?.map((txt, index) =>
+                                    <li key={index}>
+                                        {txt}
+                                    </li>
+                                )
+                            }
                         </ul>
                     </article>
 
                     <article className="space-y-2">
                         <header className="text-lg text-gray-900 font-bold">Professional Experience</header>
                         <p>
-                            Ronald Richard has an extensive professional background in UX/UI design, having worked with renowned companies such as [Company Name] and [Company Name]. His portfolio includes a diverse range of projects spanning web applications, mobile apps, and e-commerce platforms.
+                            {experience}
                         </p>
                     </article>
                 </section>
 
-                <InstructorProfileAside visibilityInfo={'hidden md:block'} />
+                <InstructorProfileAside
+                    visibilityInfo={'hidden md:block'}
+                    profileImage={image}
+                    socialLinks={socialLinks}
+                />
             </section>
 
             <MoreCoursesByInstructor />
@@ -63,44 +88,30 @@ const InstructorProfile = () => {
     );
 };
 
-const InstructorProfileAside = ({ visibilityInfo }) => {
+const InstructorProfileAside = ({ visibilityInfo, profileImage, socialLinks }) => {
     return (
         <aside className={`flex flex-col sm:flex-row md:flex-col justify-start items-center gap-x-14 space-y-4 sm:space-y-0 md:space-y-6 ${visibilityInfo} `}>
-            <img
-                className="w-40 h-40 md:w-[12.5rem] md:h-[12.5rem] rounded-full object-cover"
-                src="https://i.ibb.co.com/JmPSDz7/instructor-Profile1.jpg"
-                alt="instructor profile image" />
+            <figure className="w-40 h-40 md:w-[12.5rem] md:h-[12.5rem]">
+                <img
+                    className="w-full h-full rounded-full object-cover"
+                    src={profileImage}
+                    alt="instructor profile image" />
+            </figure>
             <ul className="space-y-2">
-                <li>
-                    <a
-                        href="#"
-                        className="block w-[12.5rem] py-2 bg-white border border-gray-900 rounded-md capitalize hover:shadow-lg active:scale-95 duration-300 "
-                    >
-                        <span className="block w-fit mx-auto font-medium">
-                            Website
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="#"
-                        className="block w-[12.5rem] py-2 bg-white border border-gray-900 rounded-md capitalize hover:shadow-lg active:scale-95 duration-300 "
-                    >
-                        <span className="block w-fit mx-auto font-medium">
-                            Twitter
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="#"
-                        className="block w-[12.5rem] py-2 bg-white border border-gray-900 rounded-md capitalize hover:shadow-lg active:scale-95 duration-300 "
-                    >
-                        <span className="block w-fit mx-auto font-medium">
-                            Youtube
-                        </span>
-                    </a>
-                </li>
+                {socialLinks &&
+                    Object.entries(socialLinks).map(([key, value]) => (
+                        <li key={key}>
+                            <a
+                                href={value}
+                                className="block w-[12.5rem] py-2 bg-white border border-gray-900 rounded-md capitalize hover:shadow-lg active:scale-95 duration-300"
+                            >
+                                <span className="block capitalize w-fit mx-auto font-medium">
+                                    {key}
+                                </span>
+                            </a>
+                        </li>
+                    ))
+                }                
             </ul>
         </aside>
     )

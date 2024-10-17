@@ -312,7 +312,7 @@ const Profile = () => {
     );
 };
 
-const AdditionalInfo = ({ axiosSecure, user }) => {  
+const AdditionalInfo = ({ axiosSecure, user }) => {
     const { register, handleSubmit } = useForm();
 
     // Language options available for selection
@@ -397,8 +397,9 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
 
     // Handle form submission
     const handleAdditionalInfo = (data) => {
+        const { website, linkedinProfile, youtubeProfile, Xprofile, facebookProfile } = data;
         const payload = {
-            ...data,
+            socialLinks: { website, linkedIn: linkedinProfile, youtube: youtubeProfile, twitter: Xprofile, facebook: facebookProfile },
             bioData: bioDataValue,
             experience: experienceInputValue,
             languages: languageSelection,
@@ -424,7 +425,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     useEffect(() => {
         const hasChanges = JSON.stringify(formData) !== JSON.stringify(user);
         setIsUpdateBtnDisabled(!hasChanges);
-    }, [formData, user]);    
+    }, [formData, user]);
     return (
         <div>
             <h3 className="text-xl font-medium mb-3">Additional Info</h3>

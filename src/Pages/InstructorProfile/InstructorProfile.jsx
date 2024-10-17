@@ -28,7 +28,7 @@ const InstructorProfile = () => {
                             <p>Instructor</p>
                             <h2 className="text-2xl font-bold text-gray-900">{name}</h2>
                             <p>{headline}</p>
-                            <div className="flex items-center gap-x-20">
+                            <div className="flex items-end gap-x-4 sm:gap-x-20">
                                 <article>
                                     <p>Total Students</p>
                                     <p className="text-xl text-gray-900 font-bold ">{totalStudents}</p>
@@ -45,7 +45,11 @@ const InstructorProfile = () => {
                                 </article>
                             </div>
                         </section>
-                        <InstructorProfileAside visibilityInfo={'block md:hidden'} />
+                        <InstructorProfileAside
+                            visibilityInfo={'block md:hidden'}
+                            profileImage={image}
+                            socialLinks={socialLinks}
+                        />
                     </article>
 
                     <article className="space-y-2">
@@ -90,14 +94,14 @@ const InstructorProfile = () => {
 
 const InstructorProfileAside = ({ visibilityInfo, profileImage, socialLinks }) => {
     return (
-        <aside className={`flex flex-col sm:flex-row md:flex-col justify-start items-center gap-x-14 space-y-4 sm:space-y-0 md:space-y-6 ${visibilityInfo} `}>
+        <aside className={`flex flex-col justify-start items-center gap-x-14 space-y-4 md:space-y-6 ${visibilityInfo} `}>
             <figure className="w-40 h-40 md:w-[12.5rem] md:h-[12.5rem]">
                 <img
                     className="w-full h-full rounded-full object-cover"
                     src={profileImage}
                     alt="instructor profile image" />
             </figure>
-            <ul className="space-y-2">
+            <ul className="flex md:block md:space-y-2 flex-wrap justify-center items-center gap-4">
                 {socialLinks &&
                     Object.entries(socialLinks).map(([key, value]) => (
                         <li key={key}>
@@ -111,7 +115,7 @@ const InstructorProfileAside = ({ visibilityInfo, profileImage, socialLinks }) =
                             </a>
                         </li>
                     ))
-                }                
+                }
             </ul>
         </aside>
     )

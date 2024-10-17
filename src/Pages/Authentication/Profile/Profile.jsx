@@ -34,7 +34,7 @@ const Profile = () => {
 
 
     // Fetch user data using react-query
-    const { data: userData = {} } = useQuery({
+    const { data: userData = {}, isLoading: isUserLoading } = useQuery({
         queryKey: ['user', user?.uid],
         enabled: !loading,
         queryFn: async () => {
@@ -300,10 +300,11 @@ const Profile = () => {
 
                         {/* Add additonal info */}
                         {
-                            userData && userRole === 'instructor' &&
+                            !isUserLoading && userRole === 'instructor' &&
                             <AdditionalInfo
                                 axiosSecure={axiosSecure}
                                 user={userData}
+                                isUserLoading={isUserLoading}
                             />
                         }
                     </div>
@@ -337,7 +338,8 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     // Local state management
     const [formData, setFormData] = useState(user);
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
-    const { headline, bioData, experience, website, Xprofile, linkedinProfile, youtubeProfile, facebookProfile, languages, expertise } = formData;
+    const { headline, bioData, experience, languages, expertise, socialLinks } = formData;
+    const {website, linkedIn, youtube, twitter, facebook } = socialLinks;
 
     // Set default options for language and expertise selection
     const selectedLanguageOptions = languages?.map(language => languageOptions.find(option => option.value === language)) || [];
@@ -529,7 +531,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                     {/* X profile */}
                     <InputField
                         label="X (Formerly Twitter)"
-                        value={Xprofile}
+                        value={twitter}
                         placeholder="X profile"
                         register={register}
                         name="Xprofile"
@@ -539,7 +541,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                     {/* LinkedIn */}
                     <InputField
                         label="LinkedIn"
-                        value={linkedinProfile}
+                        value={linkedIn}
                         placeholder="LinkedIn profile"
                         register={register}
                         name="linkedinProfile"
@@ -549,7 +551,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                     {/* YouTube */}
                     <InputField
                         label="YouTube"
-                        value={youtubeProfile}
+                        value={youtube}
                         placeholder="YouTube channel link"
                         register={register}
                         name="youtubeProfile"
@@ -559,7 +561,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
                     {/* Facebook */}
                     <InputField
                         label="Facebook"
-                        value={facebookProfile}
+                        value={facebook}
                         placeholder="Facebook profile"
                         register={register}
                         name="facebookProfile"

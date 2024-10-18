@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
 
-const MoreCoursesByInstructor = () => {    
+const MoreCoursesByInstructor = () => {
     const [coursesData, setCoursesData] = useState([]);
-    
+
     useEffect(() => {
         axios.get('/src/Pages/InstructorProfile/MoreCourses.json')
             .then(res => setCoursesData(res.data));
@@ -47,7 +47,7 @@ const MoreCoursesByInstructor = () => {
             }
 
         ]
-    };   
+    };
 
     const handlePrevBtn = () => {
         const prevButton = document.querySelector('.slick-prev');
@@ -66,9 +66,11 @@ const MoreCoursesByInstructor = () => {
                 <div className="flex justify-between px-4 md:px-6 2xl:px-4">
                     <h3 className="text-xl sm:text-2xl font-semibold">
                         More Courses By&nbsp;
-                        <span className="text-blue-600">
-                            Ronald <br /> Richards
-                        </span>
+                            <TextWithBr
+                                text={'Ronald Richards'}
+                            />
+                        {/* <span className="text-blue-600">
+                        </span> */}
                     </h3>
                     {/* Prev and Next Buttons */}
                     <div className="hidden sm:flex gap-3">
@@ -87,6 +89,24 @@ const MoreCoursesByInstructor = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+// This function will take a text and return the text with a new line break added after the first word.
+const TextWithBr = ({ text }) => {
+    const title = text.split(' ');
+    if (title.length > 1) {
+        title.splice(1, 0, '\n')
+    }
+    const text1 = title[0];
+    const text2 = title.slice(1).join('');
+
+    return (
+        <pre className="inline font-sans text-blue-600">
+            <span>{text1}</span>
+            <span>{text2}</span>
+        </pre>
+
     );
 };
 
@@ -109,7 +129,7 @@ const NextButton = ({ handleNextBtn }) => (
 // Courses Card Component
 const CourseCard = ({ item }) => {
     const { courseName, courseThumbnail, instructorName, rating, totalReviews, courseDuration, totalLectures, price, discount } = item;
-    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;    
+    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
 
 
     return (

@@ -37,9 +37,8 @@ const CourseDetails = () => {
         },
     });
 
-    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, experience } = data;
-    const { courseDuration } = courseDetails;
-    const totalModules = courseContents?.map(({ totalModules }) => totalModules).reduce((acc, curr) => acc + curr, 0);
+    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience } = data;
+    const { courseDuration } = courseDetails;    
     const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
     const totalStudentsWithCommas = formatNumberWithCommas(totalStudents);
 

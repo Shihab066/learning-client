@@ -74,11 +74,15 @@ const AddClass = () => {
         { value: 'lifestyle', label: 'Lifestyle' },
         { value: 'teaching-academics', label: 'Teaching & Academics' }
     ];
-
+    
+    // Calculate Total Modules
+    const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
+  
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
         if (courseContentError) return;
+        
         setIsCoursePublishing(true)
 
         const { uid } = user;
@@ -96,7 +100,8 @@ const AddClass = () => {
             price: parseFloat(price),
             discount: 0,
             courseContents: milestonesData,
-            publish: true
+            publish: true,
+            totalModules
         };
 
         axiosSecure.post('http://localhost:5000/api/v1/course/add', newClass).then(res => {

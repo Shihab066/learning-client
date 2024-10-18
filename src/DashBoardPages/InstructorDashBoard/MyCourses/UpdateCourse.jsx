@@ -120,6 +120,9 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
         { value: 'teaching-academics', label: 'Teaching & Academics' }
     ];
 
+    // Calculate Total Modules
+    const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);    
+
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseThumbnail, seats, price, discount } = data;
@@ -135,6 +138,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             price: parseFloat(price),
             discount: parseFloat(discount) || 0,
             courseContents: milestonesData,
+            totalModules
         };
 
         axiosSecure.patch(`http://localhost:5000/api/v1/course/update?${courseId}`, updatedCourse).then(res => {

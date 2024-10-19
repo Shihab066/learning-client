@@ -87,7 +87,7 @@ const InstructorProfile = () => {
                 />
             </section>
 
-            <MoreCoursesByInstructor />
+            {!isLoading && <MoreCoursesByInstructor instructorId={instructorId} instructorName={name} />}
         </>
     );
 };

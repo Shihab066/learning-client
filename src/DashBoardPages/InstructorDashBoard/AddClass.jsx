@@ -77,7 +77,6 @@ const AddClass = () => {
     
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
-  
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
@@ -85,11 +84,12 @@ const AddClass = () => {
         
         setIsCoursePublishing(true)
 
-        const { uid } = user;
+        const { uid, displayName } = user;        
         const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
 
         const newClass = {
             _instructorId: uid,
+            instructorName: displayName,
             courseName,
             courseThumbnail: uploadedThumbnail,
             summary,
@@ -134,7 +134,6 @@ const AddClass = () => {
         <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 py-10 w-full xl:border rounded-lg">
             <h3 className="py-5 font-bold text-2xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-
                 {/* Class Name */}
                 <div className="form-control">
                     <label className="label">
@@ -174,7 +173,7 @@ const AddClass = () => {
                     {errors.courseThumbnail && <span className="text-red-600">Field is required</span>}
                 </div>
 
-                {/* summury*/}
+                {/* summary*/}
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Summary</span>

@@ -4,14 +4,18 @@ import "slick-carousel/slick/slick-theme.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../components/Loading/Loading";
+import { Link } from "react-router-dom";
 
-const MoreCoursesByInstructor = () => {
-    const [coursesData, setCoursesData] = useState([]);
-
-    useEffect(() => {
-        axios.get('/src/Pages/InstructorProfile/MoreCourses.json')
-            .then(res => setCoursesData(res.data));
-    }, []);
+const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
+    const { data: courses = [], isLoading } = useQuery({
+        queryKey: ['moreCourseByInstructor'],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:5000/api/v1/course/moreCourse/${instructorId}`);
+            return res.data;
+        }
+    })
 
     // Slider settings
     const settings = {
@@ -60,35 +64,43 @@ const MoreCoursesByInstructor = () => {
     };
 
     return (
-        <div className="w-full bg-gray-50 py-20 2xl:px-4 mt-20">
-            <div className="lg-container">
-                {/* Header Section */}
-                <div className="flex justify-between px-4 md:px-6 2xl:px-4">
-                    <h3 className="text-xl sm:text-2xl font-semibold">
-                        More Courses By&nbsp;
-                            <TextWithBr
-                                text={'Ronald Richards'}
-                            />
-                        {/* <span className="text-blue-600">
+        <>
+            {
+                isLoading
+                    ?
+                    <Loading />
+                    :
+                    <div className="w-full bg-gray-50 py-20 2xl:px-4 mt-20">
+                        <div className="lg-container">
+                            {/* Header Section */}
+                            <div className="flex justify-between px-4 md:px-6 2xl:px-4">
+                                <h3 className="text-xl sm:text-2xl font-semibold">
+                                    More Courses By&nbsp;
+                                    <TextWithBr
+                                        text={instructorName}
+                                    />
+                                    {/* <span className="text-blue-600">
                         </span> */}
-                    </h3>
-                    {/* Prev and Next Buttons */}
-                    <div className="hidden sm:flex gap-3">
-                        <PrevButton handlePrevBtn={handlePrevBtn} />
-                        <NextButton handleNextBtn={handleNextBtn} />
-                    </div>
-                </div>
+                                </h3>
+                                {/* Prev and Next Buttons */}
+                                <div className="hidden sm:flex gap-3">
+                                    <PrevButton handlePrevBtn={handlePrevBtn} />
+                                    <NextButton handleNextBtn={handleNextBtn} />
+                                </div>
+                            </div>
 
-                {/* Slider Section */}
-                <div className="slider-container mt-10 px-2 sm:px-0 md:px-2 xl:px-2">
-                    <Slider {...settings}>
-                        {coursesData.map(item => (
-                            <CourseCard key={item._id} item={item} />
-                        ))}
-                    </Slider>
-                </div>
-            </div>
-        </div>
+                            {/* Slider Section */}
+                            <div className="slider-container mt-10 px-2 sm:px-0 md:px-2 xl:px-2">
+                                <Slider {...settings}>
+                                    {courses.map(item => (
+                                        <CourseCard key={item._id} item={item} instructorName={instructorName} />
+                                    ))}
+                                </Slider>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </>
     );
 };
 
@@ -127,45 +139,45 @@ const NextButton = ({ handleNextBtn }) => (
 );
 
 // Courses Card Component
-const CourseCard = ({ item }) => {
-    const { courseName, courseThumbnail, instructorName, rating, totalReviews, courseDuration, totalLectures, price, discount } = item;
+const CourseCard = ({ item, instructorName }) => {
+    const { _id, courseName, courseThumbnail, level, rating, totalReviews, courseDuration, totalModules, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
-
-
     return (
-        <div className="sm:w-[95%] h-[25.5rem] lg:h-[25rem] bg-white rounded-2xl p-3 lg:p-4 space-y-2 border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0">
-            <img
-                className="w-full h-40 object-cover object-top rounded-lg"
-                src={courseThumbnail}
-                alt="course thumbnail"
-            />
-            <h3 className="h-14 lg:text-lg font-medium" title={courseName}>
-                {modifiedCourseName}
-            </h3>
-            <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
-                <GenerateDynamicStar rating={rating} />
-                <span>
-                    ({totalReviews} Ratings)
-                </span>
+        <Link to={`/course/${_id}`}>
+            <div className="sm:w-[95%] h-[25.5rem] lg:h-[25rem] bg-white rounded-2xl p-3 lg:p-4 space-y-2 border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0">
+                <img
+                    className="w-full h-40 object-cover object-top rounded-lg"
+                    src={courseThumbnail}
+                    alt="course thumbnail"
+                />
+                <h3 className="h-14 lg:text-lg font-medium" title={courseName}>
+                    {modifiedCourseName}
+                </h3>
+                <p className="truncate">
+                    By {instructorName}
+                </p>
+                <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
+                    <GenerateDynamicStar rating={rating} />
+                    <span>
+                        ({totalReviews} Ratings)
+                    </span>
+                </div>
+                <p>{22} Total Hours. {totalModules} Modules.</p>
+                <div>
+                    {discount > 0
+                        ? (
+                            <div className="flex justify-start items-start gap-x-3">
+                                <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
+                                <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
+                                <p className="badge badge-accent my-auto">{discount}% Off</p>
+                            </div>
+                        ) : (
+                            <p className="text-gray-900 text-2xl font-medium">${price}</p>
+                        )
+                    }
+                </div>
             </div>
-            <p className="truncate">
-                By {instructorName}
-            </p>
-            <p>{courseDuration} Total Hours. {totalLectures} Lectures.</p>
-            <div>
-                {discount > 0
-                    ? (
-                        <div className="flex justify-start items-start gap-x-3">
-                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * discount)).toFixed(1)}</p>
-                            <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
-                            <p className="badge badge-accent my-auto">{discount * 100}% Off</p>
-                        </div>
-                    ) : (
-                        <p className="text-gray-900 text-2xl font-medium">${price}</p>
-                    )
-                }
-            </div>
-        </div>
+        </Link>
     );
 };
 

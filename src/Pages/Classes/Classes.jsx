@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
+import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -64,6 +65,7 @@ const Classes = () => {
             return res.data;
         },
     });
+    console.log(data)
 
     // Handle class selection
     const selectClass = (id) => {
@@ -176,7 +178,7 @@ const Classes = () => {
 
 // Header component with options for items per page and sorting
 const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, visiblePages }) => (
-    <div className='lg-container flex justify-between px-10 py-6'>
+    <div className='lg-container flex flex-col sm:flex-row justify-between px-2 sm:px-4 md:px-5 py-6 gap-y-4'>
         <h2 className="text-lg font-medium">Courses</h2>
         <div className={`flex items-center gap-4 text-sm ${!visiblePages.length && 'hidden'}`}>
             {/* Select item per page */}
@@ -213,15 +215,12 @@ const LoadingSpinner = () => (
 const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon }) => (
     <div className='lg-container'>
         {visiblePages.length ?
-            <div>
-                <div className="lg-container min-h-[650px] grid grid-cols-2 md:grid-cols-3 gap-y-10">
-                    {data?.courses.map(classData => (
-                        <ClassCard
-                            key={classData._id}
-                            item={classData}
-                            overlay={false}
-                            btn={true}
-                            cardForClass={true}
+            <>
+                <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-0 gap-x-4">
+                    {data?.courses.map(courseData => (
+                        <CourseCard
+                            key={courseData._id}
+                            item={courseData}
                             selectClass={selectClass}
                         />
                     ))}
@@ -233,10 +232,67 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
                     visiblePages={visiblePages}
                     data={data}
                 />
-            </div> : <ItemNotFound notFoundIcon={notFoundIcon} />
+            </> : <ItemNotFound notFoundIcon={notFoundIcon} />
         }
     </div>
 );
+
+// Courses Card Component
+const CourseCard = ({ item }) => {
+    const { _id, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
+    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
+    return (
+        <div className="w-full h-fit bg-white rounded-2xl border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
+            <Link to={`/course/${_id}`}>
+                <img
+                    className="w-full h-48 object-cover object-top rounded-t-lg"
+                    src={courseThumbnail}
+                    alt="course thumbnail"
+                />
+                <div className='p-3 lg:p-4 space-y-2'>
+                    <h3 className="h-14 md:h-fit lg:h-14 lg:text-lg font-medium" title={courseName}>
+                        {modifiedCourseName}
+                    </h3>
+                    <p className="truncate">
+                        By {instructorName}
+                    </p>
+                    <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">{level}</div>
+                    <div className="flex flex-col md:flex-row md:items-center gap-x-2">
+                        <GenerateDynamicStar rating={rating} />
+                        <span>
+                            ({totalReviews} Ratings)
+                        </span>
+                    </div>
+                    <p>{22} Total Hours. {totalModules} Modules.</p>
+                    <div>
+                        {discount > 0
+                            ? (
+                                <div className="flex justify-start items-start gap-x-3">
+                                    <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
+                                    <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
+                                    <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
+                                </div>
+                            ) : (
+                                <p className="text-gray-900 text-2xl font-medium">${price}</p>
+                            )
+                        }
+                    </div>
+                </div>
+            </Link>
+
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
+                <button className="btn bg-black hover:bg-black text-white w-full capitalize rounded-lg hover:shadow-lg duration-300">
+                    Add To Cart
+                </button>
+                <button className="btn bg-white hover:bg-white text-black outline outline-1 w-full capitalize rounded-lg hover:shadow-lg duration-300">
+                    Buy Now
+                </button>
+            </div>
+        </div>
+    );
+};
 
 // Item not found component
 const ItemNotFound = ({ notFoundIcon }) => (

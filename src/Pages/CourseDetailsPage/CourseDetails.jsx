@@ -121,7 +121,7 @@ const CourseDetails = () => {
                             alt="Instructor profile Image"
                         />
                         <p className="text-gray-700">
-                            Created by <Link className="text-blue-600 ml-1" to={'#instructorProfile'}>{instructorName}</Link>
+                            Created by <Link className="text-blue-600 ml-1" to={`/instructor/${_instructorId}`}>{instructorName}</Link>
                         </p>
                     </div>
 
@@ -218,7 +218,7 @@ const CourseDetails = () => {
                         <div className="space-y-1">
                             <h2 className="text-xl font-semibold text-gray-900">Certification</h2>
                             <p className="text-gray-700">
-                                At Byway, we understand the significance of formal recognition for your hard work and dedication to continuous learning.
+                                At Learning point, we understand the significance of formal recognition for your hard work and dedication to continuous learning.
                                 Upon successful completion of our courses, you will earn a prestigious certification that not only validates your expertise
                                 but also opens doors to new opportunities in your chosen field.
                             </p>
@@ -230,7 +230,7 @@ const CourseDetails = () => {
                         <hr />
                         <h2 className="text-xl font-semibold text-gray-900">Instructor</h2>
                         <div>
-                            <Link className="text-lg font-medium text-blue-600">{instructorName}</Link>
+                            <Link to={`/instructor/${_instructorId}`} className="text-lg font-medium text-blue-600">{instructorName}</Link>
                             <p>{headline}</p>
                         </div>
                         <div className="flex items-center gap-5">

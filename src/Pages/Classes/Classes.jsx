@@ -64,8 +64,7 @@ const Classes = () => {
             const res = await axios.get(`http://localhost:5000/api/v1/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
-    });
-    console.log(data)
+    });    
 
     // Handle class selection
     const selectClass = (id) => {
@@ -216,7 +215,7 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
     <div className='lg-container'>
         {visiblePages.length ?
             <>
-                <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-0 gap-x-4">
+                <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
                     {data?.courses.map(courseData => (
                         <CourseCard
                             key={courseData._id}

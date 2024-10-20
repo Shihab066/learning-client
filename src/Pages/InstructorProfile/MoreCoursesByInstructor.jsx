@@ -15,8 +15,7 @@ const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
             const res = await axios.get(`http://localhost:5000/api/v1/course/moreCourse/${instructorId}`);
             return res.data;
         }
-    })
-
+    })    
     // Slider settings
     const settings = {
         infinite: true,

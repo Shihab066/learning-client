@@ -12,6 +12,7 @@ import Testimonial from "../../components/Testimonial/Testimonial";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
+import GenerateStar from "../../components/GenerateStar/GenerateStar";
 
 const CourseDetails = () => {
     const courseDetails = {
@@ -454,15 +455,8 @@ const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
     )
 };
 
-const starPath = "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
 const fullStarFill = "#FEC84B";
 const emptyStarFill = "#CBD5E1";
-
-const GenerateStar = ({ fill }) => (
-    <svg className="w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d={starPath} fill={fill} />
-    </svg>
-);
 
 const StarRating = ({ courseId }) => {
     const { data: ratingPercentages = {} } = useQuery({

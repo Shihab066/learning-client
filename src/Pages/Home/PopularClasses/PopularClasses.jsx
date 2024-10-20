@@ -1,6 +1,9 @@
 import PopularClassSkeleton from "../../../components/PopularClassSkeleton/PopularClassSkeleton";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
+import formatNumberWithCommas from "../../../utils/formateNumberWithCommas";
 
 const PopularClasses = () => {
     // Fetch popular courses
@@ -11,7 +14,7 @@ const PopularClasses = () => {
             return res.data;
         },
     });
-
+    console.log(courses)
     return (
         <div className="lg-container">
             {/* Heading */}
@@ -20,21 +23,23 @@ const PopularClasses = () => {
             </h2>
 
             {/* Grid layout for class cards or skeleton loader */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-y-4 sm:gap-y-6 xl:gap-y-10 sm:px-2 2xl:px-0">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-y-4 sm:gap-y-6 xl:gap-y-10 sm:px-2 2xl:px-0 gap-x-6">
                 {isLoading
                     ?
                     <PopularClassSkeleton />
                     :
-                    courses.length > 0
+                    courses?.length > 0
                         ?
                         courses?.map(item => (
-                            <PopularClassCard
+                            <CourseCard
                                 key={item._id}
                                 item={item}
                             />
                         ))
                         :
-                        <p>No Class Found</p>
+                        <div className=" h-fit flex items-center justify-center col-span-full">
+                            <p className="text-gray-400 text-lg font-medium">No Course Found</p>
+                        </div>
                 }
             </div>
         </div>
@@ -43,7 +48,7 @@ const PopularClasses = () => {
 
 // Popular Class Card Component
 const PopularClassCard = ({ item }) => {
-    const { image, name, instructorName, price, students } = item;
+    const { courseThumbnail, courseName, instructorName, price, students } = item;
 
     return (
         <div className="flex justify-center">
@@ -51,7 +56,7 @@ const PopularClassCard = ({ item }) => {
                 {/* Class Image */}
                 <figure className="h-[12.5rem] md:h-[14.375rem] xl:h-[15.938rem] overflow-hidden bg-base-200">
                     <img
-                        src={image}
+                        src={courseThumbnail}
                         alt="classImg"
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 ease-linear"
                     />
@@ -66,7 +71,7 @@ const PopularClassCard = ({ item }) => {
                 <div className="card-body pl-4 pr-14 py-6 lg:p-8 lg:pr-14">
                     {/* Class Name */}
                     <h2 className="card-title text-sm sm:text-base lg:text-xl h-8 sm:h-12 lg:h-14">
-                        {name}
+                        {courseName}
                     </h2>
 
                     {/* Instructor Name */}
@@ -80,6 +85,39 @@ const PopularClassCard = ({ item }) => {
                     </span>
                 </div>
             </div>
+        </div>
+    );
+};
+
+// Courses Card Component
+const CourseCard = ({ item }) => {
+    const { _id, instructorName, courseName, courseThumbnail, rating, totalReviews } = item;
+    const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
+    const formatedTotalReviews = formatNumberWithCommas(totalReviews);
+    return (
+        <div className="w-full h-fit bg-white rounded-2xl border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-md duration-300">
+            <Link to={`/course/${_id}`}>
+                <img
+                    className="w-full h-48 object-cover object-top rounded-t-lg"
+                    src={courseThumbnail}
+                    alt="course thumbnail"
+                />
+                <div className='p-3 lg:p-4 space-y-2'>
+                    <h3 className="h-14 md:h-fit lg:h-14 lg:text-lg font-medium" title={courseName}>
+                        {modifiedCourseName}
+                    </h3>
+                    <p className="truncate">
+                        By {instructorName}
+                    </p>
+                    <div className="flex flex-col md:flex-row md:items-center gap-x-2">
+                        {rating > 0 && <p className="text-gray-700 font-medium">{ rating }</p>}
+                        <GenerateDynamicStar rating={rating} />
+                        <span>
+                            ({formatedTotalReviews} Ratings)
+                        </span>
+                    </div>
+                </div>
+            </Link>
         </div>
     );
 };

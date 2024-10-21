@@ -11,8 +11,9 @@ const Sponser = () => {
     }, [])
 
     return (
-        <div className="lg-container grayscale">
-            <Marquee className="mt-20 sm:mt-28 md:mt-36 lg:mt-40" gradient={true} autoFill={true}>
+        <div className="lg-container pt-10 md:mt-12 lg:mt-16 xl:mt-20 xl:mb-40">
+            <h2 className="text-center font-medium text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 ">Sponsors</h2>
+            <Marquee className="grayscale" gradient={true} autoFill={true}>
                 {
                     sponserImg.map((image, index) =>
                         <img

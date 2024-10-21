@@ -1,23 +1,15 @@
 import { useLottie } from 'lottie-react';
 import animation1 from '../../../assets/Animation/animation1.json'
 
-const NewsLetter = () => {
-    const defaultOptions = {
-        loop: true,
-        autoplay: true,
-        animationData: animation1,
-        rendererSettings: {
-            preserveAspectRatio: "xMidYMid slice"
-        }
-    };
-    const { View } = useLottie(defaultOptions);
+const NewsLetter = ({ isSmallDevice }) => {
 
     return (
         <div className="mt-20 sm:mt-40 px-3">
             <div className="lg-container sm:h-[180px] md:h-[200px] lg:h-[250px] xl:h-[300px] relative flex justify-between shadow-md overflow-hidden rounded-lg">
-                <div className='w-[50%] hidden sm:flex justify-center items-center '>
-                    {View}
-                </div>
+                {
+                    !isSmallDevice &&      
+                    <Animation />
+                }
                 <div className="w-full md:w-[65%] lg:w-[60%] h-full text-center sm:text-left change-shape bg-black text-white flex justify-center sm:justify-end items-center sm:pr-2 md:pr-0">
                     <div className="sm:w-[75%] p-5 sm:p-0">
                         <h3 className="sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold mb-2 opacity-90">Subcribe To Our Newsletter</h3>
@@ -35,5 +27,22 @@ const NewsLetter = () => {
         </div>
     );
 };
+
+const Animation = () => {
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animation1,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    };
+    const { View } = useLottie(defaultOptions);
+    return (
+        <div className='w-[50%] hidden sm:flex justify-center items-center '>
+            {View}
+        </div>
+    )
+}
 
 export default NewsLetter;

@@ -28,6 +28,7 @@ const Testimonial = () => {
             {
                 breakpoint: 575,
                 settings: {
+                    autoplay: false,
                     slidesToShow: 1,
                     centerMode: false,
                     dots: true

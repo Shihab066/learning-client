@@ -2,11 +2,10 @@ import axios from "axios";
 import PopularInstructorSkeleton from "../../../components/PopularInstructorsSkeleton.jsx/PopularInstructorSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import GenerateStar from "../../../components/GenerateStar/GenerateStar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { key } from "localforage";
 
-const PopularInstructor = () => {
+const PopularInstructor = ({isMobileView}) => {
 
     // Fetch popular instructor data
     const { data: instructors = [], isLoading } = useQuery({
@@ -15,26 +14,7 @@ const PopularInstructor = () => {
             const res = await axios.get(`http://localhost:5000/api/v1/instructor/popular`);
             return res.data;
         },
-    });
-
-    const [isMobileView, setIsMobileView] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 1280) {
-                setIsMobileView(true)
-            } else {
-                setIsMobileView(false)
-            }
-        };
-        handleResize();
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
+    });   
 
     return (
         <div className="lg-container">

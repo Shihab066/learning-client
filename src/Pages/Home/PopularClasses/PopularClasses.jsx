@@ -14,7 +14,7 @@ const PopularClasses = () => {
             return res.data;
         },
     });
-    console.log(courses)
+
     return (
         <div className="lg-container">
             {/* Heading */}
@@ -23,7 +23,7 @@ const PopularClasses = () => {
             </h2>
 
             {/* Grid layout for class cards or skeleton loader */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-y-4 sm:gap-y-6 xl:gap-y-10 sm:px-2 2xl:px-0 gap-x-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center gap-y-6 sm:gap-y-6 xl:gap-y-10 px-3 xl:px-4 2xl:px-0 gap-x-4 md:gap-x-6">
                 {isLoading
                     ?
                     <PopularClassSkeleton />
@@ -31,7 +31,7 @@ const PopularClasses = () => {
                     courses?.length > 0
                         ?
                         courses?.map(item => (
-                            <CourseCard
+                            <PopularCourseCard
                                 key={item._id}
                                 item={item}
                             />
@@ -46,51 +46,8 @@ const PopularClasses = () => {
     );
 };
 
-// Popular Class Card Component
-const PopularClassCard = ({ item }) => {
-    const { courseThumbnail, courseName, instructorName, price, students } = item;
-
-    return (
-        <div className="flex justify-center">
-            <div className="relative w-[95%] xl:w-[90%] card shadow-xl image-full">
-                {/* Class Image */}
-                <figure className="h-[12.5rem] md:h-[14.375rem] xl:h-[15.938rem] overflow-hidden bg-base-200">
-                    <img
-                        src={courseThumbnail}
-                        alt="classImg"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 ease-linear"
-                    />
-                </figure>
-
-                {/* Price Tag */}
-                <span className="absolute right-2 top-3 z-30 bg-white px-2 lg:px-3 py-1 rounded-lg text-center xs:text-sm sm:text-base">
-                    $ {price}
-                </span>
-
-                {/* Class Info */}
-                <div className="card-body pl-4 pr-14 py-6 lg:p-8 lg:pr-14">
-                    {/* Class Name */}
-                    <h2 className="card-title text-sm sm:text-base lg:text-xl h-8 sm:h-12 lg:h-14">
-                        {courseName}
-                    </h2>
-
-                    {/* Instructor Name */}
-                    <span className="text-[0.8rem] sm:text-sm lg:text-base">
-                        by {instructorName}
-                    </span>
-
-                    {/* Student Count */}
-                    <span className="text-[0.8rem] sm:text-sm lg:text-base">
-                        Students: {students}
-                    </span>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 // Courses Card Component
-const CourseCard = ({ item }) => {
+const PopularCourseCard = ({ item }) => {
     const { _id, instructorName, courseName, courseThumbnail, rating, totalReviews } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const formatedTotalReviews = formatNumberWithCommas(totalReviews);
@@ -103,14 +60,14 @@ const CourseCard = ({ item }) => {
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>
-                    <h3 className="h-14 md:h-fit lg:h-14 lg:text-lg font-medium" title={courseName}>
+                    <h3 className="h-12 lg:h-14 lg:text-lg font-medium" title={courseName}>
                         {modifiedCourseName}
                     </h3>
                     <p className="truncate">
                         By {instructorName}
                     </p>
-                    <div className="flex flex-col md:flex-row md:items-center gap-x-2">
-                        {rating > 0 && <p className="text-gray-700 font-medium">{ rating }</p>}
+                    <div className="flex items-center gap-x-2">
+                        {rating > 0 && <p className="text-gray-700 font-medium">{rating}</p>}
                         <GenerateDynamicStar rating={rating} />
                         <span>
                             ({formatedTotalReviews} Ratings)

@@ -2,8 +2,6 @@ import { useLottie } from 'lottie-react';
 import animation1 from '../../../assets/Animation/animation3.json'
 import { RiShieldCheckLine } from "react-icons/ri";
 const ExtraSection = ({ isSmallDevice }) => {
-
-    console.log(isSmallDevice)
     return (
         <div className='lg-container '>
             <div className='mt-14 md:mt-20 lg:mt-24 grid md:grid-cols-2 h-fit content-center'>
@@ -31,7 +29,7 @@ const ExtraSection = ({ isSmallDevice }) => {
                     </div>
                 </div>
                 {
-                    !isSmallDevice && 
+                    !isSmallDevice &&
                     <Animation />
                 }
             </div>

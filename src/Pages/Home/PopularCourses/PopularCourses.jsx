@@ -1,11 +1,11 @@
-import PopularClassSkeleton from "../../../components/PopularClassSkeleton/PopularClassSkeleton";
+import PopularCoursesSkeleton from "./PopularCoursesSkeleton/PopularCoursesSkeleton";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
 import formatNumberWithCommas from "../../../utils/formateNumberWithCommas";
 
-const PopularClasses = () => {
+const PopularCourses = ({isMobileView}) => {
     // Fetch popular courses
     const { data: courses = [], isLoading } = useQuery({
         queryKey: ['popularCourses'],
@@ -26,7 +26,7 @@ const PopularClasses = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center gap-y-6 sm:gap-y-6 xl:gap-y-10 px-3 xl:px-4 2xl:px-0 gap-x-4 md:gap-x-6">
                 {isLoading
                     ?
-                    <PopularClassSkeleton />
+                    <PopularCoursesSkeleton isMobileView={isMobileView} />
                     :
                     courses?.length > 0
                         ?
@@ -79,4 +79,4 @@ const PopularCourseCard = ({ item }) => {
     );
 };
 
-export default PopularClasses;
+export default PopularCourses;

@@ -1,11 +1,12 @@
 import axios from "axios";
-import PopularInstructorSkeleton from "../../../components/PopularInstructorsSkeleton.jsx/PopularInstructorSkeleton";
+import PopularInstructorSkeleton from "./PopularInstructorsSkeleton.jsx/PopularInstructorSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import GenerateStar from "../../../components/GenerateStar/GenerateStar";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import PopularInstructorMobileSkeleton from "./PopularInstructorsSkeleton.jsx/PopularInstructorMobileSkeleton";
 
-const PopularInstructor = ({isMobileView}) => {
+const PopularInstructor = ({ isMobileView }) => {
 
     // Fetch popular instructor data
     const { data: instructors = [], isLoading } = useQuery({
@@ -14,17 +15,21 @@ const PopularInstructor = ({isMobileView}) => {
             const res = await axios.get(`http://localhost:5000/api/v1/instructor/popular`);
             return res.data;
         },
-    });   
+    });
 
     return (
         <div className="lg-container">
             <h2 className="text-center font-semibold mt-16 lg:mt-20 xl:mt-32 mb-12 xs:text-xl md:text-2xl lg:text-3xl">
                 Popular Instructors
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 ld:grid-cols-3 xl:grid-cols-4 gap-y-6 xl:gap-y-4 gap-x-6 px-3 xl:px-4 2xl:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 xl:gap-y-4 gap-x-6 px-3 xl:px-4 2xl:px-0">
                 {isLoading
                     ?
-                    <PopularInstructorSkeleton />
+                    isMobileView
+                        ?
+                        <PopularInstructorMobileSkeleton />
+                        :
+                        <PopularInstructorSkeleton />
                     :
                     instructors.length > 0
                         ?

@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import ExtraSection from "../ExtraSection/ExtraSection";
-import PopularClasses from "../PopularClasses/PopularClasses";
+import PopularCourses from "../PopularCourses/PopularCourses";
 import PopularInstructor from "../PopularInstructor/PopularInstructor";
 import Slider from "../Slider/Slider";
 import JobPlacement from "../JobPlacementSection/JobPlacement";
@@ -44,19 +44,19 @@ const Home = () => {
         };
     }, []);
     return (
-        <div>
+        <>
             <Helmet>
                 <title>Learning Point</title>
             </Helmet>
             <Slider />
-            <PopularClasses />
+            <PopularCourses isMobileView={isMobileView}/>
             <PopularInstructor isMobileView={isMobileView} />
             <Testimonials />
             <Sponser />
             <ExtraSection isSmallDevice={isSmallDevice} />
             <JobPlacement isSmallDevice={isSmallDevice} />
             <NewsLetter isSmallDevice={isSmallDevice} />
-        </div >
+        </ >
     );
 };
 

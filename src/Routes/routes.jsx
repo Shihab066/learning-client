@@ -3,7 +3,6 @@ import Main from "../Layout/Main";
 import Login from "../Pages/Authentication/Login/Login";
 import SignUp from "../Pages/Authentication/SignUp/SignUp";
 import Home from "../Pages/Home/Home/Home";
-import Classes from "../Pages/Classes/Classes";
 import Instructors from "../Pages/Instructors/Instructors";
 import DashBoard from "../Layout/DashBoard";
 import SelectedClass from "../DashBoardPages/StudentDashBoard/SelectedClass";
@@ -28,6 +27,7 @@ import ProfileLayout from "../Layout/ProfileLayout";
 import MyCourses from "../DashBoardPages/InstructorDashBoard/MyCourses/MyCourses";
 import CourseReviews from "../DashBoardPages/InstructorDashBoard/Reviews/CourseReviews";
 import UpdateCourse from "../DashBoardPages/InstructorDashBoard/MyCourses/UpdateCourse";
+import Courses from "../Pages/Courses/Courses";
 
 
 export const router = createBrowserRouter([
@@ -54,7 +54,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'courses',
-        element: <Classes />
+        element: <Courses />
       },
       {
         path: 'course/:courseId',

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import ClassCard from '../../components/ClassCard/ClassCard';
 import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
@@ -10,20 +9,21 @@ import { useEffect, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
-import Loading from '../../components/Loading/Loading';
+import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
 
 // Custom hook to get query parameters
 function usePathQuery() {
     return new URLSearchParams(useLocation().search);
 }
 
-const Classes = () => {
+const Courses = () => {
     const { user } = useAuth();
     const email = user?.email;
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
     const location = useLocation();
     const query = usePathQuery();
+    const [reFetchCourse, setRefetchCourse] = useState(false);
 
     // Get query parameters
     const limit = parseInt(query.get('limit')) || '';
@@ -46,6 +46,7 @@ const Classes = () => {
         setCurrentPage(page);
         setSortValue(sort.toLowerCase() === 'price.asc' ? 1 : sort.toLowerCase() === 'price.desc' ? -1 : 0);
         setSearchValue(search || searchingValue);
+        setRefetchCourse(!reFetchCourse);
     }, [limit, page, sort, search, searchingValue]);
 
     // Update URL based on state changes
@@ -59,13 +60,13 @@ const Classes = () => {
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
     // Fetch courses data
-    const { data, isLoading } = useQuery({
-        queryKey: ['courses', itemPerPage, currentPage, sortValue, searchValue],
+    const { data, isLoading = true } = useQuery({
+        queryKey: ['courses', reFetchCourse],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/api/v1/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
-    });    
+    });
 
     // Handle class selection
     const selectClass = (id) => {
@@ -158,9 +159,7 @@ const Classes = () => {
                 sortValue={sortValue}
                 visiblePages={visiblePages}
             />
-            {isLoading ? (
-                <Loading height={700}/>
-            ) : (
+            {
                 <Content
                     data={data}
                     selectClass={selectClass}
@@ -169,9 +168,9 @@ const Classes = () => {
                     activePage={activePage}
                     visiblePages={visiblePages}
                     notFoundIcon={notFoundIcon}
-                    loading={isLoading}
+                    isCoursesLoading={isLoading}
                 />
-            )}
+            }
         </div>
     );
 };
@@ -204,27 +203,25 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
     </div>
 );
 
-// Loading spinner component
-const LoadingSpinner = () => (
-    <div className='flex justify-center items-center h-[650px]'>
-        <span className="loading loading-spinner text-info loading-lg"></span>
-    </div>
-);
-
 // Content component displaying courses and pagination
-const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon }) => (
+const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon, isCoursesLoading }) => (
     <div className='lg-container'>
-        {visiblePages.length ?
-            <>
-                <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
-                    {data?.courses.map(courseData => (
+        <>
+            <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
+                {isCoursesLoading
+                    ?
+                    <CoursesLoadingSkeleton />
+                    :
+                    data?.courses.map(courseData => (
                         <CourseCard
                             key={courseData._id}
                             item={courseData}
                             selectClass={selectClass}
                         />
                     ))}
-                </div>
+            </div>
+            {
+                !isCoursesLoading &&
                 <Pagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
@@ -232,8 +229,13 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
                     visiblePages={visiblePages}
                     data={data}
                 />
-            </> : <ItemNotFound notFoundIcon={notFoundIcon} />
+            }
+        </>
+
+        {!isCoursesLoading && data.courses.length === 0 &&
+            <ItemNotFound notFoundIcon={notFoundIcon} />
         }
+
     </div>
 );
 
@@ -257,7 +259,8 @@ const CourseCard = ({ item }) => {
                         By {instructorName}
                     </p>
                     <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">{level}</div>
-                    <div className="flex flex-col md:flex-row md:items-center gap-x-2">
+                    <div className="flex flex-wrap items-center gap-x-2">
+                        {rating > 0 && <span className='font-medium'>{rating}</span>}
                         <GenerateDynamicStar rating={rating} />
                         <span>
                             ({totalReviews} Ratings)
@@ -336,4 +339,4 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
     </div>
 );
 
-export default Classes;
+export default Courses;

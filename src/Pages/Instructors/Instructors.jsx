@@ -1,13 +1,15 @@
 import axios from 'axios';
-import ClassCard from '../../components/ClassCard/ClassCard';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import GenerateStar from '../../components/GenerateStar/GenerateStar';
+import InstructorsLoadingSkeleton from './InstructorsLoadingSkeleton';
 
 const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
         queryKey: ['instructor'],
         queryFn: async () => {
-            const res = await axios.get('https://learning-info-bd.vercel.app/instructors')
+            const res = await axios.get('http://localhost:5000/api/v1/instructor/all')
             return res.data
         }
     })
@@ -16,18 +18,21 @@ const Instructors = () => {
             <Helmet>
                 <title>Learning Point_instructors</title>
             </Helmet>
-            {isLoading ? <div className='flex justify-center items-center h-[700px] ' >
-                <span className="loading loading-spinner text-info loading-lg"></span>
-            </div > :
-                <div>
-                    <h2 className="mt-10 sm:mt-12 lg:mt-20 mb-10 text-center text-4xl font-semibold">Instructors</h2>
-                    <div className="lg-container grid grid-cols-2 md:grid-cols-3 gap-y-10">
-                        {instructors.map(instructorData => <ClassCard
-                            key={instructorData._id}
-                            item={instructorData}
-                            overlay={false}
-                            cardForClass={false}
-                        ></ClassCard>)}
+            {
+                <div className='lg-container'>
+                    <h2 className="text-left text-lg font-semibold px-4 py-6 ">Instructors</h2>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-6 px-3 md:px-4">
+                        {isLoading
+                            ?
+                            <InstructorsLoadingSkeleton />
+                            :
+                            instructors.map((instructorData, index) =>
+                                <InstructorCard
+                                    key={index}
+                                    instructorData={instructorData}
+                                />
+                            )
+                        }
                     </div>
                 </div>
             }
@@ -35,4 +40,40 @@ const Instructors = () => {
     );
 };
 
+const InstructorCard = ({ instructorData }) => {
+    const { _id, name, image, headline, rating } = instructorData;
+    return (
+        <Link to={`/instructor/${_id}`}>
+            <div
+                className={`w-full h-[19rem] rounded-lg overflow-hidden duration-300 border hover:shadow-md`}
+            >
+                {/* Instructor Image */}
+                <figure className="w-full">
+                    <img
+                        src={image}
+                        alt="instructor"
+                        className={`w-full h-48 object-cover object-top mx-auto`}
+                    />
+                </figure>
+
+                {/* Instructor Details */}
+                <article className={`p-4 space-y-1`}>
+                    {/* Instructor Name */}
+                    <h2 className="text-gray-700 font-medium truncate">
+                        {name}
+                    </h2>
+
+                    {/* Instructor Headline */}
+                    <p className="truncate">{headline}</p>
+
+                    {/* Instructor Rating */}
+                    <p className="flex items-center gap-2 font-medium">
+                        {rating ? rating : <span className='font-normal'>Not rated yet</span>}
+                        <GenerateStar fill={'#FEC84B'} />
+                    </p>
+                </article>
+            </div>
+        </Link>
+    );
+};
 export default Instructors;

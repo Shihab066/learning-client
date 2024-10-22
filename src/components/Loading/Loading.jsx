@@ -1,7 +1,7 @@
 import { useLottie } from 'lottie-react';
 import loadingAnimation from '../../assets/loadingAnimation/loading3.json';
 
-const Loading = () => {    
+const Loading = ({height = 500}) => {    
     const options = {
         animationData: loadingAnimation,
         loop: true,
@@ -10,7 +10,7 @@ const Loading = () => {
     const { View } = useLottie(options);
 
     return (
-        <div className="w-full h-[500px] flex flex-col justify-center items-center">
+        <div className={`w-full h-[${height}px] flex flex-col justify-center items-center`}>
             <div className="w-40">
                 {View}
             </div>

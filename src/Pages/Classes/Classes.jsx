@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
+import Loading from '../../components/Loading/Loading';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -158,7 +159,7 @@ const Classes = () => {
                 visiblePages={visiblePages}
             />
             {isLoading ? (
-                <LoadingSpinner />
+                <Loading height={700}/>
             ) : (
                 <Content
                     data={data}

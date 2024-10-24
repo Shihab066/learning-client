@@ -59,7 +59,7 @@ const AddMilestone = ({ milestonesData, setMilestonesData }) => {
         <>            
             {/* Modal for adding milestone */}
             <input type="checkbox" id="newMilestone" className="modal-toggle" />
-            <div className="modal mt-0" role="dialog">
+            <div className="modal mt-[0px!important]" role="dialog">
                 <div className="modal-box p-4 sm:p-6 w-11/12 max-w-5xl">
                     <div className="modal-action" onClick={resetForm}>
                         <label ref={closeModalRef} htmlFor="newMilestone" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>

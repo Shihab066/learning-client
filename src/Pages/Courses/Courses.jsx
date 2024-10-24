@@ -207,7 +207,7 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
 const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon, isCoursesLoading }) => (
     <div className='lg-container'>
         <>
-            <div className="lg-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
                 {isCoursesLoading
                     ?
                     <CoursesLoadingSkeleton />
@@ -235,7 +235,6 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
         {!isCoursesLoading && data.courses.length === 0 &&
             <ItemNotFound notFoundIcon={notFoundIcon} />
         }
-
     </div>
 );
 

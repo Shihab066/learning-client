@@ -131,18 +131,18 @@ const AddClass = () => {
     };
 
     return (
-        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 py-10 w-full xl:border rounded-lg">
-            <h3 className="py-5 font-bold text-2xl">Add Course</h3>
+        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg">
+            <h3 className="py-5 font-bold text-xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                 {/* Class Name */}
                 <div className="form-control">
                     <label className="label">
-                        <span className="label-text">Class Name</span>
+                        <span className="label-text">Course Name</span>
                     </label>
                     <input
                         type="text"
                         autoComplete="off"
-                        placeholder="Class Name"
+                        placeholder="Course name"
                         className={`input input-info ${errors.courseName ? 'border-red-500' : "border-base-300 focus:border-blue-500"} focus:outline-0`}
                         {...register('courseName', { required: true })}
                     />

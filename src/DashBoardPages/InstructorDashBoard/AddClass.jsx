@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -7,6 +7,7 @@ import AddMilestone from "./AddMilestone/AddMilestone";
 import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 import useUploadImage from "../../hooks/useUploadImage";
+import VideoPlayer from "./VideoPlayer";
 
 const AddClass = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -18,6 +19,7 @@ const AddClass = () => {
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
     const [isCoursePublishing, setIsCoursePublishing] = useState(false);
+    const playerRef = useRef();
 
     // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {
@@ -74,17 +76,17 @@ const AddClass = () => {
         { value: 'lifestyle', label: 'Lifestyle' },
         { value: 'teaching-academics', label: 'Teaching & Academics' }
     ];
-    
+
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
         if (courseContentError) return;
-        
+
         setIsCoursePublishing(true)
 
-        const { uid, displayName } = user;        
+        const { uid, displayName } = user;
         const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
 
         const newClass = {
@@ -148,6 +150,8 @@ const AddClass = () => {
                     />
                     {errors.courseName && <span className="text-red-600">Field is required</span>}
                 </div>
+
+                <VideoPlayer />
 
                 {/* Image Upload */}
                 <div className="form-control">

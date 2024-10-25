@@ -30,7 +30,7 @@ const useVideoUpload = () => {
                 formData
             );
 
-            console.log(response.data.secure_url);
+            console.log(response);
             // return response.data.secure_url;
         }
         return null;

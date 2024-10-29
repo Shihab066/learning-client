@@ -23,14 +23,17 @@ const useVideoUpload = () => {
             formData.append('upload_preset', upload_preset);
             // formData.append('folder', `Learning_Point_Assets/Learning_Point_Courses_Videos/${user.uid}`);
             formData.append('resource_type', 'video');
+            // formData.append('type', 'authenticated');
 
             // // Make the upload request to Cloudinary
             const response = await axios.post(
                 `https://api.cloudinary.com/v1_1/${cloud_name}/video/upload`,
                 formData
             );
-
             console.log(response);
+
+            // const res = await axios.get(response.data.playback_url);
+            // console.log(res);
             // return response.data.secure_url;
         }
         return null;

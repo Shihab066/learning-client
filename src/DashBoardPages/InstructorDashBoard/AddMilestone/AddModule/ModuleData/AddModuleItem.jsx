@@ -2,10 +2,9 @@ import { useRef, useState } from "react";
 import generateMongoId from "../../../../../utils/genarateID";
 import useVideoUpload from "../../../../../hooks/useVideoUpload";
 
-
-
 const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesData }) => {
     const videoTitle = useRef();
+    const videoDescription = useRef();
     const videoRef = useRef();
     const closeModal = useRef();
 
@@ -19,7 +18,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
         setVideoTitleError(!name);
     };
 
-    // Handle validation of the module item data
+    // Handle validation of the module item video
     const handleVideoError = () => {
         const videoFile = videoRef.current.files[0];
         if (videoFile && !videoFile.type.startsWith('video/')) {
@@ -31,23 +30,25 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
 
     // Handle upload video
     const handleVideoUpload = async (video) => {
-        uploadVideo(video)
-    };   
+        await uploadVideo(video)
+    };
 
     // Update milestone module items with the new item
-    const addModuleItems = () => {
+    const addModuleItems = async () => {
         const name = videoTitle.current.value;
+        const description = videoDescription.current.value;
         const videoFile = videoRef.current.files[0];
 
         if (!name) setVideoTitleError(true);
         if (!videoFile) setVideoError(true);
         if (!name || !videoFile) return;
-        handleVideoUpload(videoFile);
 
         const newModuleItem = {
             id: generateMongoId(),
+            itemType: 'video',
             itemName: name,
-            itemData: videoFile
+            itemDescription: description,
+            itemData: await handleVideoUpload(videoFile)
         };
 
         const updatedMilestoneData = milestonesData.map(milestone =>
@@ -75,8 +76,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
         setVideoTitleError(false);
         setVideoError(false);
     };
-
-    // console.log(video)
+    
     return (
         <>
             {/* Modal Input */}
@@ -92,7 +92,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                    Title<span className="text-red-600"> *</span>
+                                   Video Title<span className="text-red-600"> *</span>
                                 </span>
                             </label>
                             <input
@@ -114,28 +114,29 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                                 </span>
                             </label>
                             <input
+                                onChange={handleVideoError}
                                 ref={videoRef}
                                 type="file"
                                 accept="video/*"
                                 className="file-input w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            />                            
+                            />
+                            {videoError && <span className="text-red-600">Field is required</span>}
                         </div>
 
                         {/*Module Videos Description */}
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                    Description
+                                    Video Description
                                 </span>
                             </label>
                             <textarea
+                                ref={videoDescription}
                                 rows="5"
                                 cols="50"
                                 placeholder="description"
                                 className="textarea textarea-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
                             />
-
-                            {/* {videoError && <span className="text-red-600">Field is required</span>} */}
                         </div>
 
                         {/* Add Button */}

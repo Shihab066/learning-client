@@ -24,10 +24,10 @@ const AddClass = () => {
     const [test, setTest] = useState('');
     console.log(test);
     
-    useEffect(() => {
-        axios.get('http://localhost:5000/api/v1/upload/video/get/ewqgnwr8agoltbtqjzj8') 
-        .then(res => setTest(res))
-      },[])
+    // useEffect(() => {
+    //     axios.get('http://localhost:5000/api/v1/upload/video/get/ewqgnwr8agoltbtqjzj8') 
+    //     .then(res => setTest(res))
+    //   },[])
 
     // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {

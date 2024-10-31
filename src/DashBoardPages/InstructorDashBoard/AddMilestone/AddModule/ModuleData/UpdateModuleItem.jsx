@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import useVideoUpload from "../../../../../hooks/useVideoUpload";
 
 const UpdateModuleItem = ({
     moduleItem,
@@ -7,55 +8,84 @@ const UpdateModuleItem = ({
     milestonesData,
     setMilestonesData
 }) => {
-    const { itemName, itemData } = moduleItem;
+
+    // Ref    
+    const closeModalRef = useRef();
+    const videoRef = useRef();
 
     // State for form fields
-    const [newName, setNewName] = useState(itemName);
-    const [newData, setNewData] = useState(itemData);
+    console.log(moduleItem);
 
-    // State for form validation errors
-    const [errors, setErrors] = useState({
-        name: false,
-        data: false
-    });
-
-    // State to control the Save button
+    const [formData, setFormData] = useState(moduleItem);
+    const { itemType, itemName, itemData, itemDescription } = formData || {};
+    const [videoTitleError, setVideoTitleError] = useState(false);    
+    const [isVideoUploadDisable, setIsVideoUploadDisable] = useState(true);
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    const [isVideoUploading, setIsVideoUploading] = useState(false);
+    const { uploadVideo } = useVideoUpload();
 
-    // State to toggle between video and text input fields
-    const [isVideo, setIsVideo] = useState(true);
-
-    // Ref to programmatically close the modal
-    const closeModalRef = useRef();
-
-    /**
-     * Validates form fields and updates error states.
-     */
-    const validateFields = () => {
-        const nameError = !newName;
-        const dataError = !newData;
-
-        setErrors({
-            name: nameError,
-            data: dataError
-        });
-
-        // Determine if Save button should be enabled
-        const hasChanges = newName !== itemName || newData !== itemData;
-        const hasNoErrors = !nameError && !dataError;
-        setIsSaveDisabled(!(hasChanges && hasNoErrors));
+    // Handle validation of the module item name
+    const handleNameError = (e) => {
+        const name = e.target.value;
+        setVideoTitleError(!name);
     };
+
+    // Handle validation of the module item video
+    const handleVideoError = (e) => {
+        const videoFile = e.target.files[0];
+        const maxSize = 100 * 1024 * 1024;
+        if (videoFile && !videoFile.type.startsWith('video/')) {
+            alert('Please select a valid video file.');
+            setIsVideoUploadDisable(true);
+            e.target.value = '';
+        }
+        else if (videoFile && videoFile.size > maxSize) {
+            alert('The file is larger than 100MB.');
+            setIsVideoUploadDisable(true);
+            e.target.value = '';
+        }
+        else if (videoFile) {
+            setIsVideoUploadDisable(false);
+        }
+        else if (!videoFile) {
+            setIsVideoUploadDisable(true);
+        }
+        // setVideoError(!videoFile);
+    };
+
+    // Handle input change for general form fields
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+    };
+
+    const handleVideoTitleInput = (e) => {
+        handleNameError(e);
+        handleInputChange(e);
+    }
+
+    const handleVideoUpload = async (e) => {
+        // handleVideoError(e);
+        setIsVideoUploading(true);
+        const videoId = await uploadVideo(e.target.files[0]);
+        if (videoId) {
+            setFormData(prevData => ({ ...prevData, ['itemData']: videoId }));
+            setIsVideoUploading(false);
+        }
+    }
+
+    // Check if form data has changed to enable/disable update button
+    useEffect(() => {
+        const hasChanges = JSON.stringify(formData) !== JSON.stringify(moduleItem);
+        setIsSaveDisabled(!hasChanges);
+    }, [formData, moduleItem]);
 
     /**
      * Updates the module item data in the milestonesData state.
      */
     const updateModuleItem = () => {
-        const updatedModuleItem = {
-            ...moduleItem,
-            itemName: newName,
-            itemData: newData
-        };
-
+        if (!formData.itemName) return;
+        const updatedModuleItem = formData;
         const updatedMilestones = milestonesData.map(milestone => {
             if (milestone._id !== milestoneId) return milestone;
 
@@ -82,18 +112,13 @@ const UpdateModuleItem = ({
      * Resets the form fields and error states to their initial values.
      */
     const resetForm = () => {
-        setNewName(itemName);
-        setNewData(itemData);
-        setErrors({ name: false, data: false });
+        setFormData(moduleItem)        
+        setIsVideoUploadDisable(true);
+        videoRef.current.value = '';
     };
 
-    // Effect to validate fields whenever form inputs change
-    useEffect(() => {
-        validateFields();
-    }, [newName, newData]);
-
     return (
-        <>            
+        <>
             <input
                 type="checkbox"
                 id={`${moduleItem.id}updateModuleItem`}
@@ -114,75 +139,84 @@ const UpdateModuleItem = ({
                     </div>
 
                     <div>
-                        {/* Item Name Input */}
+                        {/* Module Item Title */}
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                    Item Name <span className="text-red-600">*</span>
+                                    Video Title<span className="text-red-600"> *</span>
                                 </span>
                             </label>
                             <input
+                                // ref={videoTitle}
+                                onChange={(e) => handleVideoTitleInput(e)}
+                                value={itemName}
                                 type="text"
-                                placeholder="Enter item name"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                className="input input-info border-base-300 focus:border-blue-500 focus:outline-0"
+                                placeholder="Enter title"
+                                className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
                             />
-                            {errors.name && (
-                                <span className="text-red-600">Field is required</span>
-                            )}
+                            {videoTitleError && <span className="text-red-600">Field is required</span>}
                         </div>
 
-                        {/* Toggle between Video and Text Input Fields */}
-                        <div className="flex justify-start items-center gap-x-2 my-4">
-                            <button
-                                type="button"
-                                onClick={() => setIsVideo(true)}
-                                className={`btn btn-sm text-white bg-blue-600 hover:bg-blue-700 ${isVideo ? "pointer-events-none opacity-50" : ""
-                                    }`}
-                            >
-                                Add Video
-                            </button>
-                            <span>or</span>
-                            <button
-                                type="button"
-                                onClick={() => setIsVideo(false)}
-                                className={`btn btn-sm text-white bg-blue-600 hover:bg-blue-700 ${!isVideo ? "pointer-events-none opacity-50" : ""
-                                    }`}
-                            >
-                                Add Text
-                            </button>
-                        </div>
-
-                        {/* Conditional Input Field: Video Link or Text Instruction */}
+                        {/*old Video id */}
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                    {isVideo ? "Video Link" : "Text Instruction"}{" "}
-                                    <span className="text-red-600">*</span>
+                                    Video ID
                                 </span>
                             </label>
-                            {isVideo ? (
-                                <input
-                                    type="text"
-                                    placeholder="Add video link"
-                                    value={newData}
-                                    onChange={(e) => setNewData(e.target.value)}
-                                    className="input input-info border-base-300 focus:border-blue-500 focus:outline-0"
-                                />
-                            ) : (
-                                <textarea
-                                    rows="5"
-                                    cols="50"
-                                    placeholder="Text Instruction"
-                                    value={newData}
-                                    onChange={(e) => setNewData(e.target.value)}
-                                    className="textarea textarea-info border-base-300 focus:border-blue-500 focus:outline-0 resize-none"
-                                />
-                            )}
-                            {errors.data && (
-                                <span className="text-red-600">Field is required</span>
-                            )}
+                            <input
+                                disabled
+                                type="text"
+                                value={itemData}
+                                className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            />                            
+                        </div>
+
+                        {/*Module Video Input */}
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">
+                                    Upload New Video (limit 100MB)
+                                </span>
+                            </label>
+                            <input
+                                onChange={(e) => handleVideoError(e)}
+                                ref={videoRef}
+                                type="file"
+                                accept="video/*"
+                                className="file-input w-full border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            />
+
+                            <button
+                                disabled={isVideoUploadDisable}
+                                onClick={handleVideoUpload}
+                                className={`w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md ${isVideoUploadDisable
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                    } ${isVideoUploading ? 'opacity-50 pointer-events-none' : ''}` }
+                            >
+                                {isVideoUploading ? 'Uploading...' : 'Upload'}
+                            </button>
+                            {/* {videoError && <span className="text-red-600">Field is required</span>} */}
+                        </div>
+
+                        {/*Module Videos Description */}
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">
+                                    Video Description
+                                </span>
+                            </label>
+                            <textarea
+                                // ref={videoDescription}
+                                value={itemDescription}
+                                onChange={handleInputChange}
+                                rows="5"
+                                cols="50"
+                                placeholder="description"
+                                className="textarea textarea-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0 resize-none"
+                                name="itemDescription"
+                            />
                         </div>
 
                         {/* Save Changes Button */}
@@ -191,8 +225,8 @@ const UpdateModuleItem = ({
                             onClick={updateModuleItem}
                             disabled={isSaveDisabled}
                             className={`w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md ${isSaveDisabled
-                                    ? "opacity-40 cursor-not-allowed"
-                                    : "cursor-pointer"
+                                ? "opacity-40 cursor-not-allowed"
+                                : "cursor-pointer"
                                 }`}
                         >
                             Save Changes

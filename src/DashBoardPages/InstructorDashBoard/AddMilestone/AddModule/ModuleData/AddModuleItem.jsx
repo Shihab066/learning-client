@@ -10,6 +10,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
 
     const [videoTitleError, setVideoTitleError] = useState(false);
     const [videoError, setVideoError] = useState(false);
+    const [isVideoUploading, setIsVideoUploading] = useState(false);
     const { uploadVideo } = useVideoUpload();
 
     // Handle validation of the module item name
@@ -30,7 +31,10 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
 
     // Handle upload video
     const handleVideoUpload = async (video) => {
-        await uploadVideo(video)
+        setIsVideoUploading(true);
+        const result = await uploadVideo(video);
+        setIsVideoUploading(false)
+        return result;
     };
 
     // Update milestone module items with the new item
@@ -66,7 +70,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
 
         setMilestonesData(updatedMilestoneData);
         // resetModalData();
-        // closeModal.current.click(); // Close modal after saving
+        closeModal.current.click(); // Close modal after saving
     };
 
     // Reset modal data fields and errors
@@ -140,12 +144,12 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                         </div>
 
                         {/* Add Button */}
-                        <div
+                        <button                            
                             onClick={addModuleItems}
-                            className="w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md cursor-pointer"
+                            className={`w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md cursor-pointer ${isVideoUploading ? 'pointer-events-none opacity-50' : ''}`}
                         >
-                            Add
-                        </div>
+                            {isVideoUploading ? 'Uploading...': 'Upload'}
+                        </button>
                     </div>
                 </div>
             </div>

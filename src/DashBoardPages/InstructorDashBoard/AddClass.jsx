@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -7,8 +7,6 @@ import AddMilestone from "./AddMilestone/AddMilestone";
 import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 import useUploadImage from "../../hooks/useUploadImage";
-import VideoPlayer from "./VideoPlayer";
-import axios from "axios";
 
 const AddClass = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -19,15 +17,7 @@ const AddClass = () => {
     const [milestonesData, setMilestonesData] = useState([]);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
-    const [isCoursePublishing, setIsCoursePublishing] = useState(false);
-    const playerRef = useRef();
-    const [test, setTest] = useState('');
-    console.log(test);
-    
-    // useEffect(() => {
-    //     axios.get('http://localhost:5000/api/v1/upload/video/get/ewqgnwr8agoltbtqjzj8') 
-    //     .then(res => setTest(res))
-    //   },[])
+    const [isCoursePublishing, setIsCoursePublishing] = useState(false);    
 
     // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {
@@ -157,16 +147,7 @@ const AddClass = () => {
                         {...register('courseName', { required: true })}
                     />
                     {errors.courseName && <span className="text-red-600">Field is required</span>}
-                </div>
-
-                <VideoPlayer />
-                {/* <iframe
-                    src="https://player.cloudinary.com/embed/?public_id=yxplshcpb1hptcmhjvno&cloud_name=dg1rgmkkb&player[showJumpControls]=true&player[hideContextMenu]=true&player[showLogo]=false&source[sourceTypes][0]=hls"
-                    width="640"
-                    height="360"
-                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"                    
-                    allowfullscreen                    
-                ></iframe> */}
+                </div>                
 
                 {/* Image Upload */}
                 <div className="form-control">

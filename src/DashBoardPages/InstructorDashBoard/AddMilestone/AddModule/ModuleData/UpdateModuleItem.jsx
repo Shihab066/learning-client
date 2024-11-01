@@ -14,10 +14,8 @@ const UpdateModuleItem = ({
     const videoRef = useRef();
 
     // State for form fields
-    console.log(moduleItem);
-
     const [formData, setFormData] = useState(moduleItem);
-    const { itemType, itemName, itemData, itemDescription } = formData || {};
+    const { itemName, itemData, itemDescription } = formData || {};
     const [videoTitleError, setVideoTitleError] = useState(false);    
     const [isVideoUploadDisable, setIsVideoUploadDisable] = useState(true);
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);

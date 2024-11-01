@@ -74,7 +74,7 @@ const Profile = () => {
         event.preventDefault();
         const form = event.target;
         const name = form.name.value || user?.displayName;
-        const image = await uploadImage(form.profileImg.files[0]) || user?.photoURL;
+        const image = await uploadImage(form.profileImg.files[0]) || user?.photoURL || '';
 
         try {
             await updateUser(name, image);

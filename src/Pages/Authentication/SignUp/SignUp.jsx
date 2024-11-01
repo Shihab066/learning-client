@@ -27,32 +27,28 @@ const SignUp = () => {
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
-                setIsLoggedIn(true),
-                updateUser(name, image)
-                    .then(() => {
-                        setImage('')
-                        const userData = {
-                            _id: result?.user?.uid,
-                            name: name || "anonymous",
-                            email,
-                            image,
-                            role: 'student',
-                            signupMethod: 'password'
-                        }
-                        axios.post('https://learning-info-bd.vercel.app/users', userData)
-                            .then(data => {
-                                if (data.data.insertedId) {
-                                    reset()
-                                    Swal.fire({
-                                        position: 'center',
-                                        icon: 'success',
-                                        title: 'Registration Successful',
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    })
-                                    navigate('/')
-                                }
+                setIsLoggedIn(true);
+                const userData = {
+                    _id: result?.user?.uid,
+                    name: name || "anonymous",
+                    email,
+                    image,
+                    role: 'student',
+                    signupMethod: 'password'
+                }
+                axios.post('http://localhost:5000/api/v1/user/add', userData)
+                    .then(res => {
+                        if (res.data.result.insertedId) {
+                            reset()
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Registration Successful',
+                                showConfirmButton: false,
+                                timer: 2000
                             })
+                            navigate('/')
+                        }
                     })
             })
     }
@@ -77,58 +73,13 @@ const SignUp = () => {
         }
     }
 
-    const handleImage = async (event) => {
-        const img = event.target.files;
-        const formData = new FormData();
-        formData.append('image', img[0])
-
-        {
-            img &&
-                await fetch(img_hosting_url, {
-                    method: 'POST',
-                    body: formData
-                    // mode: 'no-cors',
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            const imgURL = data.data.display_url;
-                            setImage(imgURL)
-                            // console.log(imgURL)
-                        }
-                        else {
-                            setImage('')
-                        }
-                    })
-        }
-    }
-
     return (
         <div className="mt-20 px-8 pb-10 w-[95%] sm:w-[500px] md:w-[530px] mx-auto shadow-2xl rounded-lg">
             <Helmet>
                 <title>Learning Point_signUp</title>
             </Helmet>
             <h3 className="text-center py-8 font-bold text-4xl">SignUp</h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Name field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">User Name</span>
-                    </label>
-                    <input type="text" placeholder="Your Name" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        {...register('name', { required: false })}
-                    />
-                </div>
-
-                {/* image upload */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Upload Image</span>
-                    </label>
-                    <input type="file" onChange={handleImage} placeholder="Your Name" className="file-input file-input-bordered border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                    // {...register('img', { required: false })}
-                    />
-                </div>
+            <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
                 {/* E-mail field */}
                 <div className="form-control">

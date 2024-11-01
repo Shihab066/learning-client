@@ -3,35 +3,57 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import shareIcon from '../assets/icon/shareicon.svg';
 import useAuth from "../hooks/useAuth";
 import dummyProfile from '../assets/icon/user_icon.png';
+import useUserRole from "../hooks/useUserRole";
 
 const ProfileLayout = () => {
     const { user } = useAuth();
-    
-    // link to navigate different section of this page
-    const links = [
+    const [userRole] = useUserRole();
+    const [links, setLinks] = useState([]);
+
+    // link to navigate different section
+    const instructorLinks = [
         { text: 'Profile', url: 'profile' },
         { text: 'My Courses', url: 'myCourses' },
         { text: 'Add Course', url: 'addCourse' },
         { text: 'Reviews', url: 'courseReviews' }
-    ];    
+    ];
+
+    const studentLinks = [
+        { text: 'Profile', url: 'profile' },
+        { text: 'My Courses', url: 'courses' },        
+        { text: 'Reviews', url: 'reviews' },
+        { text: 'Payments', url: 'paymentsHistory' }
+    ];
+
+    // run effect to update Links by userRole
+    useEffect(() => {
+        switch (userRole) {
+            case 'student':
+                setLinks(studentLinks);
+                break
+            case 'instructor':
+                setLinks(instructorLinks);
+                break;
+        }
+    }, [userRole]);
 
     // state to manage the aside section in mobile device
     const [isAsideOpen, setIsAsideOpen] = useState(false);
-   
+
     const handleAside = () => {
         setIsAsideOpen(!isAsideOpen);
     }
 
-    const [stickyNav, setStickyNav] = useState(false);    
+    const [stickyNav, setStickyNav] = useState(false);
     useEffect(() => {
-      const handleScroll = () => {
-        setStickyNav(window.scrollY > 800);
-      };
-      window.addEventListener("scroll", handleScroll);
-  
-      return () => {
-        window.removeEventListener("scroll", handleScroll);
-      };
+        const handleScroll = () => {
+            setStickyNav(window.scrollY > 800);
+        };
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     return (
@@ -76,7 +98,7 @@ const ProfileLayout = () => {
                             links.map((link, index) =>
                                 <li key={index}>
                                     <NavLink
-                                        to={link.url}                                        
+                                        to={link.url}
                                         className={`block w-full py-3 px-3 border-t duration-300 hover:bg-[#0000001a]`}
                                     >
                                         {link.text}

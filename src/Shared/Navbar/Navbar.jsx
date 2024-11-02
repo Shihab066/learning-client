@@ -59,7 +59,7 @@ const Navbar = () => {
           </NavLink>
         </li>
       )} */}
-      <hr className="mb-2" />
+      <hr className="mb-3" />
       {user ? (
         <li>
           <div onClick={signOut} className="flex items-center gap-x-1 bg-black text-white">
@@ -127,7 +127,7 @@ const Navbar = () => {
       <Helmet>
         {/* Add theme change logic here if needed */}
       </Helmet>
-      <nav className={`bg-white z-50 sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"}`}>
+      <nav className={`bg-white z-50 sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"} relative h-fit`}>
         <div className="lg-container flex items-center justify-between gap-x-4 pr-3 sm:pl-1 xl:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-1 lg:py-2.5">
           <div className="flex items-center z-20">
             {/* Hamburger icon */}
@@ -152,7 +152,7 @@ const Navbar = () => {
           </div>
 
           {/* Search input */}
-          <div className={`absolute lg:static top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0 grow`}>
+          <div className={`absolute lg:static top-[3.5rem] left-0 grow`}>
             <form onSubmit={handleSearch} className={`w-full h-fit relative`}>
               <input
                 onChange={(e) => setSearchValue(e.target.value)}
@@ -177,7 +177,7 @@ const Navbar = () => {
               <ul className="menu menu-horizontal px-1 font-medium">{navbarItem}</ul>
             </div>
 
-            
+
             <div className="flex justify-center items-center gap-4">
               {/* Search icon for mobile */}
               <div
@@ -244,24 +244,26 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-      </nav>
-      <div>
-        {/* Dropdown menu */}
-        <ul
-          onClick={handleDropdownItemClick}
-          className={`menu fixed top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden xl:hidden transition-transform duration-300 ease-out w-[17.5rem] -translate-x-full${isHamburgerOpen ? "translate-x-0" : ""
-            }`}
-        >
-          {navbarMobileItem}
-        </ul>
-        {/* Dark background overlay for dropdown */}
-        {isHamburgerOpen &&
-          <div
-            onClick={() => setIsHamburgerOpen(false)}
-            className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-[3.5rem] sm:top-[4rem] lg:top-[4.5rem] left-0 z-50 xl:hidden duration-300`}
-          ></div>
+        {
+          window.innerWidth < 1280 &&
+          <>
+            {/* Dropdown menu */}
+            <ul
+              onClick={handleDropdownItemClick}
+              className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden transition-transform duration-300 ease-out w-[17.5rem] pb-20 -translate-x-full${isHamburgerOpen ? "translate-x-0" : ""}`}
+            >
+              {navbarMobileItem}
+            </ul>
+            {/* Dark background overlay for dropdown */}
+            {isHamburgerOpen &&
+              <div
+                onClick={() => setIsHamburgerOpen(false)}
+                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden duration-300`}
+              ></div>
+            }
+          </>
         }
-      </div>
+      </nav>
     </>
   );
 };

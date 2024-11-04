@@ -28,6 +28,9 @@ import MyCourses from "../DashBoardPages/InstructorDashBoard/MyCourses/MyCourses
 import CourseReviews from "../DashBoardPages/InstructorDashBoard/Reviews/CourseReviews";
 import UpdateCourse from "../DashBoardPages/InstructorDashBoard/MyCourses/UpdateCourse";
 import Courses from "../Pages/Courses/Courses";
+import Cart from "../Pages/Cart/Cart";
+import Wishlist from "../Pages/WishList/Wishlist";
+import Notifications from "../Pages/Notifications/Notifications";
 
 
 export const router = createBrowserRouter([
@@ -35,7 +38,7 @@ export const router = createBrowserRouter([
     path: "/",
     element:
       <>
-        <Main />
+        <Main />        
         <ScrollToTop />
       </>,
     errorElement: <ErrorPage />,
@@ -67,11 +70,7 @@ export const router = createBrowserRouter([
       {
         path: 'instructor/:instructorId',
         element: <InstructorProfile />
-      },
-      // {
-      //   path: 'profile',
-      //   element: <PrivateRoutes><Profile /></PrivateRoutes>
-      // },
+      },      
       {
         path: 'account_recovery',
         element: <PasswordReset />
@@ -79,6 +78,18 @@ export const router = createBrowserRouter([
       {
         path: 'password_reset',
         element: <AddNewPassword />
+      },
+      {
+        path: 'cart',
+        element: <Cart />
+      },
+      {
+        path: 'wishlist',
+        element: <Wishlist />
+      },
+      {
+        path: 'notification',
+        element: <Notifications />
       },
       {
         path: 'dashboard',

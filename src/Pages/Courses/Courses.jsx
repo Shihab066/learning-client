@@ -10,6 +10,8 @@ import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
 import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
+import { toastSuccess } from '../../utils/toastUtils';
+import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '../../services/wishlistService';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -68,6 +70,14 @@ const Courses = () => {
         },
     });
 
+    // Fetch wishlist items
+    const { data: wishlist = [], refetch: refetchWishlist } = useQuery({
+        queryKey: ['wishlist'],
+        enabled: user !== null,
+        queryFn: () => fetchWishlist(user.uid)
+    });
+
+
     // Handle class selection
     const selectClass = (id) => {
         if (!user) {
@@ -107,6 +117,15 @@ const Courses = () => {
                     }
                 });
         }
+    };
+
+    //Handle wishlist 
+    const handleAddToWishlist = (courseId) => {
+        addCourseToWishList(user.uid, courseId, refetchWishlist);
+    };
+
+    const handleRemoveFromWishlist = (courseId) => {
+        removeCourseFromWishList(user.uid, courseId, refetchWishlist);
     };
 
     const totalItems = data?.coursesCount;
@@ -161,6 +180,7 @@ const Courses = () => {
             />
             {
                 <Content
+                    key={user}
                     data={data}
                     selectClass={selectClass}
                     currentPage={currentPage}
@@ -169,6 +189,10 @@ const Courses = () => {
                     visiblePages={visiblePages}
                     notFoundIcon={notFoundIcon}
                     isCoursesLoading={isLoading}
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleAddToWishlist}
+                    handleRemoveFromWishlist={handleRemoveFromWishlist}
+                    isLoggedIn={user !== null}
                 />
             }
         </div>
@@ -204,7 +228,7 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
 );
 
 // Content component displaying courses and pagination
-const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon, isCoursesLoading }) => (
+const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon, isCoursesLoading, wishlist, handleAddToWishlist, handleRemoveFromWishlist, isLoggedIn }) => (
     <div className='lg-container'>
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
@@ -217,6 +241,10 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
                             key={courseData._id}
                             item={courseData}
                             selectClass={selectClass}
+                            wishlist={wishlist}
+                            handleAddToWishlist={handleAddToWishlist}
+                            handleRemoveFromWishlist={handleRemoveFromWishlist}
+                            isLoggedIn={isLoggedIn}
                         />
                     ))}
             </div>
@@ -239,14 +267,16 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
 );
 
 // Courses Card Component
-const CourseCard = ({ item }) => {
+const CourseCard = ({ item, wishlist, handleAddToWishlist, handleRemoveFromWishlist, isLoggedIn }) => {
     const { _id, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
+    const isCourseInWishlist = wishlist.find(course => course.courseId === _id);    
+
     return (
-        <div className="w-full h-fit bg-white rounded-2xl border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
+        <div className="w-full h-fit bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
             <Link to={`/course/${_id}`}>
                 <img
-                    className="w-full h-48 object-cover object-top rounded-t-lg"
+                    className="w-full h-48 object-cover object-top"
                     src={courseThumbnail}
                     alt="course thumbnail"
                 />
@@ -257,7 +287,9 @@ const CourseCard = ({ item }) => {
                     <p className="truncate">
                         By {instructorName}
                     </p>
-                    <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">{level}</div>
+                    <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">
+                        {level}
+                    </div>
                     <div className="flex flex-wrap items-center gap-x-2">
                         {rating > 0 && <span className='font-medium'>{rating}</span>}
                         <GenerateDynamicStar rating={rating} />
@@ -283,14 +315,27 @@ const CourseCard = ({ item }) => {
             </Link>
 
             <div
-                onClick={(e) => e.stopPropagation()}
+                // onClick={(e) => e.stopPropagation()}
                 className="px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
-                <button className="btn bg-black hover:bg-black text-white w-full capitalize rounded-lg hover:shadow-lg duration-300">
+                <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
                     Add To Cart
                 </button>
-                <button className="btn bg-white hover:bg-white text-black outline outline-1 w-full capitalize rounded-lg hover:shadow-lg duration-300">
-                    Buy Now
-                </button>
+                {
+                    isLoggedIn &&
+                    <>
+                        {
+                            isCourseInWishlist
+                                ?
+                                <button onClick={() => handleRemoveFromWishlist(_id)} className="btn bg-white hover:bg-base-200 text-black outline outline-1 w-full capitalize rounded-lg duration-300">
+                                    Remove From Wishlist
+                                </button>
+                                :
+                                <button onClick={() => handleAddToWishlist(_id)} className="btn bg-white hover:bg-base-200 text-black outline outline-1 w-full capitalize rounded-lg duration-300">
+                                    Add To Wishlist
+                                </button>
+                        }
+                    </>
+                }
             </div>
         </div>
     );

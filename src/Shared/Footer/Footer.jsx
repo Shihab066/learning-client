@@ -3,8 +3,8 @@ import { IoLocationSharp } from "react-icons/io5";
 
 const Footer = () => {
     return (
-        <div className="bg-black mt-20 sm:mt-28 md:mt-36 lg:mt-40">
-            <footer className="lg-container footer pt-12 pb-10 pl-6 sm:p-10 text-white text-opacity-70 font-medium sm:grid-cols-2 md:flex md:justify-between md:flex-wrap">
+        <footer className="bg-black">
+            <div className="lg-container footer pt-12 pb-10 pl-6 sm:p-10 mt-20 sm:mt-28 md:mt-36 lg:mt-40 text-white text-opacity-70 font-medium sm:grid-cols-2 md:flex md:justify-between md:flex-wrap">
                 {/* Company Info Section */}
                 <div>
                     <h2 className="text-lg sm:text-xl font-bold text-white opacity-90">Learning Point</h2>
@@ -88,14 +88,14 @@ const Footer = () => {
                         <IoLocationSharp className="text-xl" /> Pine Avenue, Brooklyn, <br /> NY 10001, United States
                     </a>
                 </div>
-            </footer>
+            </div>
 
             {/* Footer Bottom Section */}
             <hr className="w-1/2 mx-auto opacity-60" />
             <div className="text-center py-5 text-white opacity-70">
                 <p><small>© 2023 Learning Point Ltd. All rights reserved.</small></p>
             </div>
-        </div>
+        </footer>
     );
 };
 

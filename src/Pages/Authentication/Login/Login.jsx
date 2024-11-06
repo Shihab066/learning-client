@@ -11,6 +11,7 @@ import axios from "axios";
 const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+    console.log(from)
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);

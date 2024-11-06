@@ -22,8 +22,8 @@ const useUploadImage = () => {
         formData
       );
 
-      console.log(response.data.secure_url);
-      return response.data.secure_url;
+      console.log(response.data);
+      return response.data.public_id;
     }
     return null;
   }

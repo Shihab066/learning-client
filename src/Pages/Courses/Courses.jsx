@@ -10,8 +10,9 @@ import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
 import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
-import { toastSuccess } from '../../utils/toastUtils';
 import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '../../services/wishlistService';
+import { addCourseToCart, fetchCartItems } from '../../services/cartService';
+import genarateImageLink from '../../utils/genarateImageLink';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -62,7 +63,7 @@ const Courses = () => {
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
     // Fetch courses data
-    const { data, isLoading = true } = useQuery({
+    const { data, isLoading: isCoursesLoading = true } = useQuery({
         queryKey: ['courses', reFetchCourse],
         queryFn: async () => {
             const res = await axios.get(`http://localhost:5000/api/v1/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
@@ -70,62 +71,50 @@ const Courses = () => {
         },
     });
 
+    // -------Handle wishlist--------
+
     // Fetch wishlist items
     const { data: wishlist = [], refetch: refetchWishlist } = useQuery({
-        queryKey: ['wishlist'],
+        queryKey: ['wishlist', user],
         enabled: user !== null,
-        queryFn: () => fetchWishlist(user.uid)
+        queryFn: () => fetchWishlist(user?.uid)
     });
 
-
-    // Handle class selection
-    const selectClass = (id) => {
-        if (!user) {
-            Swal.fire({
-                title: 'Login First',
-                text: "To select a class you need to login!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Login'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate('/login');
-                }
-            });
-        } else {
-            axiosSecure.post(`https://learning-info-bd.vercel.app/selectClass/${id}`, { email })
-                .then(res => {
-                    if (res.data.insertedId) {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: 'Class Selected Successfully',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    } else {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: 'Class Already Selected',
-                            text: 'Multiple class selection is not possible',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                });
-        }
-    };
-
-    //Handle wishlist 
     const handleAddToWishlist = (courseId) => {
         addCourseToWishList(user.uid, courseId, refetchWishlist);
     };
 
     const handleRemoveFromWishlist = (courseId) => {
         removeCourseFromWishList(user.uid, courseId, refetchWishlist);
+    };
+
+    // -------Handle Cart--------
+
+    // Fetch cart items
+    const { data: cartItems = [], refetch: refetchCartItems } = useQuery({
+        queryKey: ['cart', user],
+        enabled: user !== null,
+        queryFn: () => fetchCartItems(user?.uid)
+    });
+
+    const handleAddToCart = (courseId) => {
+        if (!user) {
+            Swal.fire({
+                text: "Please log in to add this course to your cart.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Login"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/login')
+                }
+            });
+        } else {
+            addCourseToCart(user.uid, courseId, refetchCartItems);
+        }
+
     };
 
     const totalItems = data?.coursesCount;
@@ -156,17 +145,15 @@ const Courses = () => {
     // Handlers for item per page and sort options
     const handleItemPerPageOptions = (event) => {
         setItemPerPage(parseInt(event.target.value));
-        navigate(`/class?limit=${parseInt(event.target.value)}`)
     };
 
     const handleSortOptions = (event) => {
         const sort = parseInt(event.target.value);
         setSortValue(sort);
-        navigate(`/class/?sort=${sort === 1 ? 'price.ASC' : sort === -1 ? 'price.DESC' : ''}`)
     };
 
     return (
-        <div>
+        <section className='lg-container'>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Helmet>
                 <title>Learning Point | Courses</title>
@@ -178,30 +165,49 @@ const Courses = () => {
                 sortValue={sortValue}
                 visiblePages={visiblePages}
             />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
+                {isCoursesLoading
+                    ?
+                    <CoursesLoadingSkeleton />
+                    :
+                    data?.courses.map(courseData => (
+                        <CourseCard
+                            key={courseData._id}
+                            navigate={navigate}
+                            isLoggedIn={user !== null}
+                            item={courseData}
+                            wishlist={wishlist}
+                            handleAddToWishlist={handleAddToWishlist}
+                            handleRemoveFromWishlist={handleRemoveFromWishlist}
+                            cartItems={cartItems}
+                            handleAddToCart={handleAddToCart}
+                        />
+                    ))}
+            </div>
             {
-                <Content
-                    key={user}
-                    data={data}
-                    selectClass={selectClass}
+                !isCoursesLoading &&
+                <Pagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     activePage={activePage}
                     visiblePages={visiblePages}
-                    notFoundIcon={notFoundIcon}
-                    isCoursesLoading={isLoading}
-                    wishlist={wishlist}
-                    handleAddToWishlist={handleAddToWishlist}
-                    handleRemoveFromWishlist={handleRemoveFromWishlist}
-                    isLoggedIn={user !== null}
+                    data={data}
                 />
             }
-        </div>
+
+            {
+                !isCoursesLoading && data.courses.length === 0 &&
+                <ItemNotFound notFoundIcon={notFoundIcon} />
+            }
+
+        </section>
     );
 };
 
 // Header component with options for items per page and sorting
 const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, visiblePages }) => (
-    <div className='lg-container flex flex-col sm:flex-row justify-between px-2 sm:px-4 md:px-5 py-6 gap-y-4'>
+    <div className='flex flex-col sm:flex-row justify-between px-2 sm:px-4 md:px-5 py-6 gap-y-4'>
         <h2 className="text-lg font-medium">Courses</h2>
         <div className={`flex items-center gap-4 text-sm ${!visiblePages.length && 'hidden'}`}>
             {/* Select item per page */}
@@ -228,7 +234,20 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
 );
 
 // Content component displaying courses and pagination
-const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, visiblePages, notFoundIcon, isCoursesLoading, wishlist, handleAddToWishlist, handleRemoveFromWishlist, isLoggedIn }) => (
+const Content = ({
+    data,
+    isLoggedIn,
+    currentPage,
+    setCurrentPage,
+    activePage,
+    visiblePages,
+    notFoundIcon,
+    isCoursesLoading,
+    wishlist,
+    handleAddToWishlist,
+    handleRemoveFromWishlist,
+    handleAddToCart
+}) => (
     <div className='lg-container'>
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
@@ -239,12 +258,12 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
                     data?.courses.map(courseData => (
                         <CourseCard
                             key={courseData._id}
+                            isLoggedIn={isLoggedIn}
                             item={courseData}
-                            selectClass={selectClass}
                             wishlist={wishlist}
                             handleAddToWishlist={handleAddToWishlist}
                             handleRemoveFromWishlist={handleRemoveFromWishlist}
-                            isLoggedIn={isLoggedIn}
+                            handleAddToCart={handleAddToCart}
                         />
                     ))}
             </div>
@@ -267,17 +286,27 @@ const Content = ({ data, selectClass, currentPage, setCurrentPage, activePage, v
 );
 
 // Courses Card Component
-const CourseCard = ({ item, wishlist, handleAddToWishlist, handleRemoveFromWishlist, isLoggedIn }) => {
+const CourseCard = ({
+    isLoggedIn,
+    navigate,
+    item,
+    wishlist,
+    handleAddToWishlist,
+    handleRemoveFromWishlist,
+    cartItems,
+    handleAddToCart
+}) => {
     const { _id, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
-    const isCourseInWishlist = wishlist.find(course => course.courseId === _id);    
+    const isCourseInWishlist = wishlist.find(course => course.courseId === _id);
+    const isCourseInCart = cartItems.find(course => course.courseId === _id);
 
     return (
-        <div className="w-full h-fit bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
+        <div className="relative w-full h-fit bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top"
-                    src={courseThumbnail}
+                    src={genarateImageLink({imageId: courseThumbnail })}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>
@@ -294,7 +323,7 @@ const CourseCard = ({ item, wishlist, handleAddToWishlist, handleRemoveFromWishl
                         {rating > 0 && <span className='font-medium'>{rating}</span>}
                         <GenerateDynamicStar rating={rating} />
                         <span>
-                            ({totalReviews} Ratings)
+                            ({totalReviews})
                         </span>
                     </div>
                     <p>{22} Total Hours. {totalModules} Modules.</p>
@@ -314,29 +343,30 @@ const CourseCard = ({ item, wishlist, handleAddToWishlist, handleRemoveFromWishl
                 </div>
             </Link>
 
-            <div
-                // onClick={(e) => e.stopPropagation()}
-                className="px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
-                <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                    Add To Cart
-                </button>
+            <div className="px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
                 {
-                    isLoggedIn &&
-                    <>
-                        {
-                            isCourseInWishlist
-                                ?
-                                <button onClick={() => handleRemoveFromWishlist(_id)} className="btn bg-white hover:bg-base-200 text-black outline outline-1 w-full capitalize rounded-lg duration-300">
-                                    Remove From Wishlist
-                                </button>
-                                :
-                                <button onClick={() => handleAddToWishlist(_id)} className="btn bg-white hover:bg-base-200 text-black outline outline-1 w-full capitalize rounded-lg duration-300">
-                                    Add To Wishlist
-                                </button>
-                        }
-                    </>
+                    isCourseInCart
+                        ?
+                        <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                            Go To Cart
+                        </button>
+                        :
+                        <button onClick={() => handleAddToCart(_id)} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                            Add To Cart
+                        </button>
                 }
             </div>
+            {
+                isCourseInWishlist
+                    ?
+                    <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute top-[19rem] right-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                    </button>
+                    :
+                    <button onClick={() => handleAddToWishlist(_id)} className="absolute top-[19rem] right-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                    </button>
+            }
         </div>
     );
 };

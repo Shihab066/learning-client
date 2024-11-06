@@ -3,29 +3,42 @@ import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDy
 import useAuth from "../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWishlist, fetchWishlistCourses, removeCourseFromWishList } from "../../services/wishlistService";
+import genarateImageLink from "../../utils/genarateImageLink";
 
 const Wishlist = () => {
-    const { user } = useAuth();
-    // Fetch wishlist items
-    const { data: wishlist = [], refetch: refetchWishlist } = useQuery({
-        queryKey: ['wishlist'],
-        enabled: user !== null,
-        queryFn: () => fetchWishlist(user.uid)
-    });
+    const { user } = useAuth();    
+
+    const fetchCourse = async () => {
+        const wishlist = await fetchWishlist(user?.uid);
+        const wishlistCourses = await fetchWishlistCourses(wishlist)
+        return wishlistCourses;
+    };
 
     // Fetch courses of wishlist items
-    const { data: wishlistCourses = [], isLoading: isWishListCourseLoading } = useQuery({
-        queryKey: ['wishlistCourses', wishlist],
-        queryFn: () => fetchWishlistCourses(wishlist)
+    const { data: wishlistCourses = [], refetch: refetchWishlist } = useQuery({
+        queryKey: ['wishlistCourses', user],
+        enabled: user !== null,
+        queryFn: () => fetchCourse()
     });
 
     const handleRemoveFromWishlist = (courseId) => {
         removeCourseFromWishList(user.uid, courseId, refetchWishlist);
     };
-    
+
     return (
         <section className="lg-container min-h-[25rem] px-2 sm:px-4 xl:px-6">
-            <h1 className="text-2xl font-medium my-10">Wishlist</h1>
+            {/* section heading */}
+            <div className="mt-4 md:mt-6 lg:mt-8 xl:mt-10">
+                <h1 className="text-2xl font-medium">Wishlist</h1>
+                <div className="my-4 lg:my-6 capitalize font-medium">
+                    <p>
+                        {wishlistCourses.length} {wishlistCourses.length > 1 ? 'Courses' : 'Course'}  in wishlist
+                    </p>
+                    <hr className="mt-2 border-black opacity-30" />
+                </div>
+            </div>
+
+            {/* wishlist items */}
             <div >
                 {
                     wishlistCourses.length > 0
@@ -43,7 +56,7 @@ const Wishlist = () => {
                     </div>
                 }
                 {
-                    !isWishListCourseLoading && wishlistCourses.length === 0 &&
+                    wishlistCourses.length === 0 &&
                     <div className="h-[30rem] flex items-center justify-center">
                         <p className="text-gray-400 text-xl font-medium mx-auto">
                             Your wishlist is empty.
@@ -65,7 +78,7 @@ const CourseCard = ({ courseData, handleRemoveFromWishlist }) => {
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top"
-                    src={courseThumbnail}
+                    src={genarateImageLink({imageId: courseThumbnail})}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>
@@ -87,16 +100,17 @@ const CourseCard = ({ courseData, handleRemoveFromWishlist }) => {
                     </div>
                     <p>{22} Total Hours. {totalModules} Modules.</p>
                     <div>
-                        {discount > 0
-                            ? (
-                                <div className="flex justify-start items-start gap-x-3">
-                                    <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
-                                    <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
-                                    <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
-                                </div>
-                            ) : (
-                                <p className="text-gray-900 text-2xl font-medium">${price}</p>
-                            )
+                        {
+                            discount > 0
+                                ? (
+                                    <div className="flex justify-start items-start gap-x-3">
+                                        <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
+                                        <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
+                                        <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-900 text-2xl font-medium">${price}</p>
+                                )
                         }
                     </div>
                 </div>

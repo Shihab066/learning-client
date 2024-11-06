@@ -24,4 +24,4 @@ export const removeCourseFromWishList = async (userId, courseId, refetchWishlist
 export const fetchWishlistCourses = async (wishlist) => {
     const res = await api.post(`wishlist/courses`, { wishlist });
     return res.data;
-}
+};

@@ -112,7 +112,7 @@ const Navbar = () => {
 
   // Disable scroll when hamburger menu is open
   useEffect(() => {
-    document.body.style.overflowY = isHamburgerOpen ? "hidden" : "auto";
+    document.body.style.overflow = isHamburgerOpen ? "hidden" : "";
   }, [isHamburgerOpen]);
 
   // Close hamburger menu on dropdown item click
@@ -250,15 +250,17 @@ const Navbar = () => {
             {/* Dropdown menu */}
             <ul
               onClick={handleDropdownItemClick}
-              className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden transition-transform duration-300 ease-out w-[17.5rem] pb-20 -translate-x-full${isHamburgerOpen ? "translate-x-0" : ""}`}
+              className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
             >
-              {navbarMobileItem}
+              <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
+                {navbarMobileItem}
+              </div>
             </ul>
             {/* Dark background overlay for dropdown */}
             {isHamburgerOpen &&
               <div
                 onClick={() => setIsHamburgerOpen(false)}
-                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden duration-300`}
+                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden ${isHamburgerOpen ? 'overlay-fade-in': ''}`}
               ></div>
             }
           </>

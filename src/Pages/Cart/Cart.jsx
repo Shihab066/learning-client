@@ -34,27 +34,45 @@ const Cart = () => {
     const handleRemoveFromCart = (courseId) => {
         removeCourseFromCart(user.uid, courseId, refetchCartItems);
     }
+
+    // calculate course price 
+    const coursePrice = activeCartItems?.reduce(
+        (acc, { price, discount }) => acc + (price - (price * (discount / 100)).toFixed(2)),
+        0
+    );
+
+    const mainPrice = activeCartItems?.reduce(
+        (acc, { price }) => acc + price,
+        0
+    );
+
+    const discountPercentage = parseInt(((mainPrice - coursePrice) / mainPrice) * 100);
+
+    console.log(coursePrice, mainPrice, discountPercentage)
+
     return (
-        <section className="lg-container min-h-[25rem] px-2 sm:px-4 xl:px-6">
-            <h1 className="text-2xl font-medium mt-4 md:mt-6 lg:mt-8 xl:mt-10">Cart</h1>
+        <section className="lg-container min-h-[25rem] px-3 sm:px-4 xl:px-6">
+            <h1 className="text-2xl font-medium mt-4 md:mt-6 lg:mt-8 xl:mt-10 mb-4 lg:mb-6">Cart</h1>
             {
                 isCartCourseLoading
                     ?
-                    <Loading />
+                    <Loading className="h-fit md:h-[32rem]" />
                     :
                     <>
-                        <div className="my-4 lg:my-6 capitalize font-medium">
-                            <p>
-                                {activeCartItems.length} {activeCartItems.length > 1 ? 'Courses' : 'Course'}  in cart
-                            </p>
-                            <hr className="mt-2 border-black opacity-30" />
-                        </div>
                         {
                             cartCourses.length > 0
                                 ?
                                 // cart section
-                                <div className="flex gap-x-10">
+                                <div className="flex flex-col-reverse md:flex-row gap-10 xl:gap-x-20">
                                     <div className="flex-grow">
+                                        {/* cart item count */}
+                                        <div className="mb-4 lg:mb-6 capitalize font-medium">
+                                            <p>
+                                                {activeCartItems.length} {activeCartItems.length > 1 ? 'Courses' : 'Course'}  in cart
+                                            </p>
+                                            <hr className="mt-2 border-black opacity-30" />
+                                        </div>
+
                                         {/* active item list */}
                                         {
                                             activeCartItems.length > 0
@@ -98,9 +116,27 @@ const Cart = () => {
                                     </div>
 
                                     {/* checkout panel */}
-                                    <div className={`w-80 ${!activeCartItems.length ? 'hidden' : ''}`}>
-
-                                    </div>
+                                    {
+                                        activeCartItems.length > 0 &&
+                                        <div className={`sm:min-w-[19rem]`}>
+                                            <div className="flex items-center md:flex-col md:items-start gap-x-2">
+                                                <div className="text-lg font-bold text-gray-500">Total:</div>
+                                                <div className="text-2xl md:text-3xl font-bold">${coursePrice}</div>
+                                                {
+                                                    discountPercentage > 0 &&
+                                                    <>
+                                                        <del className="text-stone-400">${mainPrice}</del>
+                                                        <div>{discountPercentage}% off</div>
+                                                    </>
+                                                }
+                                            </div>
+                                            <div className="fixed bottom-0 left-0 md:static w-full p-4 md:p-0 bg-base-300 md:bg-transparent z-10">
+                                                <button className="w-full text-white font-medium bg-black py-3 md:mt-4">
+                                                    Checkout
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                                 :
                                 <EmptyPage text={'Your cart is empty. Keep shopping to find a course!'} />
@@ -117,32 +153,34 @@ const Cart = () => {
 const CartItem = ({ courseData, navigate, handleRemoveFromCart, handleCartItemStatus }) => {
     const { _id, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount, savedForLater } = courseData;
     return (
-        <div onClick={() => navigate(`/course/${_id}`)} className="border border-[#E2E8F0] rounded-md flex items-center gap-x-4 py-3 pl-3 pr-5">
+        <div onClick={() => navigate(`/course/${_id}`)} className="border-t lg:border border-[#E2E8F0] lg:rounded-md grid grid-cols-2  sm:flex xl:items-center gap-2 lg:gap-x-4 py-3 lg:pl-3 lg:pr-5">
             {/* course thumbnail */}
             <img
-                className="w-48 h-28 object-cover object-top rounded-md"
+                className="w-24 h-16 md:w-12 md:h-12 lg:w-48 lg:h-28 object-cover object-top rounded lg:rounded-md"
                 src={genarateImageLink({ imageId: courseThumbnail, width: 300 })}
                 alt="course thumbnail"
             />
 
             {/* course info */}
-            <div className="flex-grow self-start overflow-hidden flex flex-col gap-y-1">
-                <h2 className="text-lg font-medium truncate">
+            <div className="w-full self-start overflow-hidden flex flex-col gap-y-1 order-last sm:order-none col-span-2">
+                <h2 className="lg:text-lg font-medium xl:truncate">
                     {courseName}
                 </h2>
 
-                <p>
+                <p className="text-base hidden lg:block">
                     by {instructorName}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-2">
-                    {rating > 0 && <span className='font-medium'>{rating}</span>}
-                    <GenerateDynamicStar rating={rating} />
-                    <span>
-                        ({totalReviews})
-                    </span>
-                    <div className="text-sm text-gray-500 flex items-center gap-x-1">
-                        <span>|</span>
+                <div className="flex flex-col xl:flex-row xl:items-center gap-x-2 gap-y-1">
+                    <div className="flex items-center gap-x-2">
+                        {rating > 0 && <span className='font-medium'>{rating}</span>}
+                        <GenerateDynamicStar rating={rating} />
+                        <span>
+                            ({totalReviews})
+                        </span>
+                    </div>
+                    <div className="text-xs lg:text-sm text-gray-500 flex items-center gap-x-1">
+                        <span className="hidden xl:block">|</span>
                         <span>{22} total hours</span>
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 15 15"><path fill="currentColor" d="M9.875 7.5a2.375 2.375 0 1 1-4.75 0a2.375 2.375 0 0 1 4.75 0"></path></svg>
                         <span>{totalModules} modules</span>
@@ -165,7 +203,7 @@ const CartItem = ({ courseData, navigate, handleRemoveFromCart, handleCartItemSt
                             </button>
                     }
                     <span className="text-gray-500">|</span>
-                    <button onClick={() => handleRemoveFromCart(_id)} className="text-red-500">
+                    <button onClick={() => handleRemoveFromCart(_id)} className="text-red-600">
                         Remove
                     </button>
                 </div>
@@ -174,13 +212,13 @@ const CartItem = ({ courseData, navigate, handleRemoveFromCart, handleCartItemSt
             {/* course price */}
             {discount > 0
                 ? (
-                    <div className="min-w-[8rem]  flex flex-col items-end gap-y-1">
-                        <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(1)}</p>
-                        <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
-                        <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
+                    <div className="min-w-[5rem] lg:min-w-[6rem]  flex flex-col items-end gap-y-1">
+                        <p className="text-gray-900 text-lg lg:text-2xl lg:leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(2)}</p>
+                        <p className="text-[#94A3B8] text-sm lg:text-lg"><del>${price}</del></p>
+                        <p className="text-green-600 text-sm lg:text-xl font-medium">{discount}% Off</p>
                     </div>
                 ) : (
-                    <p className="min-w-[8rem] text-gray-900 text-2xl font-medium text-end mb-auto">${price}</p>
+                    <p className="min-w-[5rem] lg:min-w-[6rem] text-gray-900 text-lg lg:text-2xl font-medium text-end mb-auto">${price}</p>
                 )
             }
         </div>

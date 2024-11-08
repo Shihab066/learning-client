@@ -8,7 +8,7 @@ import useAuth from '../../../hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/Loading/Loading';
 import Swal from 'sweetalert2';
-import genarateImageLink from '../../../utils/genarateImageLink';
+import generateImageLink from '../../../utils/generateImageLink';
 
 
 const MyCourses = () => {
@@ -161,7 +161,7 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                     <figure className="basis-1/2">
                         <img
                             className="w-full h-[10.5rem] md:h-[12.5rem] object-top object-cover rounded-lg"
-                            src={genarateImageLink({imageId: courseThumbnail})}
+                            src={generateImageLink({imageId: courseThumbnail})}
                             alt="Course Thumbnail"
                         />
                     </figure>

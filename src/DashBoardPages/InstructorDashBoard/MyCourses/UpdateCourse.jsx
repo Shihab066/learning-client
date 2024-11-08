@@ -8,7 +8,7 @@ import dummyThumbnail from '../../../assets/images/dummyCourseThumbnail.png';
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../components/Loading/Loading";
 import useUploadImage from "../../../hooks/useUploadImage";
-import genarateImageLink from "../../../utils/genarateImageLink";
+import generateImageLink from "../../../utils/generateImageLink";
 
 const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCourses }) => {
 
@@ -209,7 +209,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                                     <div className="sm:w-[26rem] sm:h-[16rem] border rounded-xl sm:p-4 relative">
                                         <img
                                             className="w-full h-full object-cover rounded-lg"
-                                            src={thumbnail || genarateImageLink({imageId: courseThumbnail}) || dummyThumbnail}
+                                            src={thumbnail || generateImageLink({imageId: courseThumbnail}) || dummyThumbnail}
                                             alt="course-thumbnail"
                                         />
                                         {

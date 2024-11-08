@@ -12,7 +12,7 @@ import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDy
 import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
 import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '../../services/wishlistService';
 import { addCourseToCart, fetchCartItems } from '../../services/cartService';
-import genarateImageLink from '../../utils/genarateImageLink';
+import generateImageLink from '../../utils/generateImageLink';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -306,7 +306,7 @@ const CourseCard = ({
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top"
-                    src={genarateImageLink({imageId: courseThumbnail })}
+                    src={generateImageLink({imageId: courseThumbnail })}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>

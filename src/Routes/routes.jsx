@@ -31,6 +31,7 @@ import Courses from "../Pages/Courses/Courses";
 import Cart from "../Pages/Cart/Cart";
 import Wishlist from "../Pages/WishList/Wishlist";
 import Notifications from "../Pages/Notifications/Notifications";
+import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
 
 
 export const router = createBrowserRouter([
@@ -90,6 +91,10 @@ export const router = createBrowserRouter([
       {
         path: 'notification',
         element: <Notifications />
+      },
+      {
+        path: 'paymentSuccess/:sessionId',
+        element: <PaymentSuccess />
       },
       {
         path: 'dashboard',

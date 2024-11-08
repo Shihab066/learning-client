@@ -3,7 +3,7 @@ import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDy
 import useAuth from "../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWishlist, fetchWishlistCourses, removeCourseFromWishList } from "../../services/wishlistService";
-import genarateImageLink from "../../utils/genarateImageLink";
+import generateImageLink from "../../utils/generateImageLink";
 
 const Wishlist = () => {
     const { user } = useAuth();    
@@ -78,7 +78,7 @@ const CourseCard = ({ courseData, handleRemoveFromWishlist }) => {
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top"
-                    src={genarateImageLink({imageId: courseThumbnail})}
+                    src={generateImageLink({imageId: courseThumbnail})}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>

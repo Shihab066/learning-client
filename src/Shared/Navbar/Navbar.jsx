@@ -122,6 +122,9 @@ const Navbar = () => {
     }
   };
 
+  // cart items count 
+  
+
   return (
     <>
       <Helmet>

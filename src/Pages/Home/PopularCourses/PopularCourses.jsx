@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
 import formatNumberWithCommas from "../../../utils/formateNumberWithCommas";
-import genarateImageLink from "../../../utils/genarateImageLink";
+import generateImageLink from "../../../utils/generateImageLink";
 
 const PopularCourses = ({isMobileView}) => {
     // Fetch popular courses
@@ -57,7 +57,7 @@ const PopularCourseCard = ({ item }) => {
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top rounded-t-lg"
-                    src={genarateImageLink({imageId: courseThumbnail})}
+                    src={generateImageLink({imageId: courseThumbnail})}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>

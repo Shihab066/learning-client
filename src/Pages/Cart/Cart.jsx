@@ -2,10 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCartCourses, fetchCartItems, removeCourseFromCart, updateCartItemStatus } from "../../services/cartService";
 import useAuth from "../../hooks/useAuth";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
-import genarateImageLink from "../../utils/genarateImageLink";
+import generateImageLink from "../../utils/generateImageLink";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading/Loading";
 import EmptyPage from "../../components/EmptyPage/EmptyPage";
+import { checkout } from "../../services/paymentService";
 
 const Cart = () => {
     const { user } = useAuth();
@@ -29,11 +30,11 @@ const Cart = () => {
 
     const handleCartItemStatus = (courseId, savedForLater) => {
         updateCartItemStatus(user.uid, courseId, savedForLater, refetchCartItems);
-    }
+    };
 
     const handleRemoveFromCart = (courseId) => {
         removeCourseFromCart(user.uid, courseId, refetchCartItems);
-    }
+    };
 
     // calculate course price 
     const coursePrice = activeCartItems?.reduce(
@@ -48,7 +49,23 @@ const Cart = () => {
 
     const discountPercentage = parseInt(((mainPrice - coursePrice) / mainPrice) * 100);
 
-    console.log(coursePrice, mainPrice, discountPercentage)
+    // handle checkout 
+    const handleCheckout = () => {
+        const cartItemForCheckout = activeCartItems?.map(({ _id, courseName, courseThumbnail, price, discount }) => {
+            const image = generateImageLink({ imageId: courseThumbnail, height: 256, aspectRatio: '1.0', cropMode: 'fill' });
+            const coursePrice = Number((price - (price * (discount / 100))).toFixed(2));
+            const courseData = {
+                courseId: _id,
+                name: courseName,
+                image: image,
+                price: coursePrice
+            };
+            return courseData;
+        });        
+
+        checkout(cartItemForCheckout, user.uid);
+
+    }
 
     return (
         <section className="lg-container min-h-[25rem] px-3 sm:px-4 xl:px-6">
@@ -105,6 +122,7 @@ const Cart = () => {
                                                             <CartItem
                                                                 key={index}
                                                                 courseData={courseData}
+                                                                navigate={navigate}
                                                                 handleRemoveFromCart={handleRemoveFromCart}
                                                                 handleCartItemStatus={handleCartItemStatus}
                                                             />
@@ -131,7 +149,7 @@ const Cart = () => {
                                                 }
                                             </div>
                                             <div className="fixed bottom-0 left-0 md:static w-full p-4 md:p-0 bg-base-300 md:bg-transparent z-10">
-                                                <button className="w-full text-white font-medium bg-black py-3 md:mt-4">
+                                                <button onClick={handleCheckout} className="w-full text-white font-medium bg-black py-3 md:mt-4">
                                                     Checkout
                                                 </button>
                                             </div>
@@ -140,7 +158,6 @@ const Cart = () => {
                                 </div>
                                 :
                                 <EmptyPage text={'Your cart is empty. Keep shopping to find a course!'} />
-
                         }
 
                     </>
@@ -157,7 +174,7 @@ const CartItem = ({ courseData, navigate, handleRemoveFromCart, handleCartItemSt
             {/* course thumbnail */}
             <img
                 className="w-24 h-16 md:w-12 md:h-12 lg:w-48 lg:h-28 object-cover object-top rounded lg:rounded-md"
-                src={genarateImageLink({ imageId: courseThumbnail, width: 300 })}
+                src={generateImageLink({ imageId: courseThumbnail, width: 300 })}
                 alt="course thumbnail"
             />
 

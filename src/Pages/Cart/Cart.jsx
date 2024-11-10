@@ -6,7 +6,8 @@ import generateImageLink from "../../utils/generateImageLink";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading/Loading";
 import EmptyPage from "../../components/EmptyPage/EmptyPage";
-import { checkout } from "../../services/paymentService";
+import { checkout, expireSession } from "../../services/paymentService";
+import { useEffect } from "react";
 
 const Cart = () => {
     const { user } = useAuth();
@@ -52,7 +53,7 @@ const Cart = () => {
     // handle checkout 
     const handleCheckout = () => {
         const cartItemForCheckout = activeCartItems?.map(({ _id, courseName, courseThumbnail, price, discount }) => {
-            const image = generateImageLink({ imageId: courseThumbnail, height: 256, aspectRatio: '1.0', cropMode: 'fill' });
+            const image = generateImageLink({ imageId: courseThumbnail, height: 300, aspectRatio: '1.0', cropMode: 'fill' });
             const coursePrice = Number((price - (price * (discount / 100))).toFixed(2));
             const courseData = {
                 courseId: _id,
@@ -61,11 +62,26 @@ const Cart = () => {
                 price: coursePrice
             };
             return courseData;
-        });        
+        });
 
         checkout(cartItemForCheckout, user.uid);
+    };
 
-    }
+    // // handle cancel checkout
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const sessionId = queryParams.get('cancel');
+
+        if (sessionId) {
+            expireSession(sessionId);
+
+            // Remove 'cancel' parameter from the URL without reloading the page
+            queryParams.delete('cancel');
+            const newUrl = `${window.location.origin}${window.location.pathname}?${queryParams.toString()}`;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }, []);
+
 
     return (
         <section className="lg-container min-h-[25rem] px-3 sm:px-4 xl:px-6">

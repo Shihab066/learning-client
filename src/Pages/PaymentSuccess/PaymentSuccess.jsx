@@ -2,41 +2,23 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import api from '../../services/baseAPI';
+import { useQuery } from '@tanstack/react-query';
 
 const PaymentSuccess = () => {
-    const [paymentInfo, setPaymentInfo] = useState(null);
-    const { sessionId } = useParams();
+    const { sessionId, token } = useParams();
 
-    useEffect(() => {
-        const handleRetrieveSession = async () => {
-            try {
-                const res = await api.get(`retrieve-checkout-session/${sessionId}`)
-                console.log(res.data);
-                
-            } catch (error) {
-                console.error('Error fetching payment info:', error)
-            }
+    const { data: paymentSuccessStatus, isLoading } = useQuery({
+        queryKey: ['paymentStatus'],
+        queryFn: async () => {
+            const res = await api.get(`payment/retrieve-checkout-session/${sessionId}/${token}`)
+            return res.data;
         }
-        // Fetch session details using sessionId
-        if (sessionId) {
-            handleRetrieveSession();
-        }
-    }, []);
+    })
+console.log(paymentSuccessStatus);
 
     return (
         <div>
-            {paymentInfo ? (
-                <div>
-                    <h1>Payment Successful</h1>
-                    <p>Customer ID: {paymentInfo.customerId}</p>
-                    <p>User ID: {paymentInfo.userId}</p>
-                    <p>Amount Paid: {paymentInfo.amount / 100} {paymentInfo.currency.toUpperCase()}</p>
-                    <p>Payment Status: {paymentInfo.paymentStatus}</p>
-                    {/* Add more info as needed */}
-                </div>
-            ) : (
-                <p>Loading payment information...</p>
-            )}
+            ...
         </div>
     );
 };

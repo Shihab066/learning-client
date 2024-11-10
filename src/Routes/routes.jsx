@@ -93,7 +93,7 @@ export const router = createBrowserRouter([
         element: <Notifications />
       },
       {
-        path: 'paymentSuccess/:sessionId',
+        path: 'paymentSuccess/:sessionId/:token',
         element: <PaymentSuccess />
       },
       {

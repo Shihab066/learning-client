@@ -5,9 +5,9 @@ import SignUp from "../Pages/Authentication/SignUp/SignUp";
 import Home from "../Pages/Home/Home/Home";
 import Instructors from "../Pages/Instructors/Instructors";
 import DashBoard from "../Layout/DashBoard";
-import SelectedClass from "../DashBoardPages/StudentDashBoard/SelectedClass";
-import EnrolledClass from "../DashBoardPages/StudentDashBoard/EnrolledClass";
-import PaymentHistory from "../DashBoardPages/StudentDashBoard/PaymentHistory";
+// import SelectedClass from "../DashBoardPages/StudentDashBoard/SelectedClass";
+// import EnrolledClass from "../DashBoardPages/StudentDashBoard/EnrolledClass";
+// import PaymentHistory from "../DashBoardPages/StudentDashBoard/PaymentHistory";
 import AddClass from "../DashBoardPages/InstructorDashBoard/AddClass";
 import MyClass from "../DashBoardPages/InstructorDashBoard/MyClass";
 import ManageClasses from "../DashBoardPages/AdminDashBoard/ManageClasses";
@@ -16,7 +16,7 @@ import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import PrivateRoutes from "./PrivateRoutes";
 import InstructorRoute from "./InstructorRoute";
 import AdminRoutes from "./AdminRoutes";
-import StudentRoutes from "./StudentRoutes";
+// import StudentRoutes from "./StudentRoutes";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import Profile from "../Pages/Authentication/Profile/Profile";
 import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
@@ -93,7 +93,7 @@ export const router = createBrowserRouter([
         element: <Notifications />
       },
       {
-        path: 'paymentSuccess/:sessionId/:token',
+        path: 'paymentSuccess/:token/:sessionId',
         element: <PaymentSuccess />
       },
       {
@@ -101,18 +101,18 @@ export const router = createBrowserRouter([
         element: <PrivateRoutes><DashBoard></DashBoard></PrivateRoutes>,
         children: [
           // STUDENT ROUTES
-          {
-            path: 'selectedClass',
-            element: <StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
-          },
-          {
-            path: 'enrolledClass',
-            element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
-          },
-          {
-            path: 'paymentHistory',
-            element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
-          },
+          // {
+          //   path: 'selectedClass',
+          //   element: <StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
+          // },
+          // {
+          //   path: 'enrolledClass',
+          //   element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
+          // },
+          // {
+          //   path: 'paymentHistory',
+          //   element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
+          // },
 
           // INSTRUCTOR ROUTES
           {

@@ -3,7 +3,7 @@ import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
@@ -26,6 +26,7 @@ const Courses = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const query = usePathQuery();
+    const queryClient = useQueryClient();
     const [reFetchCourse, setRefetchCourse] = useState(false);
 
     // Get query parameters
@@ -112,7 +113,8 @@ const Courses = () => {
                 }
             });
         } else {
-            addCourseToCart(user.uid, courseId, refetchCartItems);
+            addCourseToCart(user.uid, courseId, refetchCartItems)
+            .then(() => queryClient.refetchQueries(['cartCount']))
         }
 
     };

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCartCourses, fetchCartItems, removeCourseFromCart, updateCartItemStatus } from "../../services/cartService";
 import useAuth from "../../hooks/useAuth";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
@@ -12,10 +12,12 @@ import { useEffect } from "react";
 const Cart = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const fetchCourse = async () => {
         const cartItems = await fetchCartItems(user?.uid);
         const cartCourses = await fetchCartCourses(cartItems);
+        queryClient.refetchQueries(['cartCount']);
         return cartCourses;
     };
 

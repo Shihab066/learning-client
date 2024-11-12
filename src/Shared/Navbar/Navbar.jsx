@@ -1,15 +1,14 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import useUserRole from "../../hooks/useUserRole";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 import { Turn as Hamburger } from "hamburger-react";
-
 import logo from "/logo.png";
 import searchIcon from "../../assets/icon/search_icon.svg";
 import dummyImg from "../../assets/icon/user_icon.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCartItems } from "../../services/cartService";
+import useUserRole from "../../hooks/useUserRole";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -24,7 +23,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   // Retrieve user role
-  // const [userRole] = useUserRole();
+  const [userRole] = useUserRole();
   // const isAdmin = userRole === "admin";
   // const isStudent = userRole === "student";
   // const isInstructor = userRole === "instructor";
@@ -185,9 +184,12 @@ const Navbar = () => {
               <ul className="menu menu-horizontal px-1 font-medium">
                 <li><NavLink to="/courses">Courses</NavLink></li>
                 <li><NavLink to="/instructors">Instructors</NavLink></li>
+                {
+                  userRole === 'student' &&
+                  <li><NavLink to="/my-classes">My Classes</NavLink></li>
+                }
               </ul>
             </div>
-
 
             <div className="flex justify-center items-center gap-4">
               {/* Search icon for mobile */}

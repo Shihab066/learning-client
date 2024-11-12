@@ -19,10 +19,10 @@ const ProfileLayout = () => {
     ];
 
     const studentLinks = [
-        { text: 'Profile', url: 'profile' },
-        { text: 'My Courses', url: 'courses' },        
+        { text: 'Profile', url: 'profile' },        
         { text: 'Reviews', url: 'reviews' },
-        { text: 'Payments', url: 'paymentsHistory' }
+        { text: 'Payments', url: 'paymentsHistory' },
+        { text: 'Feedback', url: 'feedback' }
     ];
 
     // run effect to update Links by userRole
@@ -76,13 +76,16 @@ const ProfileLayout = () => {
                         <h2 className="text-gray-900 text-xl font-medium">
                             John Doe
                         </h2>
-                        <Link to={'/instructorProfile'} className="btn btn-md bg-white hover:bg-white capitalize px-6">
-                            Share Profile
-                            <img
-                                className="w-4"
-                                src={shareIcon}
-                                alt="share icon" />
-                        </Link>
+                        {
+                            userRole === 'instructor' &&
+                            <Link to={'/instructorProfile'} className="btn btn-md bg-white hover:bg-white capitalize px-6">
+                                Share Profile
+                                <img
+                                    className="w-4"
+                                    src={shareIcon}
+                                    alt="share icon" />
+                            </Link>
+                        }
 
                         {/* icon for close */}
                         <button onClick={handleAside} className="absolute -top-5 right-1 w-10 h-10 flex justify-center items-center xl:hidden">
@@ -93,7 +96,7 @@ const ProfileLayout = () => {
                     </article>
 
                     {/* nav */}
-                    <ul className="min-w-[280px] profile">
+                    <ul className="min-w-[17.5rem] profile">
                         {
                             links.map((link, index) =>
                                 <li key={index}>

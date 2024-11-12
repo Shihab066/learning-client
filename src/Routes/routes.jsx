@@ -9,7 +9,7 @@ import DashBoard from "../Layout/DashBoard";
 // import EnrolledClass from "../DashBoardPages/StudentDashBoard/EnrolledClass";
 // import PaymentHistory from "../DashBoardPages/StudentDashBoard/PaymentHistory";
 import AddClass from "../DashBoardPages/InstructorDashBoard/AddClass";
-import MyClass from "../DashBoardPages/InstructorDashBoard/MyClass";
+// import MyClass from "../DashBoardPages/InstructorDashBoard/MyClass";
 import ManageClasses from "../DashBoardPages/AdminDashBoard/ManageClasses";
 import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
@@ -32,6 +32,7 @@ import Cart from "../Pages/Cart/Cart";
 import Wishlist from "../Pages/WishList/Wishlist";
 import Notifications from "../Pages/Notifications/Notifications";
 import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
+import MyClasses from "../DashBoardPages/StudentDashboard/MyClasses/MyClasses";
 
 
 export const router = createBrowserRouter([
@@ -97,45 +98,49 @@ export const router = createBrowserRouter([
         element: <PaymentSuccess />
       },
       {
-        path: 'dashboard',
-        element: <PrivateRoutes><DashBoard></DashBoard></PrivateRoutes>,
-        children: [
-          // STUDENT ROUTES
-          // {
-          //   path: 'selectedClass',
-          //   element: <StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
-          // },
-          // {
-          //   path: 'enrolledClass',
-          //   element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
-          // },
-          // {
-          //   path: 'paymentHistory',
-          //   element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
-          // },
-
-          // INSTRUCTOR ROUTES
-          {
-            path: 'addClass',
-            element: <InstructorRoute><AddClass></AddClass></InstructorRoute>
-          },
-          {
-            path: 'myClass',
-            element: <InstructorRoute><MyClass></MyClass></InstructorRoute>
-          },
-
-
-          // ADMIN ROUTES
-          {
-            path: 'manageClass',
-            element: <AdminRoutes><ManageClasses></ManageClasses></AdminRoutes>
-          },
-          {
-            path: 'manageUser',
-            element: <AdminRoutes><ManageUser></ManageUser></AdminRoutes>
-          }
-        ]
+        path: 'my-classes',
+        element: <MyClasses />
       },
+      // {
+      //   path: 'dashboard',
+      //   element: <PrivateRoutes><DashBoard></DashBoard></PrivateRoutes>,
+      //   children: [
+      //     // STUDENT ROUTES
+      //     // {
+      //     //   path: 'selectedClass',
+      //     //   element: <StudentRoutes><SelectedClass></SelectedClass></StudentRoutes>
+      //     // },
+      //     // {
+      //     //   path: 'enrolledClass',
+      //     //   element: <StudentRoutes><EnrolledClass></EnrolledClass></StudentRoutes>
+      //     // },
+      //     // {
+      //     //   path: 'paymentHistory',
+      //     //   element: <StudentRoutes><PaymentHistory></PaymentHistory></StudentRoutes>
+      //     // },
+
+      //     // INSTRUCTOR ROUTES
+      //     {
+      //       path: 'addClass',
+      //       element: <InstructorRoute><AddClass></AddClass></InstructorRoute>
+      //     },
+      //     // {
+      //     //   path: 'myClass',
+      //     //   element: <InstructorRoute><MyClass></MyClass></InstructorRoute>
+      //     // },
+
+
+      //     // ADMIN ROUTES
+      //     {
+      //       path: 'manageClass',
+      //       element: <AdminRoutes><ManageClasses></ManageClasses></AdminRoutes>
+      //     },
+      //     {
+      //       path: 'manageUser',
+      //       element: <AdminRoutes><ManageUser></ManageUser></AdminRoutes>
+      //     }
+      //   ]
+      // },
       {
         path: 'user',
         element: <ProfileLayout />,
@@ -164,7 +169,8 @@ export const router = createBrowserRouter([
           {
             path: 'courseReviews',
             element: <CourseReviews />
-          }
+          },
+          // STUDENT ROUTES          
         ]
       }
     ]

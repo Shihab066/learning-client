@@ -23,7 +23,9 @@ html {
 
 .lg-container {
     max-width: 85rem;
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .drawer-side a.active {

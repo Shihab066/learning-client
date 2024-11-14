@@ -22,10 +22,11 @@ export const checkout = async (products, userId) => {
   }
 };
 
-
 export const expireSession = async (sessionId) => {
   await api.post(`payment/expire-session`, { sessionId });
-}
+};
 
-
-
+export const getPurchaseHistory = async (studentId) => {
+  const res = await api.get(`payment/get/${studentId}`);
+  return res.data;
+};

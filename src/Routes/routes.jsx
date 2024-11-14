@@ -33,6 +33,7 @@ import Wishlist from "../Pages/WishList/Wishlist";
 import Notifications from "../Pages/Notifications/Notifications";
 import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
 import MyClasses from "../DashBoardPages/StudentDashboard/MyClasses/MyClasses";
+import PurchaseHistory from "../Pages/PurchaseHistory/PurchaseHistory";
 
 
 export const router = createBrowserRouter([
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
     path: "/",
     element:
       <>
-        <Main />        
+        <Main />
         <ScrollToTop />
       </>,
     errorElement: <ErrorPage />,
@@ -72,7 +73,7 @@ export const router = createBrowserRouter([
       {
         path: 'instructor/:instructorId',
         element: <InstructorProfile />
-      },      
+      },
       {
         path: 'account_recovery',
         element: <PasswordReset />
@@ -148,7 +149,7 @@ export const router = createBrowserRouter([
           {
             path: '/user',
             element: <Navigate to='profile' />
-          },           
+          },
           {
             path: 'profile',
             element: <Profile />
@@ -170,7 +171,11 @@ export const router = createBrowserRouter([
             path: 'courseReviews',
             element: <CourseReviews />
           },
-          // STUDENT ROUTES          
+          // STUDENT ROUTES       
+          {
+            path: 'purchase-history',
+            element: <PurchaseHistory />
+          },
         ]
       }
     ]

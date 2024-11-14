@@ -21,7 +21,7 @@ const ProfileLayout = () => {
     const studentLinks = [
         { text: 'Profile', url: 'profile' },        
         { text: 'Reviews', url: 'reviews' },
-        { text: 'Payments', url: 'paymentsHistory' },
+        { text: 'Purchase History', url: 'purchase-history' },
         { text: 'Feedback', url: 'feedback' }
     ];
 

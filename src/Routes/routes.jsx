@@ -33,7 +33,7 @@ import Wishlist from "../Pages/WishList/Wishlist";
 import Notifications from "../Pages/Notifications/Notifications";
 import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
 import MyClasses from "../DashBoardPages/StudentDashboard/MyClasses/MyClasses";
-import PurchaseHistory from "../Pages/PurchaseHistory/PurchaseHistory";
+import PurchaseHistory from "../DashBoardPages/StudentDashboard/PurchaseHistory/PurchaseHistory";
 
 
 export const router = createBrowserRouter([

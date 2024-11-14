@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import useAuth from '../../hooks/useAuth';
-import { getPurchaseHistory } from '../../services/paymentService';
+import useAuth from '../../../hooks/useAuth';
+import { getPurchaseHistory } from '../../../services/paymentService';
 import { Link } from 'react-router-dom';
-import Loading from '../../components/Loading/Loading';
-import EmptyPage from '../../components/EmptyPage/EmptyPage';
-import formatDate from '../../utils/formatDate';
+import Loading from '../../../components/Loading/Loading';
+import EmptyPage from '../../../components/EmptyPage/EmptyPage';
+import formatDate from '../../../utils/formatDate';
 
 // Order row component for each purchase item
 const OrderRow = ({ data }) => (

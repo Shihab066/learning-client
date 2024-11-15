@@ -34,6 +34,7 @@ import Notifications from "../Pages/Notifications/Notifications";
 import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
 import MyClasses from "../DashBoardPages/StudentDashboard/MyClasses/MyClasses";
 import PurchaseHistory from "../DashBoardPages/StudentDashboard/PurchaseHistory/PurchaseHistory";
+import MyReviews from "../DashBoardPages/StudentDashboard/MyReviews/MyReviews";
 
 
 export const router = createBrowserRouter([
@@ -176,6 +177,10 @@ export const router = createBrowserRouter([
             path: 'purchase-history',
             element: <PurchaseHistory />
           },
+          {
+            path: 'my-reviews',
+            element: <MyReviews />
+          }
         ]
       }
     ]

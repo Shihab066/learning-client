@@ -20,7 +20,7 @@ const ProfileLayout = () => {
 
     const studentLinks = [
         { text: 'Profile', url: 'profile' },        
-        { text: 'Reviews', url: 'reviews' },
+        { text: 'My Reviews', url: 'my-reviews' },
         { text: 'Purchase History', url: 'purchase-history' },
         { text: 'Feedback', url: 'feedback' }
     ];

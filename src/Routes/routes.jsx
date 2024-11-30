@@ -35,6 +35,8 @@ import PaymentSuccess from "../Pages/PaymentSuccess/PaymentSuccess";
 import MyClasses from "../DashBoardPages/StudentDashboard/MyClasses/MyClasses";
 import PurchaseHistory from "../DashBoardPages/StudentDashboard/PurchaseHistory/PurchaseHistory";
 import MyReviews from "../DashBoardPages/StudentDashboard/MyReviews/MyReviews";
+import PendingReviews from "../DashBoardPages/StudentDashboard/MyReviews/PendingReviews";
+import MyReviewsHistory from "../DashBoardPages/StudentDashboard/MyReviews/MyReviewsHistory";
 
 
 export const router = createBrowserRouter([
@@ -179,7 +181,21 @@ export const router = createBrowserRouter([
           },
           {
             path: 'my-reviews',
-            element: <MyReviews />
+            element: <MyReviews />,
+            children: [
+              {
+                path: '/user/my-reviews',
+                element: <Navigate to='pending-reviews'/>
+              },
+              {
+                path: 'pending-reviews',
+                element: <PendingReviews />
+              },
+              {
+                path: 'reviews-history',
+                element: <MyReviewsHistory />
+              }
+            ]
           }
         ]
       }

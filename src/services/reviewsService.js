@@ -14,3 +14,8 @@ export const addReview = async (reviewData) => {
     const res = await api.post(`review/add`, reviewData);
     return res.data;
 };
+
+export const updateReview = async (reviewData) => {
+    const res = await api.post(`review/update`, reviewData);
+    return res.data;
+};

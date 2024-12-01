@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
-import { getStudentReviews } from "../../../services/reviewsService";
+import { getStudentReviews, updateReview } from "../../../services/reviewsService";
 import generateImageLink from "../../../utils/generateImageLink";
 import { Link } from "react-router-dom";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
 import { useEffect, useRef, useState } from "react";
+import { toastSuccess } from "../../../utils/toastUtils";
 
 const MyReviewsHistory = () => {
     // Extract user data from authentication context
@@ -12,7 +13,7 @@ const MyReviewsHistory = () => {
     const [reviewData, setReviewData] = useState(null);
 
     // Fetch the user's reviews using React Query
-    const { data: myReviews = [] } = useQuery({
+    const { data: myReviews = [], refetch } = useQuery({
         queryKey: ['my-reviews'],
         enabled: !!user, // Only enable the query if the user is authenticated
         queryFn: async () => await getStudentReviews(user.uid),
@@ -26,10 +27,10 @@ const MyReviewsHistory = () => {
             ))}
             {
                 reviewData &&
-                <UpdateReviewModal
-                    // key={reviewData}
+                <UpdateReviewModal                    
                     reviewData={reviewData}
                     setReviewData={setReviewData}
+                    refetch={refetch}
                 />
             }
         </div>
@@ -121,7 +122,7 @@ const MyReviewsHistoryCard = ({ data, setReviewData }) => {
     );
 };
 
-const UpdateReviewModal = ({ courseIdForReview, setCourseIdForReview, reviewData, setReviewData }) => {
+const UpdateReviewModal = ({ reviewData, setReviewData, refetch }) => {
     const [newReviewData, setNewReviewData] = useState(reviewData);
     const { _courseId, rating, review } = newReviewData;
 
@@ -146,17 +147,16 @@ const UpdateReviewModal = ({ courseIdForReview, setCourseIdForReview, reviewData
             _studentId: user.uid,        
             rating,
             review
-        };
-
-        console.log(reviewData);
+        };        
         
-        // const res = await addReview(reviewData);
+        const res = await updateReview(reviewData);
 
-        // if (res.insertedId) {
-        //     toastSuccess('Your review has been submitted.')
-        //     e.target.reset();
-        //     closeRef.current.click();
-        // }
+        if (res.modifiedCount) {
+            toastSuccess('Your review is being updated')            
+            closeRef.current.click();
+            setIsUpdateBtnDisable(true);
+            refetch();
+        }
     }
 
     useEffect(() => {

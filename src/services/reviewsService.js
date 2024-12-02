@@ -5,8 +5,8 @@ export const getStudentReviews = async (studentId) => {
     return res.data;
 };
 
-export const getPendingReviews = async (studentId) => {
-    const res = await api.get(`review/pending-reviews/${studentId}`);
+export const getPendingReviews = async (studentId, limit) => {
+    const res = await api.get(`review/pending-reviews/${studentId}?limit=${limit}`);
     return res.data;
 };
 

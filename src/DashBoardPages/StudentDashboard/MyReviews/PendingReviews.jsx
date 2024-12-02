@@ -10,13 +10,14 @@ import { toastSuccess } from "../../../utils/toastUtils";
 
 const PendingReviews = () => {
     const { user } = useAuth();
-    const [courseIdForReview, setCourseIdForReview] = useState(''); // this state is used in addCourseModal to add review for specific course    
-
+    const [courseIdForReview, setCourseIdForReview] = useState(''); // this state is used in addCourseModal to add review for specific course
+    const [limit, setLimit] = useState(6);
+    
     // Fetch pending reviews data using React Query
-    const { data: pendingReviewsData = [], isLoading } = useQuery({
-        queryKey: ['pending-reviews'],
+    const { data, isLoading } = useQuery({
+        queryKey: ['pending-reviews', limit],
         enabled: !!user, // Ensure query runs only if the user is logged in
-        queryFn: () => getPendingReviews(user.uid),
+        queryFn: () => getPendingReviews(user.uid, limit),
     });
 
     return (
@@ -28,20 +29,31 @@ const PendingReviews = () => {
                     <>
                         {/* Render a list of pending review cards */}
                         {
-                            pendingReviewsData.length > 0 ? (
-                                pendingReviewsData.map((reviewData, index) => (
-                                    <PendingReviewCard
-                                        key={index}
-                                        data={reviewData}
-                                        setCourseIdForReview={setCourseIdForReview}
+                            data?.pendingReviews?.length > 0
+                                ?
+                                <>
+                                    {
+                                        data?.pendingReviews?.map((reviewData, index) => (
+                                            <PendingReviewCard
+                                                key={index}
+                                                data={reviewData}
+                                                setCourseIdForReview={setCourseIdForReview}
+                                            />
+                                        ))
+                                    }
+                                    {
+                                        data?.pendingReviewsCount > 6 && data?.pendingReviewsCount !== data?.pendingReviews.length &&
+                                        <button onClick={() => setLimit(limit + 4)} className={`px-3 py-2.5 rounded-md capitalize outline outline-1 outline-gray-900  text-sm text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300 ml-1`}>
+                                            View more
+                                        </button>
+                                    }
+                                </>
+                                : (
+                                    <EmptyPage
+                                        text='Your feedback helps others make better choices'
+                                        height="h-[20rem] sm:h-[30rem]"
                                     />
-                                ))
-                            ) : (
-                                <EmptyPage
-                                    text='Your feedback helps others make better choices'
-                                    height="h-[20rem] sm:h-[30rem]"
-                                />
-                            )}                        
+                                )}
                     </>
             }
             <AddReviewModal

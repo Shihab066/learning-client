@@ -15,16 +15,17 @@ const MyReviewsHistory = () => {
 
     // State to track the selected review data for the update modal
     const [selectedReview, setSelectedReview] = useState(null);
+    const [limit, setLimit] = useState(6);
 
     // Fetch the user's reviews using React Query
     const {
-        data: reviews = [],
+        data,
         refetch,
         isLoading,
     } = useQuery({
-        queryKey: ['my-reviews'],
+        queryKey: ['my-reviews', limit],
         enabled: !!user,          // Only enable the query if the user is authenticated
-        queryFn: async () => await getStudentReviews(user.uid),
+        queryFn: async () => await getStudentReviews(user.uid, limit),
     });
 
     // Render a loading indicator if the data is still being fetched
@@ -33,7 +34,7 @@ const MyReviewsHistory = () => {
     }
 
     // Render an empty page if there are no reviews
-    if (reviews.length === 0) {
+    if (data?.reviews.length === 0) {
         return (
             <EmptyPage
                 text="It looks like you haven’t reviewed any courses yet."
@@ -43,29 +44,37 @@ const MyReviewsHistory = () => {
     }
 
     return (
-        <div className="flex flex-col gap-6">
-            {/* Render each review card */}
-            {reviews.map((review, index) => (
-                <MyReviewsHistoryCard
-                    key={index}
-                    data={review}
-                    setSelectedReview={setSelectedReview} // Pass down function to update modal data
-                />
-            ))}
+        <div>
+            <div className="space-y-6">
+                {/* Render each review card */}
+                {data?.reviews.map((review, index) => (
+                    <MyReviewsHistoryCard
+                        key={index}
+                        data={review}
+                        setSelectedReview={setSelectedReview} // Pass down function to update modal data
+                    />
+                ))}
 
-            {/* Display the update review modal if a review is selected */}
-            {selectedReview && (
-                <UpdateReviewModal
-                    selectedReview={selectedReview}
-                    setSelectedReview={setSelectedReview} // Clear modal data on close
-                    refetch={refetch}                // Refresh reviews after an update
-                />
-            )}
+                {/* Display the update review modal if a review is selected */}
+                {selectedReview && (
+                    <UpdateReviewModal
+                        selectedReview={selectedReview}
+                        setSelectedReview={setSelectedReview} // Clear modal data on close
+                        refetch={refetch}                // Refresh reviews after an update
+                    />
+                )}
+            </div>
+            {
+                data?.reviewsCount > 6 && data?.reviewsCount !== data?.reviews.length &&
+                <button onClick={() => setLimit(limit + 6)} className={`px-3 py-2.5 rounded-md capitalize outline outline-1 outline-gray-900  text-sm text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300 ml-1 my-4`}>
+                    View more
+                </button>
+            }
         </div>
     );
 };
 
-const MyReviewsHistoryCard = ({ data, setSelectedReview }) => {    
+const MyReviewsHistoryCard = ({ data, setSelectedReview }) => {
     const { _courseId, courseName, courseThumbnail, rating, review } = data;
 
     return (
@@ -202,7 +211,7 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
         <div>
             {/* Modal Toggle Checkbox */}
             <input type="checkbox" id="update-review-modal" className="modal-toggle" />
-            
+
             {/* Modal */}
             <div className="modal h-screen overflow-y-auto" role="dialog">
                 <div className="modal-box w-11/12 max-w-xl py-10 my-52 min-h-fit">
@@ -212,7 +221,7 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
                             How would you rate this course?
                         </h3>
                         <p className="py-4 font-medium">{ratingMessages[rating]}</p>
-                        
+
                         {/* Star Rating */}
                         <div className="rating rating-lg">
                             {[1, 2, 3, 4, 5].map((value) => (
@@ -241,9 +250,8 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
                         <input
                             type="submit"
                             value="Save Changes"
-                            className={`self-end w-fit px-3 py-3 font-bold text-white bg-black hover:bg-opacity-80 cursor-pointer ${
-                                isUpdateBtnDisabled ? "pointer-events-none opacity-50" : ""
-                            }`}
+                            className={`self-end w-fit px-3 py-3 font-bold text-white bg-black hover:bg-opacity-80 cursor-pointer ${isUpdateBtnDisabled ? "pointer-events-none opacity-50" : ""
+                                }`}
                         />
                     </form>
 

@@ -1,7 +1,7 @@
 import api from "./baseAPI"
 
-export const getStudentReviews = async (studentId) => {
-    const res = await api.get(`review/my-reviews/${studentId}`);
+export const getStudentReviews = async (studentId, limit) => {
+    const res = await api.get(`review/my-reviews/${studentId}?limit=${limit}`);
     return res.data;
 };
 

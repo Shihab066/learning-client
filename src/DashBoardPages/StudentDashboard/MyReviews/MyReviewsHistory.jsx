@@ -218,7 +218,7 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
                     {/* Modal Header */}
                     <div className="flex flex-col items-center">
                         <h3 className="text-xl font-bold text-center">
-                            How would you rate this course?
+                            Your Review
                         </h3>
                         <p className="py-4 font-medium">{ratingMessages[rating]}</p>
 

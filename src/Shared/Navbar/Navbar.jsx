@@ -9,6 +9,7 @@ import dummyImg from "../../assets/icon/user_icon.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCartItems } from "../../services/cartService";
 import useUserRole from "../../hooks/useUserRole";
+import generateImageLink from "../../utils/generateImageLink";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -241,7 +242,7 @@ const Navbar = () => {
                     <ul className="group relative">
                       <li className="hidden lg:block">
                         <img
-                          src={user.photoURL || dummyImg}
+                          src={user.photoURL ? generateImageLink({ imageId: user.photoURL, height: 40, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
                           className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
                           referrerPolicy="no-referrer"
                           alt="User Profile"

@@ -37,6 +37,7 @@ import PurchaseHistory from "../DashBoardPages/StudentDashboard/PurchaseHistory/
 import MyReviews from "../DashBoardPages/StudentDashboard/MyReviews/MyReviews";
 import PendingReviews from "../DashBoardPages/StudentDashboard/MyReviews/PendingReviews";
 import MyReviewsHistory from "../DashBoardPages/StudentDashboard/MyReviews/MyReviewsHistory";
+import Feedback from "../DashBoardPages/StudentDashboard/Feedback/Feedback";
 
 
 export const router = createBrowserRouter([
@@ -178,6 +179,10 @@ export const router = createBrowserRouter([
           {
             path: 'purchase-history',
             element: <PurchaseHistory />
+          },
+          {
+            path: 'feedback',
+            element: <Feedback />
           },
           {
             path: 'my-reviews',

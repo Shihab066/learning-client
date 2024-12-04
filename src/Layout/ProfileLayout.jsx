@@ -4,6 +4,7 @@ import shareIcon from '../assets/icon/shareicon.svg';
 import useAuth from "../hooks/useAuth";
 import dummyProfile from '../assets/icon/user_icon.png';
 import useUserRole from "../hooks/useUserRole";
+import generateImageLink from "../utils/generateImageLink";
 
 const ProfileLayout = () => {
     const { user } = useAuth();
@@ -71,7 +72,7 @@ const ProfileLayout = () => {
                     <article className="flex flex-col justify-center items-center gap-y-2 pb-6 relative min-w-[280px] xl:min-w-full">
                         <img
                             className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover"
-                            src={user?.photoURL || dummyProfile}
+                            src={user?.photoURL ? generateImageLink({ imageId: user.photoURL, height: 160, aspectRatio: 1.0, cropMode: 'fill' }) : dummyProfile}
                             alt="profile image" />
                         <h2 className="text-gray-900 text-xl font-medium">
                             John Doe

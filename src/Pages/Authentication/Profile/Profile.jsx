@@ -10,6 +10,7 @@ import CreatableSelect from 'react-select/creatable';
 import useUserRole from "../../../hooks/useUserRole";
 import Loading from "../../../components/Loading/Loading";
 import useUploadImage from "../../../hooks/useUploadImage";
+import generateImageLink from "../../../utils/generateImageLink";
 
 const Profile = () => {
     // React Hook Form setup
@@ -216,7 +217,7 @@ const Profile = () => {
                                     />
                                     <img
                                         className="w-16 h-16 bg-white rounded-full object-cover drop-shadow-lg"
-                                        src={img || user?.photoURL || dummyImg}
+                                        src={img || user?.photoURL ? generateImageLink({ imageId: user.photoURL, height: 64, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
                                         alt="profile picture"
                                     />
                                     <button

@@ -1,26 +1,26 @@
 import api from "./baseAPI";
 
-export const getAllFeedback = () => {
-    const res = api.get('feedback/getAll');
+export const getAllFeedback = async () => {
+    const res = await api.get('feedback/getAll');
     return res.data;
 };
 
-export const getFeedbackById = (userId) => {
-    const res = api.get(`feedback/get/:${userId}`);
+export const getFeedbackById = async (userId) => {
+    const res = await api.get(`feedback/get/:${userId}`);
     return res.data;
 };
 
-export const addFeedback = (feedback) => {
-    const res = api.post(`feedback/add`, {feedback});
+export const addFeedback = async (feedback) => {
+    const res = await api.post(`feedback/add`, feedback);
     return res.data;
 };
 
-export const updateFeedback = (updatedFeedback) => {
-    const res = api.patch(`feedback/update`, {updatedFeedback});
+export const updateFeedback = async (updatedFeedback) => {
+    const res = await api.patch(`feedback/update`, updatedFeedback);
     return res.data;
 };
 
-export const removeFeedback = (userId, feedbackId) => {
-    const res = api.patch(`feedback/delete/:${userId}/:${feedbackId}`);
+export const removeFeedback = async (userId, feedbackId) => {
+    const res = await api.patch(`feedback/delete/:${userId}/:${feedbackId}`);
     return res.data;
 };

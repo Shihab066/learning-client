@@ -1,9 +1,11 @@
 import useAuth from "../../../hooks/useAuth";
+import { addFeedback } from "../../../services/feedbackService";
+import { toastSuccess } from "../../../utils/toastUtils";
 
 const Feedback = () => {
     const { user } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
         const heading = form.headline.value;
@@ -17,8 +19,12 @@ const Feedback = () => {
             feedback,
         };
 
-        console.log(feedbackData);
-    }
+        const res = await addFeedback(feedbackData);
+        if (res.insertedId) {
+            toastSuccess('Your feedback has been submitted.')
+            e.target.reset();
+        }
+    };
     return (
         <section>
             <div>

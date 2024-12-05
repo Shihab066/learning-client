@@ -5,52 +5,55 @@ import { removeAlert, toastSuccess } from "../../../utils/toastUtils";
 import { useEffect, useState } from "react";
 import EditIcon from "../../../components/Icons/EditIcon";
 import DeleteIcon from "../../../components/Icons/DeleteIcon";
+import Loading from "../../../components/Loading/Loading";
 
 const Feedback = () => {
-    const { user } = useAuth();
-    const { data = null, isLoading } = useQuery({
-        queryKey: ['my-feedback'],
-        enabled: !!user,
+    const { user } = useAuth(); // Retrieve the authenticated user
+    const { data: feedback, isLoading } = useQuery({
+        queryKey: ["my-feedback"],
+        enabled: !!user, // Enable the query only if a user exists
         queryFn: async () => {
             const res = await getFeedbackById(user.uid);
             return res;
-        }
+        },
     });
 
-    console.log(data)
     return (
         <section>
-            <div>
-                <h2 className="text-xl font-medium mb-2">
-                    Feedback
-                </h2>
+            {/* Header Section */}
+            <header>
+                <h2 className="mb-2 text-xl font-medium">Feedback</h2>
                 <hr />
-            </div>
+            </header>
 
-            {
-                data
-                    ?
-                    <MyFeedBack
-                        user={user}
-                        data={data}
-                    />
-                    :
-                    <FeedbackForm
-                        user={user}
-                    />
-            }
-
+            {/* Content Section */}
+            {isLoading ? (
+                <Loading /> 
+            ) : (
+                <>
+                    {/* Show feedback if data exists, otherwise render the feedback form */}
+                    {feedback ? (
+                        <MyFeedback user={user} data={feedback} />
+                    ) : (
+                        <FeedbackForm user={user} />
+                    )}
+                </>
+            )}
         </section>
     );
 };
 
 const FeedbackForm = ({ user }) => {
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
-        const headline = form.headline.value;
-        const feedback = form.feedback.value;
 
+        // Extract form values
+        const headline = form.headline.value.trim();
+        const feedback = form.feedback.value.trim();
+
+        // Prepare feedback data
         const feedbackData = {
             userId: user.uid,
             name: user.displayName,
@@ -59,187 +62,220 @@ const FeedbackForm = ({ user }) => {
             feedback,
         };
 
+        // Submit feedback
         const res = await addFeedback(feedbackData);
         if (res.insertedId) {
-            toastSuccess('Your feedback has been submitted.')
-            e.target.reset();
+            toastSuccess('Your feedback has been submitted.');
+            form.reset(); // Reset form fields
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            {/* Headline Input */}
             <div className="flex flex-col space-y-2">
-                <label htmlFor="headline" className="font-medium">Headline</label>
+                <label htmlFor="headline" className="font-medium">
+                    Headline
+                </label>
                 <input
                     name="headline"
                     id="headline"
                     type="text"
-                    className="focus:outline-none border border-black py-2 px-4 placeholder-gray-500"
-                    placeholder="Engnieer/Designer etc."
+                    placeholder="Engineer/Designer etc."
+                    className="border border-black py-2 px-4 placeholder-gray-500 focus:outline-none"
                 />
             </div>
 
+            {/* Feedback Input */}
             <div className="flex flex-col space-y-2">
-                <label htmlFor="feedback" className="font-medium">Share Your Thoughts</label>
+                <label htmlFor="feedback" className="font-medium">
+                    Share Your Thoughts
+                </label>
                 <textarea
                     name="feedback"
                     id="feedback"
                     rows="10"
                     placeholder="Your suggestions help us grow!"
-                    className="focus:outline-none border border-black resize-none p-4 placeholder-gray-500 "
+                    className="border border-black resize-none p-4 placeholder-gray-500 focus:outline-none"
                 />
             </div>
 
+            {/* Submit Button */}
             <input
                 type="submit"
-                className={`w-fit text-sm font-medium text-white bg-black px-3 py-2.5 rounded cursor-pointer`}
-                value='Submit'
+                value="Submit"
+                className="px-3 py-2.5 w-fit text-sm font-medium text-white bg-black rounded cursor-pointer"
             />
         </form>
-    )
+    );
 };
 
-const MyFeedBack = ({ user, data }) => {
+const MyFeedback = ({ user, data }) => {
     const { headline, feedback } = data;
+
+    // Prepare feedback data for edit form
     const feedbackData = {
         userId: user.uid,
         headline,
-        feedback
+        feedback,
     };
 
-    const [isEditEnable, setIsEditEnable] = useState(false);
-    const queryClient = useQueryClient();
+    const [isEditEnable, setIsEditEnable] = useState(false); // Toggle edit mode
+    const queryClient = useQueryClient(); // React Query client for refetching data
 
+    // Handle feedback removal
     const handleRemoveFeedback = () => {
-        removeAlert()
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    const res = await removeFeedback(user.uid);
-                    if (res.deletedCount) {
-                        toastSuccess('Your feedback has been removed');
-                        queryClient.refetchQueries(['my-feedback']);
-                    }
+        removeAlert().then(async (result) => {
+            if (result.isConfirmed) {
+                const res = await removeFeedback(user.uid);
+                if (res.deletedCount) {
+                    toastSuccess('Your feedback has been removed');
+                    queryClient.refetchQueries(['my-feedback']); // Refetch feedback data
                 }
-            })
+            }
+        });
     };
 
     return (
         <>
-            {
-                isEditEnable
-                    ?
-                    <FeedbackUpdateForm
-                        feedbackData={feedbackData}
-                        setIsEditEnable={setIsEditEnable}
-                    />
-                    :
-                    <div className="py-4 px-4 border rounded-xl mt-4">
-                        <div className="relative">
-                            <h2 className="font-medium mb-2">
-                                Your feedback
-                            </h2>
+            {isEditEnable ? (
+                <FeedbackUpdateForm
+                    feedbackData={feedbackData}
+                    setIsEditEnable={setIsEditEnable}
+                />
+            ) : (
+                <div className="mt-4 border rounded-xl px-4 py-4">
+                    <div className="relative">
+                        {/* Feedback Header */}
+                        <h2 className="mb-2 font-medium">Your Feedback</h2>
 
-                            <div className="absolute top-0 right-0 flex items-center gap-x-3">
-                                <span
-                                    onClick={handleRemoveFeedback}
-                                    className="cursor-pointer"
-                                >
-                                    <DeleteIcon />
-                                </span>
+                        {/* Action Buttons */}
+                        <div className="absolute top-0 right-0 flex items-center gap-x-3">
+                            {/* Remove Feedback */}
+                            <span onClick={handleRemoveFeedback} className="cursor-pointer">
+                                <DeleteIcon />
+                            </span>
 
-                                <span
-                                    className="cursor-pointer"
-                                    onClick={() => setIsEditEnable(true)}
-                                    title="edit"
-                                >
-                                    <EditIcon />
-                                </span>
-                            </div>
+                            {/* Edit Feedback */}
+                            <span
+                                onClick={() => setIsEditEnable(true)}
+                                className="cursor-pointer"
+                                title="Edit"
+                            >
+                                <EditIcon />
+                            </span>
                         </div>
-                        <p>
-                            {feedback}
-                        </p>
                     </div>
-            }
+
+                    {/* Feedback Content */}
+                    <p>{feedback}</p>
+                </div>
+            )}
         </>
-    )
+    );
 };
 
 const FeedbackUpdateForm = ({ feedbackData, setIsEditEnable }) => {
-    const [formData, setFormData] = useState(feedbackData);
-    const { headline, feedback } = formData;
-    const [isUpdateBtnDisable, setIsUpdateBtnDisable] = useState(true);
-    const queryClient = useQueryClient();
+    const [formData, setFormData] = useState(feedbackData); // Manage form state
+    const { headline, feedback } = formData; // Destructure current form values
+    const [isUpdateBtnDisable, setIsUpdateBtnDisable] = useState(true); // Track button state
+    const queryClient = useQueryClient(); // React Query client for data refetching
 
+    // Handle input field changes
     const handleInputChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prevData => ({ ...prevData, [name]: value }));
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const res = await updateFeedback(formData);
         if (res.modifiedCount) {
-            toastSuccess('feedback update successfully')
+            toastSuccess('Feedback updated successfully');
             setIsEditEnable(false);
-            queryClient.refetchQueries(['my-feedback']);
+            queryClient.refetchQueries(['my-feedback']); // Refetch feedback data
         }
     };
 
+    // Watch for form data changes to enable/disable the update button
     useEffect(() => {
         const hasChanges = JSON.stringify(formData) !== JSON.stringify(feedbackData);
         setIsUpdateBtnDisable(!hasChanges);
-    }, [formData]);
+    }, [formData, feedbackData]);
 
     return (
         <div className="relative">
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                {/* Headline Field */}
                 <div className="flex flex-col space-y-2">
-                    <label htmlFor="headline" className="font-medium">Headline</label>
+                    <label htmlFor="headline" className="font-medium">
+                        Headline
+                    </label>
                     <input
-                        onChange={(e) => handleInputChange(e)}
                         name="headline"
                         id="headline"
                         type="text"
-                        className="focus:outline-none border border-black py-2 px-4 placeholder-gray-500"
-                        placeholder="Engnieer/Designer etc."
                         value={headline}
+                        onChange={handleInputChange}
+                        placeholder="Engineer/Designer etc."
+                        className="border border-black px-4 py-2 placeholder-gray-500 focus:outline-none"
                     />
                 </div>
 
+                {/* Feedback Field */}
                 <div className="flex flex-col space-y-2">
-                    <label htmlFor="feedback" className="font-medium">Share Your Thoughts</label>
+                    <label htmlFor="feedback" className="font-medium">
+                        Share Your Thoughts
+                    </label>
                     <textarea
-                        onChange={(e) => handleInputChange(e)}
                         name="feedback"
                         id="feedback"
                         rows="10"
-                        placeholder="Your suggestions help us grow!"
                         value={feedback}
-                        className="focus:outline-none border border-black resize-none p-4 placeholder-gray-500 "
+                        onChange={handleInputChange}
+                        placeholder="Your suggestions help us grow!"
+                        className="border border-black p-4 placeholder-gray-500 resize-none focus:outline-none"
                         required
                     />
                 </div>
 
+                {/* Submit Button */}
                 <input
                     type="submit"
-                    className={`w-fit text-sm font-medium text-white bg-black px-4 py-2.5 rounded cursor-pointer ${isUpdateBtnDisable ? 'opacity-50 pointer-events-none cursor-not-allowed' : ''}`}
-                    value='Save'
+                    value="Save"
+                    className={`w-fit rounded px-4 py-2.5 text-sm font-medium text-white bg-black cursor-pointer ${
+                        isUpdateBtnDisable ? 'opacity-50 pointer-events-none cursor-not-allowed' : ''
+                    }`}
                 />
             </form>
 
+            {/* Back Button */}
             <div className="absolute top-0 right-0">
                 <button
                     onClick={() => setIsEditEnable(false)}
-                    className="font-medium flex items-center text-blue-800"
+                    className="flex items-center text-blue-800 font-medium"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit={10} strokeWidth={1.5} d="m10 16l-4-4m0 0l4-4m-4 4h12"></path></svg>
-                    <span>
-                        Back
-                    </span>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeMiterlimit={10}
+                            strokeWidth={1.5}
+                            d="m10 16l-4-4m0 0l4-4m-4 4h12"
+                        />
+                    </svg>
+                    <span>Back</span>
                 </button>
             </div>
         </div>
-    )
+    );
 };
+
 export default Feedback;

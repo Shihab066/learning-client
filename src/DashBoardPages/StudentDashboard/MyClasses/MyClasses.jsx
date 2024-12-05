@@ -4,6 +4,8 @@ import useAuth from "../../../hooks/useAuth";
 import generateImageLink from "../../../utils/generateImageLink";
 import Loading from "../../../components/Loading/Loading";
 import EmptyPage from "../../../components/EmptyPage/EmptyPage";
+import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.jpg';
+import { useState } from "react";
 
 const MyClasses = () => {
     const { user } = useAuth();
@@ -55,12 +57,25 @@ const MyClasses = () => {
 const MyClassCard = ({ courseData }) => {
     const { courseName, courseThumbnail, instructorName } = courseData;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
+
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Mark the image as loaded
+    };
     return (
         <div className="w-full h-fit border border-[#E2E8F0] rounded-xl overflow-hidden">
             <img
-                className="w-full  object-cover"
+                src={dummyCourseThumbnail}
+                alt="Placeholder"
+                id="dummy"
+                className={`${isLoaded ? 'hidden' : 'block'}`}
+            />
+            <img
+                className={`w-full object-cover ${isLoaded ? 'block' : 'hidden'}`}
                 src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
                 alt="course thumbnail"
+                onLoad={handleImageLoad}
             />
             <div className='p-3 lg:p-4 space-y-2'>
                 <h3 className="h-12 lg:h-14 text-base lg:text-lg font-medium" title={courseName}>

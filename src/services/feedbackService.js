@@ -6,7 +6,7 @@ export const getAllFeedback = async () => {
 };
 
 export const getFeedbackById = async (userId) => {
-    const res = await api.get(`feedback/get/:${userId}`);
+    const res = await api.get(`feedback/get/${userId}`);
     return res.data;
 };
 
@@ -20,7 +20,7 @@ export const updateFeedback = async (updatedFeedback) => {
     return res.data;
 };
 
-export const removeFeedback = async (userId, feedbackId) => {
-    const res = await api.patch(`feedback/delete/:${userId}/:${feedbackId}`);
+export const removeFeedback = async (userId) => {
+    const res = await api.delete(`feedback/delete/${userId}`);
     return res.data;
 };

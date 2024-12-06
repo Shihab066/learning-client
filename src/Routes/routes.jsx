@@ -38,6 +38,7 @@ import MyReviews from "../DashBoardPages/StudentDashboard/MyReviews/MyReviews";
 import PendingReviews from "../DashBoardPages/StudentDashboard/MyReviews/PendingReviews";
 import MyReviewsHistory from "../DashBoardPages/StudentDashboard/MyReviews/MyReviewsHistory";
 import Feedback from "../DashBoardPages/StudentDashboard/Feedback/Feedback";
+import ViewCourse from "../Pages/ViewCourse/ViewCourse";
 
 
 export const router = createBrowserRouter([
@@ -105,6 +106,10 @@ export const router = createBrowserRouter([
       {
         path: 'my-classes',
         element: <MyClasses />
+      },
+      {
+        path: 'course/view/:courseId',
+        element: <ViewCourse />
       },
       // {
       //   path: 'dashboard',

@@ -14,13 +14,12 @@ const VideoPlayer = () => {
             
         })        
 
-        player.source("https://learning-info-bd.vercel.app/api/v1/upload/video/get/ewqgnwr8agoltbtqjzj8");
+        player.source("https://learning-info-bd.vercel.app/api/v1/upload/video/get/wgs3rcdhgngvd2rei3pw");
     }, []);
     return (
         <video
-            ref={videoRef}                             
-            width={'540px'}
-            height={'360px'}            
+            ref={videoRef}                                
+            className='w-full h-[30rem] rounded-xl'
         />
     );
 };

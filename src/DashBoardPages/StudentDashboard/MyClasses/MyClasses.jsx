@@ -6,6 +6,7 @@ import Loading from "../../../components/Loading/Loading";
 import EmptyPage from "../../../components/EmptyPage/EmptyPage";
 import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.jpg';
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyClasses = () => {
     const { user } = useAuth();
@@ -54,11 +55,12 @@ const MyClasses = () => {
     );
 };
 
-const MyClassCard = ({ courseData }) => {
-    const { courseName, courseThumbnail, instructorName } = courseData;
+const MyClassCard = ({ courseData }) => {    
+    const {_id, courseName, courseThumbnail, instructorName } = courseData;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const navigate = useNavigate();
 
     const handleImageLoad = () => {
         setIsLoaded(true); // Mark the image as loaded
@@ -91,7 +93,7 @@ const MyClassCard = ({ courseData }) => {
                     50% Complete
                 </p>
 
-                <button className="btn w-full normal-case bg-black hover:bg-black hover:bg-opacity-80 duration-300 text-white py-2 rounded-md">
+                <button onClick={() => navigate(`/course/view/${_id}`)} className="btn w-full normal-case bg-black hover:bg-black hover:bg-opacity-80 duration-300 text-white py-2 rounded-md">
                     Continue Learning
                 </button>
             </div>

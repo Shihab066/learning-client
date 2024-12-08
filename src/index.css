@@ -236,3 +236,22 @@ html {
     75% { transform: translateX(5px) }
     100% { transform: translateX(0) }
    }
+
+/* accordian custom icon */
+
+.collapse-custom .collapse-custom-icon:after {
+    position: absolute;
+    display: block;     
+    top: 15px;    
+    right: 1.4rem;
+    content: url('./assets/icon/plus.svg');
+    pointer-events: none;    
+}
+
+.collapse[open].collapse-custom .collapse-custom-icon:after,
+.collapse-open.collapse-custom .collapse-custom-icon:after,
+.collapse-custom:focus:not(.collapse-close) .collapse-custom-icon:after,
+.collapse-custom:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-custom-icon:after,
+.collapse-custom:not(.collapse-close) input[type="radio"]:checked ~ .collapse-custom-icon:after {   
+    content: url('./assets/icon/minus.svg');
+}

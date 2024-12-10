@@ -89,7 +89,7 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
     
     
     return (
-        <div ref={milestoneId === _id ? activeItemRef : null} id="test" className="collapse collapse-custom bg-white border rounded-lg ">
+        <div ref={milestoneId === _id ? activeItemRef : null} className="collapse collapse-custom bg-white border rounded-lg ">
             <input ref={milestoneRef} type="checkbox" name="my-accordion-3" />
 
             {/* Milestone Name */}
@@ -116,17 +116,17 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
 
 const MilestoneModules = ({ milestoneModule, videoId, setVideoId }) => {
     const { moduleName, moduleItems } = milestoneModule;
-    const testRef = useRef();
+    const moduleRef = useRef();
 
     useEffect(() => {
         const isVideoExist = moduleItems?.find(moduleData => moduleData.itemData === videoId);
         if (isVideoExist) {
-            testRef.current.checked = true;
+            moduleRef.current.checked = true;
         }
     }, [])
     return (
         <div className="collapse collapse-arrow bg-[#f7f9fa] rounded-lg">
-            <input ref={testRef} type="checkbox" name="my-accordion-2" />
+            <input ref={moduleRef} type="checkbox" name="my-accordion-2" />
             {/* Module Name */}
             <div className="collapse-title font-medium">
                 {moduleName}

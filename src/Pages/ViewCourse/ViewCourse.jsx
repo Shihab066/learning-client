@@ -80,7 +80,7 @@ const ViewCourse = () => {
 
                 {
                     videoIds?.length > 0 &&
-                    <div className="flex gap-x-4 mt-6 justify-end">
+                    <div className="flex gap-x-4 mt-6 justify-end select-none">
                         {
                             videoIds?.indexOf(videoId) > 0 &&
                             <button onClick={handlePrevButton} className="bg-white hover:bg-base-300 text-black border border-black rounded-md px-4 py-2 font-bold">

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 // import 'cloudinary-video-player/playlist';
 
-const VideoPlayer = ({ test }) => {
+const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNextButton }) => {
     const cloudinaryRef = useRef();
     const playerRef = useRef();
 
@@ -11,12 +11,12 @@ const VideoPlayer = ({ test }) => {
     //     { publicId: "https://learning-info-bd.vercel.app/api/v1/upload/video/get/z6udvua8go4ck8ahdpwi", title: "Video 2", type: "application/x-mpegURL" },
     // ];
 
-    const videoIds = [
-        "wgs3rcdhgngvd2rei3pw",
-        "z6udvua8go4ck8ahdpwi"
-    ]
-
-    const [videoId, setVideoId] = useState('wgs3rcdhgngvd2rei3pw')
+    // const videoIds = [
+    //     "wgs3rcdhgngvd2rei3pw",
+    //     "z6udvua8go4ck8ahdpwi",
+    //     "jfwnszwqwrmg4dwjh8a6",
+    //     "j8lvppkgnnkxjkm8ct7y"
+    // ]    
 
     // console.log(playerRef.current.plugins);
     useEffect(() => {
@@ -98,35 +98,27 @@ const VideoPlayer = ({ test }) => {
             const secondChild = parentDiv.children[2]; // Get the current third position (index starts from 0)
             parentDiv.insertBefore(nextButton, secondChild);
         }
+
+        const reverseButton = parentDiv.querySelector('.vjs-icon-skip-10-min');
+        const forwardButton = parentDiv.querySelector('.vjs-icon-skip-10-plus');
+        const playbackRate = parentDiv.querySelector('.vjs-playback-rate');
+        const sourceSelector = parentDiv.querySelector('.vjs-http-source-selector');
+        const fullscreenButton = parentDiv.querySelector('.vjs-fullscreen-control');
+
+        if (reverseButton && forwardButton && sourceSelector && playbackRate && fullscreenButton) {
+            reverseButton.style.order = 9
+            forwardButton.style.order = 10
+            playbackRate.style.order = 11
+            playbackRate.style.width = '45px'
+            sourceSelector.style.order = 12
+            fullscreenButton.style.order = 13
+        }
     }, [])
-
-    // Use a ref to store the current videoId
-    const videoIdRef = useRef(videoId);
-
-    // Update the ref whenever videoId changes
-    useEffect(() => {
-        videoIdRef.current = videoId;
-    }, [videoId]);
 
     useEffect(() => {
         const prevButton = document.querySelector('#video-prev');
         const nextButton = document.querySelector('#video-next');
 
-        const handlePrevButton = () => {
-            const prevVideoIndex = videoIds.indexOf(videoIdRef.current) - 1;
-            if (prevVideoIndex >= 0) {
-                setVideoId(videoIds[prevVideoIndex]);
-            }
-        };
-
-        const handleNextButton = () => {
-            const nextVideoIndex = videoIds.indexOf(videoIdRef.current) + 1;
-            if (nextVideoIndex < videoIds.length) {
-                setVideoId(videoIds[nextVideoIndex]);
-            }
-        };
-
-        // Attach the event listeners only once
         if (prevButton) prevButton.addEventListener('click', handlePrevButton);
         if (nextButton) nextButton.addEventListener('click', handleNextButton);
 
@@ -135,7 +127,7 @@ const VideoPlayer = ({ test }) => {
             if (prevButton) prevButton.removeEventListener('click', handlePrevButton);
             if (nextButton) nextButton.removeEventListener('click', handleNextButton);
         };
-    }, [videoIds]); // Dependencies related to the buttons and video IDs      
+    }, [handleNextButton, handlePrevButton]);
 
 
     return (

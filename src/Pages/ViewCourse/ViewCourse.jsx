@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/baseAPI";
@@ -15,17 +15,23 @@ const ViewCourse = () => {
             return res.data;
         }
     });
-    console.log(data)
-
+    console.log(data);
 
     const [videoIds, setVideoIds] = useState([]);
     const [milestoneId, setMilestoneId] = useState('');
     const [videoId, setVideoId] = useState('');
+    const [videoTitle, setVideoTitle] = useState('');
+    const [videoDescription, setVideoDescription] = useState('');
+    const [isExpandView, setExpandView] = useState(false);
     const activeItemRef = useRef();
     const containerRef = useRef();
+    const navigate = useNavigate();
+
+    console.log(videoTitle)
+    console.log(videoDescription)
 
     useEffect(() => {
-        setMilestoneId("67529190d5c9fb13e22175a6")
+        setMilestoneId("67529190d5c9fb13e22175a6");
         setVideoId("wgs3rcdhgngvd2rei3pw");
     }, [])
 
@@ -67,59 +73,91 @@ const ViewCourse = () => {
         }
     };
 
+    const handleExpandView = () => {
+        setExpandView(!isExpandView);
+    };
+
+    console.log(isExpandView)
+
     return (
-        <section className="lg-container flex gap-x-6 px-4 pt-10">
-            <div className="flex-grow">
-                <VideoPlayer
-                    videoIds={videoIds}
-                    videoId={videoId}
-                    setVideoId={setVideoId}
-                    handleNextButton={handleNextButton}
-                    handlePrevButton={handlePrevButton}
-                />
-
-                {
-                    videoIds?.length > 0 &&
-                    <div className="flex gap-x-4 mt-6 justify-end select-none">
-                        {
-                            videoIds?.indexOf(videoId) > 0 &&
-                            <button onClick={handlePrevButton} className="bg-white hover:bg-base-300 text-black border border-black rounded-md px-4 py-2 font-bold">
-                                Previous
-                            </button>
-                        }
-                        {
-                            videoIds?.indexOf(videoId) < videoIds.length - 1 &&
-                            <button onClick={handleNextButton} className="bg-black hover:bg-opacity-80 text-white border border-black rounded-md px-8 py-2 font-bold">
-                                Next
-                            </button>
-                        }
-                    </div>
-                }
+        <section className="lg-container px-4 pt-8">
+            <div className="border-b pb-4 flex items-center gap-x-2">
+                <button onClick={() => navigate('/my-classes')} className="bg-black rounded-full p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width={15} height={15} viewBox="0 0 12 12"><path fill="#fff" d="M10.5 6a.75.75 0 0 0-.75-.75H3.81l1.97-1.97a.75.75 0 0 0-1.06-1.06L1.47 5.47a.75.75 0 0 0 0 1.06l3.25 3.25a.75.75 0 0 0 1.06-1.06L3.81 6.75h5.94A.75.75 0 0 0 10.5 6"></path></svg>
+                </button>
+                <h3 className="text-xl leading-[24px] font-medium text-gray-700">
+                    {videoTitle}
+                </h3>
             </div>
+            <div className={`flex ${isExpandView ? 'flex-col' : 'flex-col lg:flex-row'} gap-6 pt-6`}>
+                <div className="flex-grow">
+                    <VideoPlayer
+                        videoIds={videoIds}
+                        videoId={videoId}
+                        setVideoId={setVideoId}
+                        handleNextButton={handleNextButton}
+                        handlePrevButton={handlePrevButton}
+                        isExpandView={isExpandView}
+                        handleExpandView={handleExpandView}
+                    />
 
-            <div ref={containerRef} className="w-[450px] h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 scroll-smooth border rounded-xl px-2 py-4">
-                {/* <div className="w-full h-[1000px]">
+                    {
+                        videoIds?.length > 0 &&
+                        <div className="flex gap-x-4 mt-6 justify-end select-none">
+                            {
+                                videoIds?.indexOf(videoId) > 0 &&
+                                <button onClick={handlePrevButton} className="bg-white hover:bg-base-300 text-black border border-black rounded-md px-4 py-2 font-bold">
+                                    Previous
+                                </button>
+                            }
+                            {
+                                videoIds?.indexOf(videoId) < videoIds.length - 1 &&
+                                <button onClick={handleNextButton} className="bg-black hover:bg-opacity-80 text-white border border-black rounded-md px-8 py-2 font-bold">
+                                    Next
+                                </button>
+                            }
+                        </div>
+                    }
+
+                    {
+                        videoDescription &&
+                        <div>
+                            <h4 className="font-medium border-b pb-2">
+                                Video Description
+                            </h4>
+                            <div className="mt-4 bg-white h-56 rounded-md overflow-y-auto md-scrollbar">
+                                {videoDescription}
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div ref={containerRef} className={`w-full lg:w-[350px] ${isExpandView ? 'xl:w-full' : 'xl:min-w-[450px]'} h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 scroll-smooth border rounded-xl px-2 py-4`}>
+                    {/* <div className="w-full h-[1000px]">
 
                 </div> */}
-                {
-                    data?.courseContents?.map((data, index) =>
-                        <ContentCard
-                            key={index}
-                            data={data}
-                            videoId={videoId}
-                            setVideoId={setVideoId}
-                            milestoneId={milestoneId}
-                            setMilestoneId={setMilestoneId}
-                            activeItemRef={activeItemRef}
-                        />
-                    )
-                }
+                    {
+                        data?.courseContents?.map((data, index) =>
+                            <ContentCard
+                                key={index}
+                                data={data}
+                                videoId={videoId}
+                                setVideoId={setVideoId}
+                                milestoneId={milestoneId}
+                                setMilestoneId={setMilestoneId}
+                                activeItemRef={activeItemRef}
+                                setVideoDescription={setVideoDescription}
+                                setVideoTitle={setVideoTitle}
+                            />
+                        )
+                    }
+                </div>
             </div>
         </section>
     );
 };
 
-const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef }) => {
+const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef, setVideoDescription, setVideoTitle }) => {
     const { _id, milestoneName, milestoneModules } = data;
     const milestoneRef = useRef();
     useEffect(() => {
@@ -128,7 +166,7 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
         } else {
             milestoneRef.current.checked = false;
         }
-    }, [milestoneId, _id]);
+    }, [milestoneId, _id, videoId]);
 
 
     return (
@@ -151,6 +189,8 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
                             videoId={videoId}
                             setVideoId={setVideoId}
                             setMilestoneId={setMilestoneId}
+                            setVideoDescription={setVideoDescription}
+                            setVideoTitle={setVideoTitle}
                         />
                     )
                 }
@@ -159,7 +199,7 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
     )
 }
 
-const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId }) => {
+const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId, setVideoDescription, setVideoTitle }) => {
     const { moduleName, moduleItems } = milestoneModule;
     const moduleRef = useRef();
 
@@ -189,6 +229,8 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
                             moduleData={moduleData}
                             videoId={videoId}
                             setVideoId={setVideoId}
+                            setVideoDescription={setVideoDescription}
+                            setVideoTitle={setVideoTitle}
                         />
                     )
                 }
@@ -197,8 +239,12 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
     )
 };
 
-const ModuleItem = ({ moduleData, videoId, setVideoId }) => {
+const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setVideoTitle }) => {
     const { itemType, itemName, itemData, itemDescription } = moduleData;
+    if (itemData === videoId) {
+        setVideoTitle(itemName);
+        setVideoDescription(itemDescription);
+    }
     return (
         <div
             onClick={() => setVideoId(itemData)}

@@ -31,6 +31,8 @@ const UpdateModuleItem = ({
     // Handle validation of the module item video
     const handleVideoError = (e) => {
         const videoFile = e.target.files[0];
+        // console.log(videoFile);
+        
         const maxSize = 100 * 1024 * 1024;
         if (videoFile && !videoFile.type.startsWith('video/')) {
             alert('Please select a valid video file.');

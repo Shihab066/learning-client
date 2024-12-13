@@ -3,10 +3,11 @@ import VideoPlayer from "./VideoPlayer";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/baseAPI";
 import { useEffect, useRef, useState } from "react";
+import formatTimeWithHours from "../../utils/formatTimeWithHours";
+import formatTimeWithMin from "../../utils/formatTimeWithMin";
 
 const ViewCourse = () => {
     const { courseId } = useParams();
-    console.log(courseId);
 
     const { data = {} } = useQuery({
         queryKey: ['course-contents'],
@@ -18,6 +19,7 @@ const ViewCourse = () => {
     console.log(data);
 
     const [videoIds, setVideoIds] = useState([]);
+    const [totalVideoWatched, setTotalVideoWatched] = useState([]);
     const [milestoneId, setMilestoneId] = useState('');
     const [videoId, setVideoId] = useState('');
     const [videoTitle, setVideoTitle] = useState('');
@@ -27,22 +29,26 @@ const ViewCourse = () => {
     const containerRef = useRef();
     const navigate = useNavigate();
 
-    console.log(videoTitle)
-    console.log(videoDescription)
-
     useEffect(() => {
         setMilestoneId("67529190d5c9fb13e22175a6");
         setVideoId("wgs3rcdhgngvd2rei3pw");
     }, [])
 
     useEffect(() => {
-        const allVideoIds = data?.courseContents?.flatMap(milestones =>
+        const allVideoIds = data?.contents?.courseContents.flatMap(milestones =>
             milestones.milestoneModules.flatMap(milestoneModule =>
                 milestoneModule.moduleItems.map(moduleItem => moduleItem.itemData)
             )
         );
         setVideoIds(allVideoIds);
     }, [data]);
+
+    useEffect(() => {
+        setTotalVideoWatched(videoIds?.slice(0, data?.currentProgress?.totalLecturesWatched));
+    }, [videoIds, data])
+    
+    console.log(totalVideoWatched);
+    
 
 
     useEffect(() => {
@@ -76,8 +82,6 @@ const ViewCourse = () => {
     const handleExpandView = () => {
         setExpandView(!isExpandView);
     };
-
-    console.log(isExpandView)
 
     return (
         <section className="lg-container px-4 pt-8">
@@ -125,7 +129,7 @@ const ViewCourse = () => {
                             <h4 className="font-medium border-b pb-2">
                                 Video Description
                             </h4>
-                            <div className="mt-4 bg-white h-56 rounded-md overflow-y-auto md-scrollbar">
+                            <div className="mt-4 bg-white max-h-56 rounded-md overflow-y-auto md-scrollbar">
                                 {videoDescription}
                             </div>
                         </div>
@@ -137,7 +141,7 @@ const ViewCourse = () => {
 
                 </div> */}
                     {
-                        data?.courseContents?.map((data, index) =>
+                        data?.contents?.courseContents?.map((data, index) =>
                             <ContentCard
                                 key={index}
                                 data={data}
@@ -159,6 +163,18 @@ const ViewCourse = () => {
 
 const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef, setVideoDescription, setVideoTitle }) => {
     const { _id, milestoneName, milestoneModules } = data;
+    const reduceCurrentItem = (moduleItems) => {
+        const modulesDuration = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
+        return modulesDuration;
+    }
+    const milestoneDurationInSec = milestoneModules.reduce((acc, curr) => acc + reduceCurrentItem(curr.moduleItems), 0);
+    const milestoneDurationInHours = formatTimeWithHours(milestoneDurationInSec);
+    console.log("milestone time", milestoneDurationInHours);
+    const milestoneVideoCount = milestoneModules.reduce((acc, curr) => acc + curr.moduleItems.length, 0);
+    console.log('milestone total video', milestoneVideoCount);
+
+
+
     const milestoneRef = useRef();
     useEffect(() => {
         if (milestoneId === _id) {
@@ -176,6 +192,16 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
             {/* Milestone Name */}
             <div className="collapse-title collapse-custom-icon text-lg font-medium relative">
                 {milestoneName}
+                <div className="text-sm text-gray-500 font-normal flex items-center gap-x-2.5">
+                    <div className="flex items-center">
+                        {milestoneDurationInHours}
+                        <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
+                    </div>
+                    <div>
+                        0/{milestoneVideoCount}
+                    </div>
+
+                </div>
             </div>
 
             {/* Milestone Modules */}
@@ -201,6 +227,9 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
 
 const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId, setVideoDescription, setVideoTitle }) => {
     const { moduleName, moduleItems } = milestoneModule;
+    const totalModuleTimeInSec = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
+    const totalModuleDuration = formatTimeWithHours(totalModuleTimeInSec)
+    const modulesVideoCount = moduleItems.length;
     const moduleRef = useRef();
 
     useEffect(() => {
@@ -218,6 +247,16 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
             {/* Module Name */}
             <div className="collapse-title font-medium">
                 {moduleName}
+                <div className="text-sm text-gray-500 font-normal flex items-center gap-x-2.5">
+                    <div className="flex items-center">
+                        {totalModuleDuration}
+                        <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
+                    </div>
+                    <div>
+                        0/{modulesVideoCount}
+                    </div>
+
+                </div>
             </div>
 
             {/* Modules Items */}
@@ -240,17 +279,23 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
 };
 
 const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setVideoTitle }) => {
-    const { itemType, itemName, itemData, itemDescription } = moduleData;
+    const { itemType, itemName, itemData, itemDescription, duration } = moduleData;
+    console.log(duration);
+    const videoDuration = formatTimeWithMin(duration)
+
     if (itemData === videoId) {
         setVideoTitle(itemName);
         setVideoDescription(itemDescription);
     }
     return (
-        <div
-            onClick={() => setVideoId(itemData)}
-            className={`text-sm font-normal p-3  rounded-md cursor-pointer ${videoId === itemData ? 'text-white bg-black' : 'bg-slate-200 text-black shadow-'}`}
-        >
-            {itemName}
+        <div onClick={() => setVideoId(itemData)}>
+            <div className={`text-sm font-normal p-3  rounded-md cursor-pointer ${videoId === itemData ? 'text-white bg-black' : 'bg-slate-200 text-black shadow-'}`}>
+                {itemName}
+                <div className={`flex items-center gap-x-2 mt-2 ${videoId === itemData ? 'text-white' : 'text-gray-500'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-6`} viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinejoin="round" strokeMiterlimit={10} strokeWidth={1.5} d="M22.54 6.42a2.77 2.77 0 0 0-1.945-1.957C18.88 4 12 4 12 4s-6.88 0-8.595.463A2.77 2.77 0 0 0 1.46 6.42C1 8.148 1 11.75 1 11.75s0 3.602.46 5.33a2.77 2.77 0 0 0 1.945 1.958C5.121 19.5 12 19.5 12 19.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.945-1.958c.46-1.726.46-5.33.46-5.33s0-3.602-.46-5.33ZM9.75 15.021V8.48l5.75 3.271z"></path></svg>
+                    {videoDuration}
+                </div>
+            </div>
         </div>
     )
 }

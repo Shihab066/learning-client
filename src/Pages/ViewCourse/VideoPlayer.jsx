@@ -18,6 +18,8 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
             });
         }
 
+        console.log(cloudinaryRef.current.videoPlayer)
+
         // Disable right-click on video element
         const videoElement = document.getElementById('vjs_video_3');
         if (videoElement) {
@@ -34,7 +36,8 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
         if (playerRef.current && videoId) {
             playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
             playerRef.current.on('ended', () => {
-                setVideoId(videoIds[videoIds.indexOf(videoId) + 1]);
+                // setVideoId(videoIds[videoIds.indexOf(videoId) + 1]);
+                handleNextButton()
             });
         }
     }, [videoId, videoIds, setVideoId]);
@@ -157,12 +160,12 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
             if (expandView) expandView.removeEventListener('click', handleExpandView);
         };
     }, [handlePrevButton, handleNextButton, handleExpandView]);
-    
+
     return (
         <div className='w-full aspect-video'>
             <video
-                ref={playerRef}                
-                className={`w-full h-full  vjs-playlist`}
+                ref={playerRef}
+                className={`w-full h-full vjs-playlist`}
             />
         </div>
     );

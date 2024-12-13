@@ -155,7 +155,7 @@ const ModuleOptions = ({ moduleId, deleteModule, optionsRef, handleOption, miles
                             <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4z"></path>
                         </g>
                     </svg>
-                    <span>Module Item</span>
+                    <span>Add video</span>
                 </label>
             </li>
 

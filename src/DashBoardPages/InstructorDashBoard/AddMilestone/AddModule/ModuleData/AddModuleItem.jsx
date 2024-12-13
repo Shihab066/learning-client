@@ -11,7 +11,10 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
     const [videoTitleError, setVideoTitleError] = useState(false);
     const [videoError, setVideoError] = useState(false);
     const [isVideoUploading, setIsVideoUploading] = useState(false);
+    const [duration, setDuration] = useState(null);
     const { uploadVideo } = useVideoUpload();
+    console.log(duration);
+    
 
     // Handle validation of the module item name
     const handleNameError = () => {
@@ -19,14 +22,38 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
         setVideoTitleError(!name);
     };
 
-    // Handle validation of the module item video
+    // Handle validation of the module item video  
     const handleVideoError = () => {
         const videoFile = videoRef.current.files[0];
+        if (videoFile) {
+            console.log(videoFile);
+        }
+        const maxSize = 100 * 1024 * 1024;
         if (videoFile && !videoFile.type.startsWith('video/')) {
             alert('Please select a valid video file.');
+            setVideoError(true);
             videoRef.current.value = '';
         }
-        setVideoError(!videoFile);
+        else if (videoFile && videoFile.size > maxSize) {
+            alert('The file is larger than 100MB.');
+            setVideoError(true);
+            videoRef.current.value = '';
+        }
+        else if (videoFile) {
+            setVideoError(false);
+            const videoURL = URL.createObjectURL(videoFile);
+
+            const videoElement = document.createElement("video");
+            videoElement.src = videoURL;
+
+            videoElement.onloadedmetadata = () => {
+                setDuration(videoElement.duration);
+                URL.revokeObjectURL(videoURL); // Clean up the object URL
+            };
+        }
+        else if (!videoFile) {
+            setVideoError(true);
+        }
     };
 
     // Handle upload video
@@ -52,7 +79,8 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
             itemType: 'video',
             itemName: name,
             itemDescription: description,
-            itemData: await handleVideoUpload(videoFile)
+            itemData: await handleVideoUpload(videoFile),
+            duration: parseFloat(duration.toFixed(2))
         };
 
         const updatedMilestoneData = milestonesData.map(milestone =>
@@ -80,7 +108,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
         setVideoTitleError(false);
         setVideoError(false);
     };
-    
+
     return (
         <>
             {/* Modal Input */}
@@ -96,7 +124,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                   Video Title<span className="text-red-600"> *</span>
+                                    Video Title<span className="text-red-600"> *</span>
                                 </span>
                             </label>
                             <input
@@ -113,10 +141,11 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">
-                                    Upload Video
+                                    Upload Video (limit 100MB)
                                     <span className="text-red-600"> *</span>
                                 </span>
                             </label>
+                            <video id="upload-video" className="hidden" />
                             <input
                                 onChange={handleVideoError}
                                 ref={videoRef}
@@ -144,11 +173,11 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
                         </div>
 
                         {/* Add Button */}
-                        <button                            
+                        <button
                             onClick={addModuleItems}
                             className={`w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md cursor-pointer ${isVideoUploading ? 'pointer-events-none opacity-50' : ''}`}
                         >
-                            {isVideoUploading ? 'Uploading...': 'Upload'}
+                            {isVideoUploading ? 'Uploading...' : 'Upload'}
                         </button>
                     </div>
                 </div>

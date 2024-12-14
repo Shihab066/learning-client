@@ -46,9 +46,9 @@ const ViewCourse = () => {
     useEffect(() => {
         setTotalVideoWatched(videoIds?.slice(0, data?.currentProgress?.totalLecturesWatched));
     }, [videoIds, data])
-    
+
     console.log(totalVideoWatched);
-    
+
 
 
     useEffect(() => {
@@ -73,9 +73,13 @@ const ViewCourse = () => {
     };
 
     const handleNextButton = () => {
+        const currentVideoIndex = videoIds.indexOf(videoId);
         const nextVideoIndex = videoIds.indexOf(videoId) + 1;
         if (nextVideoIndex < videoIds.length) {
             setVideoId(videoIds[nextVideoIndex]);
+        }
+        if (!totalVideoWatched?.includes(videoIds[currentVideoIndex])) {
+            setTotalVideoWatched([...totalVideoWatched, videoIds[currentVideoIndex]]);
         }
     };
 
@@ -136,7 +140,7 @@ const ViewCourse = () => {
                     }
                 </div>
 
-                <div ref={containerRef} className={`w-full lg:w-[350px] ${isExpandView ? 'xl:w-full' : 'xl:min-w-[450px]'} h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 scroll-smooth border rounded-xl px-2 py-4`}>
+                <div ref={containerRef} className={`w-full lg:w-[350px] ${isExpandView ? 'xl:w-full' : 'xl:min-w-[450px]'} h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 scroll-smooth border rounded-xl px-2 py-4 select-none`}>
                     {/* <div className="w-full h-[1000px]">
 
                 </div> */}
@@ -152,6 +156,7 @@ const ViewCourse = () => {
                                 activeItemRef={activeItemRef}
                                 setVideoDescription={setVideoDescription}
                                 setVideoTitle={setVideoTitle}
+                                totalVideoWatched={totalVideoWatched}
                             />
                         )
                     }
@@ -161,7 +166,7 @@ const ViewCourse = () => {
     );
 };
 
-const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef, setVideoDescription, setVideoTitle }) => {
+const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef, setVideoDescription, setVideoTitle, totalVideoWatched }) => {
     const { _id, milestoneName, milestoneModules } = data;
     const reduceCurrentItem = (moduleItems) => {
         const modulesDuration = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
@@ -217,6 +222,7 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
                             setMilestoneId={setMilestoneId}
                             setVideoDescription={setVideoDescription}
                             setVideoTitle={setVideoTitle}
+                            totalVideoWatched={totalVideoWatched}
                         />
                     )
                 }
@@ -225,11 +231,14 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
     )
 }
 
-const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId, setVideoDescription, setVideoTitle }) => {
+const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId, setVideoDescription, setVideoTitle, totalVideoWatched }) => {
     const { moduleName, moduleItems } = milestoneModule;
     const totalModuleTimeInSec = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
     const totalModuleDuration = formatTimeWithHours(totalModuleTimeInSec)
     const modulesVideoCount = moduleItems.length;
+    const totalWatched = moduleItems.filter(item => totalVideoWatched?.includes(item.itemData));
+    console.log("totalwatched in modules", totalWatched);
+    
     const moduleRef = useRef();
 
     useEffect(() => {
@@ -270,6 +279,7 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
                             setVideoId={setVideoId}
                             setVideoDescription={setVideoDescription}
                             setVideoTitle={setVideoTitle}
+                            watched={totalVideoWatched?.includes(moduleData.itemData)}
                         />
                     )
                 }
@@ -278,9 +288,8 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
     )
 };
 
-const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setVideoTitle }) => {
+const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setVideoTitle, watched }) => {
     const { itemType, itemName, itemData, itemDescription, duration } = moduleData;
-    console.log(duration);
     const videoDuration = formatTimeWithMin(duration)
 
     if (itemData === videoId) {
@@ -289,11 +298,24 @@ const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setV
     }
     return (
         <div onClick={() => setVideoId(itemData)}>
-            <div className={`text-sm font-normal p-3  rounded-md cursor-pointer ${videoId === itemData ? 'text-white bg-black' : 'bg-slate-200 text-black shadow-'}`}>
-                {itemName}
-                <div className={`flex items-center gap-x-2 mt-2 ${videoId === itemData ? 'text-white' : 'text-gray-500'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-6`} viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinejoin="round" strokeMiterlimit={10} strokeWidth={1.5} d="M22.54 6.42a2.77 2.77 0 0 0-1.945-1.957C18.88 4 12 4 12 4s-6.88 0-8.595.463A2.77 2.77 0 0 0 1.46 6.42C1 8.148 1 11.75 1 11.75s0 3.602.46 5.33a2.77 2.77 0 0 0 1.945 1.958C5.121 19.5 12 19.5 12 19.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.945-1.958c.46-1.726.46-5.33.46-5.33s0-3.602-.46-5.33ZM9.75 15.021V8.48l5.75 3.271z"></path></svg>
-                    {videoDuration}
+            <div onClick={(e) => { if (!watched) e.stopPropagation() }} className={`flex gap-x-2 text-sm px-2 py-3 rounded-md cursor-pointer ${videoId === itemData ? 'text-white bg-black' : 'bg-slate-200 text-black'}`}>
+                <div>
+                    {
+                        videoId === itemData ?
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6" viewBox="0 0 16 16"><path fill="#fff" fillRule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1m3.901 7L6 4.066v7.868z" clipRule="evenodd"></path></svg>
+                            :
+                            watched ?
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6" viewBox="0 0 1024 1024"><path fill="#16a34a" d="M512 64a448 448 0 1 1 0 896a448 448 0 0 1 0-896m-55.808 536.384l-99.52-99.584a38.4 38.4 0 1 0-54.336 54.336l126.72 126.72a38.27 38.27 0 0 0 54.336 0l262.4-262.464a38.4 38.4 0 1 0-54.272-54.336z"></path></svg>
+                                :
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 text-gray-500" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}><rect width={18} height={11} x={3} y={11} rx={2} ry={2}></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></g></svg>
+                    }
+                </div>
+                <div className="font-medium">
+                    {itemName}
+                    <div className={`flex items-center gap-x-2 mt-2 font-normal ${videoId === itemData ? 'text-white' : 'text-gray-500'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className={`w-6`} viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinejoin="round" strokeMiterlimit={10} strokeWidth={1.5} d="M22.54 6.42a2.77 2.77 0 0 0-1.945-1.957C18.88 4 12 4 12 4s-6.88 0-8.595.463A2.77 2.77 0 0 0 1.46 6.42C1 8.148 1 11.75 1 11.75s0 3.602.46 5.33a2.77 2.77 0 0 0 1.945 1.958C5.121 19.5 12 19.5 12 19.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.945-1.958c.46-1.726.46-5.33.46-5.33s0-3.602-.46-5.33ZM9.75 15.021V8.48l5.75 3.271z"></path></svg>
+                        {videoDuration}
+                    </div>
                 </div>
             </div>
         </div>

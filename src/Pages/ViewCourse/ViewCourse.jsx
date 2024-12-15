@@ -174,9 +174,9 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
     }
     const milestoneDurationInSec = milestoneModules.reduce((acc, curr) => acc + reduceCurrentItem(curr.moduleItems), 0);
     const milestoneDurationInHours = formatTimeWithHours(milestoneDurationInSec);
-    console.log("milestone time", milestoneDurationInHours);
     const milestoneVideoCount = milestoneModules.reduce((acc, curr) => acc + curr.moduleItems.length, 0);
-    console.log('milestone total video', milestoneVideoCount);
+    const totalWatched = milestoneModules.flatMap(item => item.moduleItems.filter(item => totalVideoWatched?.includes(item.itemData))).length;
+
 
 
 
@@ -203,7 +203,7 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
                         <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
                     </div>
                     <div>
-                        0/{milestoneVideoCount}
+                        {totalWatched}/{milestoneVideoCount}
                     </div>
 
                 </div>
@@ -236,9 +236,8 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
     const totalModuleTimeInSec = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
     const totalModuleDuration = formatTimeWithHours(totalModuleTimeInSec)
     const modulesVideoCount = moduleItems.length;
-    const totalWatched = moduleItems.filter(item => totalVideoWatched?.includes(item.itemData));
-    console.log("totalwatched in modules", totalWatched);
-    
+    const totalWatched = moduleItems.filter(item => totalVideoWatched?.includes(item.itemData)).length;
+
     const moduleRef = useRef();
 
     useEffect(() => {
@@ -262,7 +261,7 @@ const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, se
                         <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
                     </div>
                     <div>
-                        0/{modulesVideoCount}
+                        {totalWatched}/{modulesVideoCount}
                     </div>
 
                 </div>

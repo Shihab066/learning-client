@@ -12,7 +12,7 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
                 controls: true,
                 playbackRates: [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25],
                 sourceTypes: ['hls'],
-                autoplay: true,
+                autoplay: false,
                 showJumpControls: true,
                 hideContextMenu: true
             });

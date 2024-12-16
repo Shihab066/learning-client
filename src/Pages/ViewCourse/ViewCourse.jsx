@@ -5,16 +5,17 @@ import api from "../../services/baseAPI";
 import { useEffect, useRef, useState } from "react";
 import formatTimeWithHours from "../../utils/formatTimeWithHours";
 import formatTimeWithMin from "../../utils/formatTimeWithMin";
+import { getEnrollmentCourseContents, updateLearingProgress } from "../../services/enrollmentCoursesService";
+import useAuth from "../../hooks/useAuth";
 
 const ViewCourse = () => {
     const { courseId } = useParams();
+    const { user } = useAuth();
 
     const { data = {} } = useQuery({
-        queryKey: ['course-contents'],
-        queryFn: async () => {
-            const res = await api.get(`/course/content/fs/${courseId}`);
-            return res.data;
-        }
+        queryKey: ['course-contents', courseId],
+        enabled: !!user,
+        queryFn: async () => await getEnrollmentCourseContents(user.uid, courseId)
     });
     console.log(data);
 
@@ -29,11 +30,14 @@ const ViewCourse = () => {
     const activeItemRef = useRef();
     const containerRef = useRef();
     const navigate = useNavigate();
+    const effect = useRef(true);
 
     useEffect(() => {
-        setMilestoneId("67529190d5c9fb13e22175a6");
-        setVideoId("wgs3rcdhgngvd2rei3pw");
-    }, [])
+        if (totalVideoWatched?.length && effect.current) {
+            setVideoId(totalVideoWatched[totalVideoWatched.length - 1]);
+            effect.current = false
+        }
+    }, [totalVideoWatched]);
 
     useEffect(() => {
         const allVideoIds = data?.contents?.courseContents.flatMap(milestones =>
@@ -47,10 +51,6 @@ const ViewCourse = () => {
     useEffect(() => {
         setTotalVideoWatched(videoIds?.slice(0, data?.currentProgress?.totalLecturesWatched));
     }, [videoIds, data])
-
-    console.log(totalVideoWatched);
-
-
 
     useEffect(() => {
         if (containerRef.current && activeItemRef.current) {
@@ -82,6 +82,16 @@ const ViewCourse = () => {
         if (!totalVideoWatched?.includes(videoIds[currentVideoIndex])) {
             setTotalVideoWatched([...totalVideoWatched, videoIds[currentVideoIndex]]);
         }
+
+        if (totalVideoWatched?.length > data.currentProgress.totalLecturesWatched) {
+            if (!effect.current) {
+                const updateDoc = {
+                    totalVideoWatched: totalVideoWatched.length,
+                    currentProgress
+                }
+                updateLearingProgress(user?.uid, courseId, updateDoc)
+            }
+        }
     };
 
     const handleExpandView = () => {
@@ -91,12 +101,21 @@ const ViewCourse = () => {
     useEffect(() => {
         if (videoIds?.length && totalVideoWatched?.length) {
             const progress = (totalVideoWatched.length / videoIds.length) * 100;
-            console.log(parseInt(progress).toString());
             setCurrentProgress(parseInt(progress))
         }
-    }, [videoIds, totalVideoWatched])
+    }, [videoIds, totalVideoWatched]);
 
-    const gradientStyle = {
+    // useEffect(() => {
+    //     if (!effect.current) {
+    //         const updateDoc = {
+    //             totalVideoWatched: totalVideoWatched?.length,
+    //             currentProgress
+    //         }
+    //         updateLearingProgress(user?.uid, courseId, updateDoc)
+    //     }
+    // }, [totalVideoWatched, currentProgress]);
+
+    const radialProgressStyle = {
         background: `conic-gradient(#a855f7 ${currentProgress}%, #e0e0e0 ${currentProgress}% 100%)`,
     };
 
@@ -131,7 +150,7 @@ const ViewCourse = () => {
                     {/* Progress Circle */}
                     <div
                         className="relative flex items-center justify-center min-w-fit h-fit p-[3px] bgp rounded-full overflow-hidden"
-                        style={gradientStyle}
+                        style={radialProgressStyle}
                     >
                         <div className="flex items-center justify-center w-12 h-12 text-xl font-bold bg-white rounded-full">
                             <svg
@@ -179,7 +198,9 @@ const ViewCourse = () => {
                 </div>
             </div>
             <div className={`flex ${isExpandView ? 'flex-col' : 'flex-col lg:flex-row'} gap-6 pt-6`}>
+                {/* Main Content Area */}
                 <div className="flex-grow">
+                    {/* Video Player */}
                     <VideoPlayer
                         videoIds={videoIds}
                         videoId={videoId}
@@ -190,60 +211,60 @@ const ViewCourse = () => {
                         handleExpandView={handleExpandView}
                     />
 
-                    {
-                        videoIds?.length > 0 &&
-                        <div className="flex gap-x-4 mt-6 justify-end select-none">
-                            {
-                                videoIds?.indexOf(videoId) > 0 &&
-                                <button onClick={handlePrevButton} className="bg-white hover:bg-base-300 text-black border border-black rounded-md px-4 py-2 font-bold">
+                    {/* Navigation Buttons */}
+                    {videoIds?.length > 0 && (
+                        <div className="flex justify-end gap-x-4 mt-6 select-none">
+                            {videoIds?.indexOf(videoId) > 0 && (
+                                <button
+                                    onClick={handlePrevButton}
+                                    className="px-4 py-2 font-bold text-black bg-white border border-black rounded-md hover:bg-base-300"
+                                >
                                     Previous
                                 </button>
-                            }
-                            {
-                                videoIds?.indexOf(videoId) < videoIds.length - 1 &&
-                                <button onClick={handleNextButton} className="bg-black hover:bg-opacity-80 text-white border border-black rounded-md px-8 py-2 font-bold">
+                            )}
+                            {videoIds?.indexOf(videoId) < videoIds.length - 1 && (
+                                <button
+                                    onClick={handleNextButton}
+                                    className="px-8 py-2 font-bold text-white bg-black border border-black rounded-md hover:bg-opacity-80"
+                                >
                                     Next
                                 </button>
-                            }
+                            )}
                         </div>
-                    }
+                    )}
 
-                    {
-                        videoDescription &&
+                    {/* Video Description */}
+                    {videoDescription && (
                         <div>
-                            <h4 className="font-medium border-b pb-2">
-                                Video Description
-                            </h4>
-                            <div className="mt-4 bg-white max-h-56 rounded-md overflow-y-auto md-scrollbar">
+                            <h4 className="pb-2 font-medium border-b">Video Description</h4>
+                            <div className="max-h-56 mt-4 bg-white rounded-md overflow-y-auto md-scrollbar">
                                 {videoDescription}
                             </div>
                         </div>
-                    }
+                    )}
                 </div>
 
-                <div ref={containerRef} className={`w-full lg:w-[350px] ${isExpandView ? 'xl:w-full' : 'xl:min-w-[450px]'} h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 scroll-smooth border rounded-xl px-2 py-4 select-none`}>
-                    {/* <div className="w-full h-[1000px]">
-
-                </div> */}
-                    {
-                        data?.contents?.courseContents?.map((data, index) =>
-                            <ContentCard
-                                key={index}
-                                data={data}
-                                videoId={videoId}
-                                setVideoId={setVideoId}
-                                milestoneId={milestoneId}
-                                setMilestoneId={setMilestoneId}
-                                activeItemRef={activeItemRef}
-                                setVideoDescription={setVideoDescription}
-                                setVideoTitle={setVideoTitle}
-                                totalVideoWatched={totalVideoWatched}
-                            />
-                        )
-                    }
+                {/* Sidebar Content */}
+                <div
+                    ref={containerRef}
+                    className={`w-full lg:w-[350px] ${isExpandView ? 'xl:w-full' : 'xl:min-w-[450px]'} h-screen max-h-[750px] overflow-auto bg-white space-y-4 pb-10 border rounded-xl px-2 py-4 scroll-smooth select-none`}
+                >
+                    {data?.contents?.courseContents?.map((content, index) => (
+                        <ContentCard
+                            key={index}
+                            data={content}
+                            videoId={videoId}
+                            setVideoId={setVideoId}
+                            milestoneId={milestoneId}
+                            setMilestoneId={setMilestoneId}
+                            activeItemRef={activeItemRef}
+                            setVideoDescription={setVideoDescription}
+                            setVideoTitle={setVideoTitle}
+                            totalVideoWatched={totalVideoWatched}
+                        />
+                    ))}
                 </div>
             </div>
-
         </section>
     );
 };
@@ -258,9 +279,6 @@ const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, a
     const milestoneDurationInHours = formatTimeWithHours(milestoneDurationInSec);
     const milestoneVideoCount = milestoneModules.reduce((acc, curr) => acc + curr.moduleItems.length, 0);
     const totalWatched = milestoneModules.flatMap(item => item.moduleItems.filter(item => totalVideoWatched?.includes(item.itemData))).length;
-
-
-
 
     const milestoneRef = useRef();
     useEffect(() => {

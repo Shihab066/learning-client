@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNextButton, handleExpandView, isExpandView }) => {
+const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
     const cloudinaryRef = useRef();
     const playerRef = useRef();
-
     useEffect(() => {
         if (!cloudinaryRef.current) {
             cloudinaryRef.current = window.cloudinary;
@@ -12,13 +11,11 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
                 controls: true,
                 playbackRates: [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25],
                 sourceTypes: ['hls'],
-                autoplay: false,
+                autoplay: autoPlay,
                 showJumpControls: true,
                 hideContextMenu: true
             });
         }
-
-        console.log(cloudinaryRef.current.videoPlayer)
 
         // Disable right-click on video element
         const videoElement = document.getElementById('vjs_video_3');
@@ -30,7 +27,7 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
                 videoElement.removeEventListener('contextmenu', handleContextMenu);
             };
         }
-    }, []);
+    }, [autoPlay]);
 
     useEffect(() => {
         if (playerRef.current && videoId) {
@@ -165,7 +162,7 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
         <div className='w-full aspect-video'>
             <video
                 ref={playerRef}
-                className={`w-full h-full vjs-playlist`}
+                className={`w-full h-full sm:vjs-playlist`}
             />
         </div>
     );

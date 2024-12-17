@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer";
 import { useQuery } from "@tanstack/react-query";
-import api from "../../services/baseAPI";
 import { useEffect, useRef, useState } from "react";
 import formatTimeWithHours from "../../utils/formatTimeWithHours";
 import formatTimeWithMin from "../../utils/formatTimeWithMin";
@@ -12,14 +11,9 @@ import CourseCompleteAnimation from "./CourseCompleteAnimation";
 const ViewCourse = () => {
     const { courseId } = useParams();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
-    const { data = {} } = useQuery({
-        queryKey: ['course-contents', courseId],
-        // enabled: !!user,
-        queryFn: async () => await getEnrollmentCourseContents("fs", courseId)
-    });
-    // console.log(data);
-
+    // State management
     const [videoIds, setVideoIds] = useState([]);
     const [totalVideoWatched, setTotalVideoWatched] = useState([]);
     const [milestoneId, setMilestoneId] = useState('');
@@ -29,93 +23,109 @@ const ViewCourse = () => {
     const [isExpandView, setExpandView] = useState(false);
     const [currentProgress, setCurrentProgress] = useState(null);
     const [autoPlay, setAutoPlay] = useState(false);
+
+    // References
     const activeItemRef = useRef();
     const containerRef = useRef();
-    const navigate = useNavigate();
     const effect = useRef(true);
 
-    useEffect(() => {
-        if (currentProgress && (currentProgress < 100)) {
-            setAutoPlay(true)
-        }
-    }, [currentProgress])
+    // Fetch data using React Query
+    const { data = {} } = useQuery({
+        queryKey: ['course-contents', courseId],
+        queryFn: async () => await getEnrollmentCourseContents('fs', courseId),
+    });
 
+    // Automatically enable autoplay if progress is less than 100%
     useEffect(() => {
-        if (data?.currentProgress?.totalLecturesWatched === 0 && effect.current && videoIds) {
+        if (currentProgress && currentProgress < 100) {
+            setAutoPlay(true);
+        }
+    }, [currentProgress]);
+
+    // Set initial video based on progress or watched videos
+    useEffect(() => {
+        if (data?.currentProgress?.totalLecturesWatched === 0 && effect.current && videoIds.length) {
             setVideoId(videoIds[0]);
             effect.current = false;
-        }
-        else if (totalVideoWatched?.length && effect.current) {
+        } else if (totalVideoWatched?.length && effect.current) {
             setVideoId(totalVideoWatched[totalVideoWatched.length - 1]);
-            effect.current = false
+            effect.current = false;
         }
     }, [totalVideoWatched, data, videoIds]);
 
+    // Extract all video IDs from course data
     useEffect(() => {
-        const allVideoIds = data?.contents?.courseContents.flatMap(milestones =>
-            milestones.milestoneModules.flatMap(milestoneModule =>
-                milestoneModule.moduleItems.map(moduleItem => moduleItem.itemData)
+        const allVideoIds = data?.contents?.courseContents?.flatMap((milestone) =>
+            milestone.milestoneModules.flatMap((module) =>
+                module.moduleItems.map((item) => item.itemData)
             )
         );
-        setVideoIds(allVideoIds);
+        setVideoIds(allVideoIds || []);
     }, [data]);
 
+    // Set total watched videos based on progress
     useEffect(() => {
-        setTotalVideoWatched(videoIds?.slice(0, data?.currentProgress?.totalLecturesWatched));
-    }, [videoIds, data])
+        setTotalVideoWatched(videoIds.slice(0, data?.currentProgress?.totalLecturesWatched || 0));
+    }, [videoIds, data]);
 
+    // Smooth scroll to the active video item
     useEffect(() => {
         if (containerRef.current && activeItemRef.current) {
             const container = containerRef.current;
             const item = activeItemRef.current;
 
-            // Calculate the position of the item relative to the container
             const containerTop = container.getBoundingClientRect().top;
             const itemTop = item.getBoundingClientRect().top;
 
-            // Adjust the container's scroll position
             container.scrollTop += itemTop - containerTop;
         }
     }, [milestoneId, data]);
 
+    // Handle Previous Video Button
     const handlePrevButton = () => {
-        const prevVideoIndex = videoIds.indexOf(videoId) - 1;
-        if (prevVideoIndex >= 0) {
-            setVideoId(videoIds[prevVideoIndex]);
+        const prevIndex = videoIds.indexOf(videoId) - 1;
+        if (prevIndex >= 0) {
+            setVideoId(videoIds[prevIndex]);
         }
     };
 
+    // Handle Next Video Button
     const handleNextButton = () => {
-        const currentVideoIndex = videoIds.indexOf(videoId);
-        const nextVideoIndex = videoIds.indexOf(videoId) + 1;
-        if (nextVideoIndex < videoIds.length) {
-            setVideoId(videoIds[nextVideoIndex]);
+        const currentIndex = videoIds.indexOf(videoId);
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < videoIds.length) {
+            setVideoId(videoIds[nextIndex]);
         }
-        if (!totalVideoWatched?.includes(videoIds[currentVideoIndex])) {
-            setTotalVideoWatched([...totalVideoWatched, videoIds[currentVideoIndex]]);
+
+        if (!totalVideoWatched.includes(videoIds[currentIndex])) {
+            setTotalVideoWatched([...totalVideoWatched, videoIds[currentIndex]]);
         }
     };
 
-    const handleExpandView = () => {
-        setExpandView(!isExpandView);
-    };
+    // Toggle Expand View
+    const handleExpandView = () => setExpandView((prev) => !prev);
 
+    // Update Progress State
     useEffect(() => {
-        if (videoIds?.length && totalVideoWatched?.length) {
+        if (videoIds.length && totalVideoWatched.length) {
             const progress = (totalVideoWatched.length / videoIds.length) * 100;
-            setCurrentProgress(parseInt(progress))
+            setCurrentProgress(parseInt(progress));
         }
     }, [videoIds, totalVideoWatched]);
 
+    // Update Learning Progress on Server
     useEffect(() => {
-        if ((totalVideoWatched?.length > data?.currentProgress?.totalLecturesWatched) || (currentProgress > data?.currentProgress?.courseCompletePercent)) {
+        if (
+            totalVideoWatched.length > data?.currentProgress?.totalLecturesWatched ||
+            currentProgress > data?.currentProgress?.courseCompletePercent
+        ) {
             const updateDoc = {
                 totalVideoWatched: totalVideoWatched.length,
-                currentProgress
-            }
-            console.log(updateDoc);
+                currentProgress,
+            };
 
-            updateLearingProgress(user.uid, courseId, updateDoc)
+            updateLearingProgress(user.uid, courseId, updateDoc);
         }
     }, [totalVideoWatched, currentProgress]);
 
@@ -287,153 +297,261 @@ const ViewCourse = () => {
 
 const ContentCard = ({ data, videoId, setVideoId, milestoneId, setMilestoneId, activeItemRef, setVideoDescription, setVideoTitle, totalVideoWatched }) => {
     const { _id, milestoneName, milestoneModules } = data;
-    const reduceCurrentItem = (moduleItems) => {
-        const modulesDuration = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
-        return modulesDuration;
-    }
-    const milestoneDurationInSec = milestoneModules.reduce((acc, curr) => acc + reduceCurrentItem(curr.moduleItems), 0);
-    const milestoneDurationInHours = formatTimeWithHours(milestoneDurationInSec);
-    const milestoneVideoCount = milestoneModules.reduce((acc, curr) => acc + curr.moduleItems.length, 0);
-    const totalWatched = milestoneModules.flatMap(item => item.moduleItems.filter(item => totalVideoWatched?.includes(item.itemData))).length;
 
+    // Calculate total duration of a module
+    const calculateModuleDuration = (moduleItems) =>
+        moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
+
+    // Total milestone duration in seconds and formatted to hours
+    const milestoneDurationInSec = milestoneModules.reduce(
+        (acc, curr) => acc + calculateModuleDuration(curr.moduleItems),
+        0
+    );
+    const milestoneDurationInHours = formatTimeWithHours(milestoneDurationInSec);
+
+    // Total video count and watched videos in milestone
+    const milestoneVideoCount = milestoneModules.reduce(
+        (acc, curr) => acc + curr.moduleItems.length,
+        0
+    );
+    const totalWatched = milestoneModules.flatMap((module) =>
+        module.moduleItems.filter((item) => totalVideoWatched?.includes(item.itemData))
+    ).length;
+
+    // Handle milestone checkbox state
     const milestoneRef = useRef();
     useEffect(() => {
-        if (milestoneId === _id) {
-            milestoneRef.current.checked = true;
-        } else {
-            milestoneRef.current.checked = false;
-        }
+        milestoneRef.current.checked = milestoneId === _id;
     }, [milestoneId, _id, videoId]);
 
-
     return (
-        <div ref={milestoneId === _id ? activeItemRef : null} className="collapse collapse-custom bg-white border rounded-lg ">
+        <div
+            ref={milestoneId === _id ? activeItemRef : null}
+            className="collapse collapse-custom border rounded-lg bg-white"
+        >
+            {/* Milestone Checkbox */}
             <input ref={milestoneRef} type="checkbox" name="my-accordion-3" />
 
-            {/* Milestone Name */}
-            <div className="collapse-title collapse-custom-icon text-lg font-medium relative">
+            {/* Milestone Header */}
+            <div className="collapse-title relative text-lg font-medium collapse-custom-icon">
                 {milestoneName}
-                <div className="text-sm text-gray-500 font-normal flex items-center gap-x-2.5">
+                <div className="flex items-center gap-x-2.5 text-sm font-normal text-gray-500">
                     <div className="flex items-center">
                         {milestoneDurationInHours}
-                        <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
+                        <div className="ml-1 pb-2 text-xl font-extrabold leading-5">.</div>
                     </div>
                     <div>
                         {totalWatched}/{milestoneVideoCount}
                     </div>
-
                 </div>
             </div>
 
             {/* Milestone Modules */}
             <div className="collapse-content space-y-4">
-                {
-                    milestoneModules?.map((milestoneModule, index) =>
-                        <MilestoneModule
-                            key={index}
-                            milestoneId={_id}
-                            milestoneModule={milestoneModule}
-                            videoId={videoId}
-                            setVideoId={setVideoId}
-                            setMilestoneId={setMilestoneId}
-                            setVideoDescription={setVideoDescription}
-                            setVideoTitle={setVideoTitle}
-                            totalVideoWatched={totalVideoWatched}
-                        />
-                    )
-                }
-            </div>
-        </div>
-    )
-}
-
-const MilestoneModule = ({ milestoneId, milestoneModule, videoId, setVideoId, setMilestoneId, setVideoDescription, setVideoTitle, totalVideoWatched }) => {
-    const { moduleName, moduleItems } = milestoneModule;
-    const totalModuleTimeInSec = moduleItems.reduce((acc, curr) => acc + (curr?.duration || 0), 0);
-    const totalModuleDuration = formatTimeWithHours(totalModuleTimeInSec)
-    const modulesVideoCount = moduleItems.length;
-    const totalWatched = moduleItems.filter(item => totalVideoWatched?.includes(item.itemData)).length;
-
-    const moduleRef = useRef();
-
-    useEffect(() => {
-        const isVideoExist = moduleItems?.find(moduleData => moduleData.itemData === videoId);
-        if (isVideoExist) {
-            moduleRef.current.checked = true;
-            setMilestoneId(milestoneId);
-        } else {
-            moduleRef.current.checked = false;
-        }
-    }, [videoId])
-    return (
-        <div className="collapse collapse-arrow bg-[#f7f9fa] rounded-lg">
-            <input ref={moduleRef} type="checkbox" name="my-accordion-2" />
-            {/* Module Name */}
-            <div className="collapse-title font-medium">
-                {moduleName}
-                <div className="text-sm text-gray-500 font-normal flex items-center gap-x-2.5">
-                    <div className="flex items-center">
-                        {totalModuleDuration}
-                        <div className="font-extrabold text-xl leading-5 pb-2 ml-1">.</div>
-                    </div>
-                    <div>
-                        {totalWatched}/{modulesVideoCount}
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Modules Items */}
-            <div className="collapse-content space-y-2">
-                {
-                    moduleItems?.map((moduleData, index) =>
-                        <ModuleItem
-                            key={index}
-                            moduleData={moduleData}
-                            videoId={videoId}
-                            setVideoId={setVideoId}
-                            setVideoDescription={setVideoDescription}
-                            setVideoTitle={setVideoTitle}
-                            watched={totalVideoWatched?.includes(moduleData.itemData)}
-                        />
-                    )
-                }
+                {milestoneModules?.map((milestoneModule, index) => (
+                    <MilestoneModule
+                        key={index}
+                        milestoneId={_id}
+                        milestoneModule={milestoneModule}
+                        videoId={videoId}
+                        setVideoId={setVideoId}
+                        setMilestoneId={setMilestoneId}
+                        setVideoDescription={setVideoDescription}
+                        setVideoTitle={setVideoTitle}
+                        totalVideoWatched={totalVideoWatched}
+                    />
+                ))}
             </div>
         </div>
     )
 };
 
-const ModuleItem = ({ moduleData, videoId, setVideoId, setVideoDescription, setVideoTitle, watched }) => {
-    const { itemType, itemName, itemData, itemDescription, duration } = moduleData;
-    const videoDuration = formatTimeWithMin(duration)
+const MilestoneModule = ({
+    milestoneId,
+    milestoneModule,
+    videoId,
+    setVideoId,
+    setMilestoneId,
+    setVideoDescription,
+    setVideoTitle,
+    totalVideoWatched,
+}) => {
+    const { moduleName, moduleItems } = milestoneModule;
 
-    if (itemData === videoId) {
-        setVideoTitle(itemName);
-        setVideoDescription(itemDescription);
-    }
+    // Calculate total module duration and watched videos
+    const totalModuleTimeInSec = moduleItems.reduce(
+        (acc, curr) => acc + (curr?.duration || 0),
+        0
+    );
+    const totalModuleDuration = formatTimeWithHours(totalModuleTimeInSec);
+    const modulesVideoCount = moduleItems.length;
+
+    const totalWatched = moduleItems.filter((item) =>
+        totalVideoWatched?.includes(item.itemData)
+    ).length;
+
+    // Handle module checkbox state
+    const moduleRef = useRef();
+    useEffect(() => {
+        const isVideoExist = moduleItems.find(
+            (moduleData) => moduleData.itemData === videoId
+        );
+
+        moduleRef.current.checked = Boolean(isVideoExist);
+        if (isVideoExist) {
+            setMilestoneId(milestoneId);
+        }
+    }, [videoId, milestoneId, moduleItems, setMilestoneId]);
+
+    return (
+        <div className="collapse collapse-arrow rounded-lg bg-[#f7f9fa]">
+            {/* Module Checkbox */}
+            <input ref={moduleRef} type="checkbox" name="my-accordion-2" />
+
+            {/* Module Header */}
+            <div className="collapse-title font-medium">
+                {moduleName}
+                <div className="flex items-center gap-x-2.5 text-sm font-normal text-gray-500">
+                    <div className="flex items-center">
+                        {totalModuleDuration}
+                        <div className="ml-1 pb-2 text-xl font-extrabold leading-5">.</div>
+                    </div>
+                    <div>
+                        {totalWatched}/{modulesVideoCount}
+                    </div>
+                </div>
+            </div>
+
+            {/* Module Items */}
+            <div className="collapse-content space-y-2">
+                {moduleItems?.map((moduleData, index) => (
+                    <ModuleItem
+                        key={index}
+                        moduleData={moduleData}
+                        videoId={videoId}
+                        setVideoId={setVideoId}
+                        setVideoDescription={setVideoDescription}
+                        setVideoTitle={setVideoTitle}
+                        watched={totalVideoWatched?.includes(moduleData.itemData)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const ModuleItem = ({
+    moduleData,
+    videoId,
+    setVideoId,
+    setVideoDescription,
+    setVideoTitle,
+    watched,
+}) => {
+    const { itemType, itemName, itemData, itemDescription, duration } = moduleData;
+    const videoDuration = formatTimeWithMin(duration);
+
+    // Update video title and description when the current item is active
+    useEffect(() => {
+        if (itemData === videoId) {
+            setVideoTitle(itemName);
+            setVideoDescription(itemDescription);
+        }
+    }, [itemData, videoId, setVideoTitle, setVideoDescription, itemName, itemDescription]);
+
+    // Determine active and watched styles
+    const isActive = videoId === itemData;
+    const baseClasses = "flex gap-x-2 text-sm px-2 py-3 rounded-md cursor-pointer";
+    const activeClasses = isActive ? "text-white bg-black" : "bg-slate-200 text-black";
+    const durationTextClasses = isActive ? "text-white" : "text-gray-500";
+
     return (
         <div onClick={() => setVideoId(itemData)}>
-            <div onClick={(e) => { if (!watched) e.stopPropagation() }} className={`flex gap-x-2 text-sm px-2 py-3 rounded-md cursor-pointer ${videoId === itemData ? 'text-white bg-black' : 'bg-slate-200 text-black'}`}>
+            <div
+                className={`${baseClasses} ${activeClasses}`}
+                onClick={(e) => {
+                    if (!watched) e.stopPropagation();
+                }}
+            >
+                {/* Icon for Watched/Active/Unwatched */}
                 <div>
-                    {
-                        videoId === itemData ?
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6" viewBox="0 0 16 16"><path fill="#fff" fillRule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1m3.901 7L6 4.066v7.868z" clipRule="evenodd"></path></svg>
-                            :
-                            watched ?
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6" viewBox="0 0 1024 1024"><path fill="#16a34a" d="M512 64a448 448 0 1 1 0 896a448 448 0 0 1 0-896m-55.808 536.384l-99.52-99.584a38.4 38.4 0 1 0-54.336 54.336l126.72 126.72a38.27 38.27 0 0 0 54.336 0l262.4-262.464a38.4 38.4 0 1 0-54.272-54.336z"></path></svg>
-                                :
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 text-gray-500" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}><rect width={18} height={11} x={3} y={11} rx={2} ry={2}></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></g></svg>
-                    }
+                    {isActive ? (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-6"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                fill="#fff"
+                                fillRule="evenodd"
+                                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1m3.901 7L6 4.066v7.868z"
+                                clipRule="evenodd"
+                            ></path>
+                        </svg>
+                    ) : watched ? (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-6"
+                            viewBox="0 0 1024 1024"
+                        >
+                            <path
+                                fill="#16a34a"
+                                d="M512 64a448 448 0 1 1 0 896a448 448 0 0 1 0-896m-55.808 536.384l-99.52-99.584a38.4 38.4 0 1 0-54.336 54.336l126.72 126.72a38.27 38.27 0 0 0 54.336 0l262.4-262.464a38.4 38.4 0 1 0-54.272-54.336z"
+                            ></path>
+                        </svg>
+                    ) : (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-5 text-gray-500"
+                            viewBox="0 0 24 24"
+                        >
+                            <g
+                                fill="none"
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                            >
+                                <rect
+                                    width={18}
+                                    height={11}
+                                    x={3}
+                                    y={11}
+                                    rx={2}
+                                    ry={2}
+                                ></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </g>
+                        </svg>
+                    )}
                 </div>
+
+                {/* Video Info */}
                 <div className="font-medium">
                     {itemName}
-                    <div className={`flex items-center gap-x-2 mt-2 font-normal ${videoId === itemData ? 'text-white' : 'text-gray-500'}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className={`w-6`} viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinejoin="round" strokeMiterlimit={10} strokeWidth={1.5} d="M22.54 6.42a2.77 2.77 0 0 0-1.945-1.957C18.88 4 12 4 12 4s-6.88 0-8.595.463A2.77 2.77 0 0 0 1.46 6.42C1 8.148 1 11.75 1 11.75s0 3.602.46 5.33a2.77 2.77 0 0 0 1.945 1.958C5.121 19.5 12 19.5 12 19.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.945-1.958c.46-1.726.46-5.33.46-5.33s0-3.602-.46-5.33ZM9.75 15.021V8.48l5.75 3.271z"></path></svg>
+                    <div
+                        className={`flex items-center gap-x-2 mt-2 font-normal ${durationTextClasses}`}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-6"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="none"
+                                stroke="currentColor"
+                                strokeLinejoin="round"
+                                strokeMiterlimit={10}
+                                strokeWidth={1.5}
+                                d="M22.54 6.42a2.77 2.77 0 0 0-1.945-1.957C18.88 4 12 4 12 4s-6.88 0-8.595.463A2.77 2.77 0 0 0 1.46 6.42C1 8.148 1 11.75 1 11.75s0 3.602.46 5.33a2.77 2.77 0 0 0 1.945 1.958C5.121 19.5 12 19.5 12 19.5s6.88 0 8.595-.462a2.77 2.77 0 0 0 1.945-1.958c.46-1.726.46-5.33.46-5.33s0-3.602-.46-5.33ZM9.75 15.021V8.48l5.75 3.271z"
+                            ></path>
+                        </svg>
                         {videoDuration}
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
+
 export default ViewCourse;

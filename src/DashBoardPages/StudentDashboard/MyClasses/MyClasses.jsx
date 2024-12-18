@@ -55,8 +55,8 @@ const MyClasses = () => {
     );
 };
 
-const MyClassCard = ({ courseData }) => {    
-    const {_id, courseName, courseThumbnail, instructorName } = courseData;
+const MyClassCard = ({ courseData }) => {
+    const { courseId, courseName, courseThumbnail, instructorName, courseCompletePercent } = courseData;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
 
     const [isLoaded, setIsLoaded] = useState(false);
@@ -87,13 +87,13 @@ const MyClassCard = ({ courseData }) => {
                     By {instructorName}
                 </p>
                 <div className="w-full h-2.5 border rounded-full overflow-hidden">
-                    <div className="h-full w-[50%] rounded-full bg-blue-500"></div>
+                    <div className={`h-full ${courseCompletePercent ? `w-[${courseCompletePercent}%]`: 'w-0'} rounded-full bg-blue-500`}></div>
                 </div>
                 <p className="font-medium">
-                    50% Complete
+                    {courseCompletePercent || 0}% Complete
                 </p>
 
-                <button onClick={() => navigate(`/course/view/${_id}`)} className="btn w-full normal-case bg-black hover:bg-black hover:bg-opacity-80 duration-300 text-white py-2 rounded-md">
+                <button onClick={() => navigate(`/course/view/${courseId}`)} className="btn w-full normal-case bg-black hover:bg-black hover:bg-opacity-80 duration-300 text-white py-2 rounded-md">
                     Continue Learning
                 </button>
             </div>

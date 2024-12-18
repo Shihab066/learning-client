@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
+const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
     const cloudinaryRef = useRef();
     const playerRef = useRef();
+
     useEffect(() => {
         if (!cloudinaryRef.current) {
             cloudinaryRef.current = window.cloudinary;
@@ -10,8 +11,7 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
                 showLogo: false,
                 controls: true,
                 playbackRates: [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25],
-                sourceTypes: ['hls'],
-                autoplay: autoPlay,
+                sourceTypes: ['hls'],                
                 showJumpControls: true,
                 hideContextMenu: true
             });
@@ -32,12 +32,11 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
     useEffect(() => {
         if (playerRef.current && videoId) {
             playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
-            playerRef.current.on('ended', () => {
-                // setVideoId(videoIds[videoIds.indexOf(videoId) + 1]);
+            playerRef.current.on('ended', () => {                
                 handleNextButton()
             });
         }
-    }, [videoId, videoIds, setVideoId]);
+    }, [videoId, handleNextButton]);
 
     useEffect(() => {
         const parentDiv = document.querySelector('.vjs-control-bar');
@@ -162,7 +161,8 @@ const VideoPlayer = ({ videoIds, videoId, setVideoId, handlePrevButton, handleNe
         <div className='w-full aspect-video'>
             <video
                 ref={playerRef}
-                className={`w-full h-full sm:vjs-playlist`}
+                className={`w-full h-full vjs-playlist`}
+                autoPlay={autoPlay}
             />
         </div>
     );

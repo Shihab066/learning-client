@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
@@ -16,6 +16,22 @@ const CourseCompleteAnimation = ({ setAutoPlay }) => {
         setShowAnimation(false);
         setAutoPlay(true);
     };
+
+    useEffect(() => {
+        const soundTracks = ['track1', 'track2'];
+        const currentSoundTrack = soundTracks[Math.floor(Math.random() * 2)];
+        const welcomeAudio = new Audio(`/src/assets/audio/course_success_${currentSoundTrack}.mp3`); // Path to the audio file
+        welcomeAudio.volume = 0.5
+        
+        if (showAnimation) {
+            welcomeAudio.play();
+        }        
+
+        return () => {
+            welcomeAudio.pause();
+            welcomeAudio.currentTime = 0;
+        };
+    }, [showAnimation]);
 
     return (
         <>

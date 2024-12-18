@@ -49,7 +49,7 @@ const Home = () => {
                 <title>Learning Point</title>
             </Helmet>
             <Slider />
-            <PopularCourses isMobileView={isMobileView}/>
+            <PopularCourses isMobileView={isMobileView} />
             <PopularInstructor isMobileView={isMobileView} />
             <Testimonials />
             <Sponser />

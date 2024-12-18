@@ -28,7 +28,7 @@ const ViewCourse = () => {
     const activeItemRef = useRef();
     const containerRef = useRef();
     const effect = useRef(true);
-
+    
     // Fetch data using React Query
     const { data = {} } = useQuery({
         queryKey: ['course-contents', courseId],
@@ -39,6 +39,9 @@ const ViewCourse = () => {
     useEffect(() => {
         if (currentProgress && currentProgress < 100) {
             setAutoPlay(true);
+        }
+        else if (currentProgress && currentProgress === 100) {
+            setAutoPlay(false);
         }
     }, [currentProgress]);
 
@@ -51,7 +54,7 @@ const ViewCourse = () => {
             setVideoId(totalVideoWatched[totalVideoWatched.length - 1]);
             effect.current = false;
         }
-    }, [totalVideoWatched, data, videoIds]);
+    }, [totalVideoWatched, videoIds]);
 
     // Extract all video IDs from course data
     useEffect(() => {
@@ -60,13 +63,15 @@ const ViewCourse = () => {
                 module.moduleItems.map((item) => item.itemData)
             )
         );
-        setVideoIds(allVideoIds || []);
+        if (allVideoIds?.length) {
+            setVideoIds(allVideoIds);
+        }
     }, [data]);
 
     // Set total watched videos based on progress
     useEffect(() => {
         setTotalVideoWatched(videoIds.slice(0, data?.currentProgress?.totalLecturesWatched || 0));
-    }, [videoIds, data]);
+    }, [videoIds]);
 
     // Smooth scroll to the active video item
     useEffect(() => {
@@ -95,7 +100,7 @@ const ViewCourse = () => {
         const nextIndex = currentIndex + 1;
 
         if (nextIndex < videoIds.length) {
-            setVideoId(videoIds[nextIndex]);
+            setVideoId(videoIds[nextIndex]);            
         }
 
         if (!totalVideoWatched.includes(videoIds[currentIndex])) {
@@ -218,15 +223,12 @@ const ViewCourse = () => {
                         {/* Video Player */}
                         {
                             videoId &&
-                            <VideoPlayer
-                                key={autoPlay}
-                                videoIds={videoIds}
-                                videoId={videoId}
-                                setVideoId={setVideoId}
+                            <VideoPlayer                                
+                                videoId={videoId}                                
                                 handleNextButton={handleNextButton}
                                 handlePrevButton={handlePrevButton}
-                                handleExpandView={handleExpandView}
-                                autoPlay={autoPlay}
+                                handleExpandView={handleExpandView}                                
+                                autoPlay={autoPlay}                                
                             />
                         }
 

@@ -11,14 +11,19 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
                 showLogo: false,
                 controls: true,
                 playbackRates: [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25],
-                sourceTypes: ['hls'],                
+                sourceTypes: ['hls'],
                 showJumpControls: true,
                 hideContextMenu: true
             });
         }
 
         // Disable right-click on video element
+        const playerElement = document.getElementById('vjs_video_3_html5_api');
         const videoElement = document.getElementById('vjs_video_3');
+        if (playerElement) {
+            playerElement.volume = 0.5;
+        }
+
         if (videoElement) {
             const handleContextMenu = (e) => e.preventDefault();
             videoElement.addEventListener('contextmenu', handleContextMenu);
@@ -27,12 +32,15 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
                 videoElement.removeEventListener('contextmenu', handleContextMenu);
             };
         }
-    }, [autoPlay]);
+
+        // inital player volume
+
+    }, []);
 
     useEffect(() => {
         if (playerRef.current && videoId) {
             playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
-            playerRef.current.on('ended', () => {                
+            playerRef.current.on('ended', () => {
                 handleNextButton()
             });
         }
@@ -157,11 +165,42 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
         };
     }, [handlePrevButton, handleNextButton, handleExpandView]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const bodyWidth = window.innerWidth;
+            const playerElement = document.getElementById('vjs_video_3');
+            const replayBtn = document.querySelector('.vjs-icon-replay-10');
+            const forwardBtn = document.querySelector('.vjs-icon-forward-10');
+            const playBtn = document.querySelector('.vjs-big-play-button');
+
+            if (!playerElement) return;
+
+            if (bodyWidth < 576) {
+                playerElement.classList.remove('vjs-playlist');
+                replayBtn.style.display = 'none';
+                forwardBtn.style.display = 'none';
+                playBtn.style.fontSize = '3em';
+            } else {
+                playerElement.classList.add('vjs-playlist');
+                replayBtn.style.display = 'block';
+                forwardBtn.style.display = 'block';
+                playBtn.style.fontSize = '5em';
+            }
+        };
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <div className='w-full aspect-video'>
             <video
                 ref={playerRef}
-                className={`w-full h-full vjs-playlist`}
+                className={`w-full h-full`}
                 autoPlay={autoPlay}
             />
         </div>

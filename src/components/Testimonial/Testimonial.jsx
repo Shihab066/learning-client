@@ -1,11 +1,12 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAllFeedback } from "../../services/feedbackService";
+import generateImageLink from "../../utils/generateImageLink";
 
 const Testimonial = () => {
-    const [testimonials, setTestimonials] = useState([]);
 
     // Slider settings
     const settings = {
@@ -37,16 +38,16 @@ const Testimonial = () => {
         ]
     };
 
-    useEffect(() => {
-        axios.get('/src/components/Testimonial/testimonial.json')
-            .then(res => setTestimonials(res.data));
-    }, []);
+    const { data: testimonials = [] } = useQuery({
+        queryKey: ['testimonials'],
+        queryFn: () => getAllFeedback()
+    });
 
     const handlePrevBtn = () => {
         const prevButton = document.querySelector('.slick-prev');
         if (prevButton) prevButton.click();
     };
-    
+
     const handleNextBtn = () => {
         const nextButton = document.querySelector('.slick-next');
         if (nextButton) nextButton.click();
@@ -70,8 +71,8 @@ const Testimonial = () => {
                 {/* Slider Section */}
                 <div className="slider-container mt-10 px-2 sm:px-0 md:px-2 xl:px-0">
                     <Slider {...settings}>
-                        {testimonials.map(item => (
-                            <TestimonialCard key={item._id} item={item} />
+                        {testimonials?.map((item, index) => (
+                            <TestimonialCard key={index} item={item} />
                         ))}
                     </Slider>
                 </div>
@@ -98,7 +99,7 @@ const NextButton = ({ handleNextBtn }) => (
 
 // TestimonialCard Component
 const TestimonialCard = ({ item }) => {
-    const { name, headLine, profileImage, feedback } = item;
+    const { name, headline, profileImage, feedback } = item;
 
     const isFeedbackOverflow = feedback.length > 200;
     const [modifiedFeedback, setModifiedFeedback] = useState(feedback.slice(0, 190) + '...');
@@ -113,7 +114,7 @@ const TestimonialCard = ({ item }) => {
         setModifiedFeedback(feedback.slice(0, 190) + '...');
         setSeeMoreEnabled(true);
     };
-    
+
     const gradientToBottom = {
         background: 'linear-gradient(to bottom, rgba(255,255,255, 1), rgba(255,255,255, 0))'
     };
@@ -158,16 +159,16 @@ const TestimonialCard = ({ item }) => {
             {/* Profile Information */}
             <div className="w-full flex justify-start items-center gap-3 px-4 md:px-6">
                 <img
-                    src={profileImage}
+                    src={generateImageLink({imageId: profileImage, width: 60, aspectRatio: 1.0, cropMode: 'fill'})}
                     alt="user profile"
                     className="w-[3.75rem] h-[3.75rem] sm:w-12 sm:h-12 md:w-[3.75rem] md:h-[3.75rem] object-cover rounded-full"
                 />
                 <div className="w-[calc(100%-6rem)]">
-                    <h4 className="sm:text-sm md:text-lg font-semibold truncate" title={name.length > 30 ? name : ''}>
+                    <h4 className="sm:text-sm md:text-lg font-semibold truncate" title={name?.length > 30 ? name : ''}>
                         {name}
                     </h4>
-                    <p className="text-sm sm:text-[.75rem] md:text-sm text-gray-700 truncate" title={headLine.length > 30 ? headLine : ''}>
-                        {headLine}
+                    <p className="text-sm sm:text-[.75rem] md:text-sm text-gray-700 truncate" title={headline?.length > 30 ? headline : ''}>
+                        {headline}
                     </p>
                 </div>
             </div>

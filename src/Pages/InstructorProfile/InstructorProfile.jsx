@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import MoreCoursesByInstructor from "./MoreCoursesByInstructor";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import generateImageLink from "../../utils/generateImageLink";
 
 
 const InstructorProfile = () => {
@@ -14,7 +15,7 @@ const InstructorProfile = () => {
         queryFn: async () => {
             const res = await axiosSecure.get(`http://localhost:5000/api/v1/instructor/details/${instructorId}`);
             return res.data;
-        }
+        },
     });
 
     const { name, image, headline, bioData, expertise, experience, socialLinks, totalCoursesCount, totalReviewsCount, totalStudents } = instructorDetails;
@@ -98,7 +99,7 @@ const InstructorProfileAside = ({ visibilityInfo, profileImage, socialLinks }) =
             <figure className="w-40 h-40 md:w-[12.5rem] md:h-[12.5rem]">
                 <img
                     className="w-full h-full rounded-full object-cover"
-                    src={profileImage}
+                    src={generateImageLink({ imageId: profileImage, width: 300, cropMode: 'fill', aspactRatio: '1.0' })}
                     alt="instructor profile image" />
             </figure>
             <ul className="flex md:block md:space-y-2 flex-wrap justify-center items-center gap-4">

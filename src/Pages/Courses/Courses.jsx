@@ -13,6 +13,7 @@ import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
 import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '../../services/wishlistService';
 import { addCourseToCart, fetchCartItems } from '../../services/cartService';
 import generateImageLink from '../../utils/generateImageLink';
+import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -114,7 +115,7 @@ const Courses = () => {
             });
         } else {
             addCourseToCart(user.uid, courseId, refetchCartItems)
-            .then(() => queryClient.refetchQueries(['cartCount']))
+                .then(() => queryClient.refetchQueries(['cartCount']))
         }
 
     };
@@ -168,7 +169,7 @@ const Courses = () => {
                 visiblePages={visiblePages}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
                 {isCoursesLoading
                     ?
                     <CoursesLoadingSkeleton />
@@ -235,58 +236,6 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
     </div>
 );
 
-// Content component displaying courses and pagination
-const Content = ({
-    data,
-    isLoggedIn,
-    currentPage,
-    setCurrentPage,
-    activePage,
-    visiblePages,
-    notFoundIcon,
-    isCoursesLoading,
-    wishlist,
-    handleAddToWishlist,
-    handleRemoveFromWishlist,
-    handleAddToCart
-}) => (
-    <div className='lg-container'>
-        <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
-                {isCoursesLoading
-                    ?
-                    <CoursesLoadingSkeleton />
-                    :
-                    data?.courses.map(courseData => (
-                        <CourseCard
-                            key={courseData._id}
-                            isLoggedIn={isLoggedIn}
-                            item={courseData}
-                            wishlist={wishlist}
-                            handleAddToWishlist={handleAddToWishlist}
-                            handleRemoveFromWishlist={handleRemoveFromWishlist}
-                            handleAddToCart={handleAddToCart}
-                        />
-                    ))}
-            </div>
-            {
-                !isCoursesLoading &&
-                <Pagination
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    activePage={activePage}
-                    visiblePages={visiblePages}
-                    data={data}
-                />
-            }
-        </>
-
-        {!isCoursesLoading && data.courses.length === 0 &&
-            <ItemNotFound notFoundIcon={notFoundIcon} />
-        }
-    </div>
-);
-
 // Courses Card Component
 const CourseCard = ({
     isLoggedIn,
@@ -302,17 +251,28 @@ const CourseCard = ({
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const isCourseInWishlist = wishlist.find(course => course.courseId === _id);
     const isCourseInCart = cartItems.find(course => course.courseId === _id);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Mark the image as loaded
+    };
 
     return (
-        <div className="relative w-full h-fit bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
+        <div className="w-full h-fit bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-lg duration-300">
             <Link to={`/course/${_id}`}>
                 <img
-                    className="w-full h-48 object-cover object-top"
-                    src={generateImageLink({imageId: courseThumbnail })}
+                    src={dummyCourseThumbnail}
+                    alt="Placeholder"
+                    id="dummy"
+                    className={`${isLoaded ? 'hidden' : 'block'}`}
+                />
+                <img
+                    className={`w-full object-cover ${isLoaded ? 'block' : 'hidden'}`}
+                    src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
                     alt="course thumbnail"
+                    onLoad={handleImageLoad}
                 />
                 <div className='p-3 lg:p-4 space-y-2'>
-                    <h3 className="h-14 md:h-fit lg:h-14 lg:text-lg font-medium" title={courseName}>
+                    <h3 className="h-14 lg:h-14 lg:text-lg font-medium" title={courseName}>
                         {modifiedCourseName}
                     </h3>
                     <p className="truncate">
@@ -345,7 +305,7 @@ const CourseCard = ({
                 </div>
             </Link>
 
-            <div className="px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
+            <div className="relative px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
                 {
                     isCourseInCart
                         ?
@@ -357,18 +317,19 @@ const CourseCard = ({
                             Add To Cart
                         </button>
                 }
+                {/* wishlist button */}
+                {
+                    isCourseInWishlist
+                        ?
+                        <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                        </button>
+                        :
+                        <button onClick={() => handleAddToWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                        </button>
+                }
             </div>
-            {
-                isCourseInWishlist
-                    ?
-                    <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute top-[19rem] right-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                    </button>
-                    :
-                    <button onClick={() => handleAddToWishlist(_id)} className="absolute top-[19rem] right-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                    </button>
-            }
         </div>
     );
 };

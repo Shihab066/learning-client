@@ -13,6 +13,8 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
 import GenerateStar from "../../components/GenerateStar/GenerateStar";
+import generateImageLink from "../../utils/generateImageLink";
+import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
 
 const CourseDetails = () => {
     const courseDetails = {
@@ -39,7 +41,7 @@ const CourseDetails = () => {
     });
 
     const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience } = data;
-    const { courseDuration } = courseDetails;    
+    const { courseDuration } = courseDetails;
     const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
     const totalStudentsWithCommas = formatNumberWithCommas(totalStudents);
 
@@ -75,9 +77,14 @@ const CourseDetails = () => {
 
     // State to manage active link
     const [activeLink, setActiveLink] = useState(0);
+    const [isLoaded, setIsLoaded] = useState(false);                   
 
     const handleClick = (index) => {
         setActiveLink(index);
+    };
+
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Mark the image as loaded
     };
 
     return (
@@ -117,8 +124,8 @@ const CourseDetails = () => {
                     {/* Instructor Info */}
                     <div className="flex justify-start items-center gap-x-2">
                         <img
-                            className="w-12 h-12 rounded-full object-cover"
-                            src={instructorImage}
+                            className="w-14 h-14 rounded-full object-cover"
+                            src={generateImageLink({ imageId: instructorImage, width: 128 })}
                             alt="Instructor profile Image"
                         />
                         <p className="text-gray-700">
@@ -140,9 +147,16 @@ const CourseDetails = () => {
                             {/* Thumbnail */}
                             <figure className="basis-1/2">
                                 <img
-                                    className="w-full h-[10.5rem] md:h-[12.5rem] object-top lg:object-center object-cover rounded-lg"
-                                    src={courseThumbnail}
+                                    src={dummyCourseThumbnail}
+                                    alt="Placeholder"
+                                    id="dummy"
+                                    className={`${isLoaded ? 'hidden' : 'block'} rounded-xl`}
+                                />
+                                <img
+                                    className="w-full object-top lg:object-center object-cover rounded-xl"
+                                    src={generateImageLink({ imageId: courseThumbnail, width: 500 })}
                                     alt="Course Thumbnail"
+                                    onLoad={handleImageLoad}
                                 />
                                 <div className="hidden sm:flex justify-start items-center gap-x-1 md:gap-x-3 pt-4 lg:hidden">
                                     {/* Social Share */}
@@ -236,8 +250,8 @@ const CourseDetails = () => {
                         </div>
                         <div className="flex items-center gap-5">
                             <img
-                                className="w-[5.5rem] h-[5.5rem] sm:w-[6.5rem] sm:h-[6.5rem] md:w-[7.5rem] md:h-[7.5rem] object-cover rounded-full"
-                                src={instructorImage}
+                                className="w-[5.5rem] h-[5.5rem] sm:w-[6.5rem] sm:h-[6.5rem] md:w-fit md:h-fit rounded-full"
+                                src={generateImageLink({ imageId: instructorImage, width: 128, aspectRatio: '1.0', cropMode: 'fill' })}
                                 alt="Instructor profile Image"
                             />
                             <ul className="space-y-1">
@@ -577,7 +591,7 @@ const ReviewCard = ({ review: reviewData }) => {
             <div className="flex items-center gap-x-2 h-fit truncate">
                 <img
                     className="w-[2.5rem] h-[2.5rem] lg:w-[3.75rem] lg:h-[3.75rem] object-cover rounded-full"
-                    src={userImage}
+                    src={generateImageLink({ imageId: userImage, width: 128 })}
                     alt="user profile image" />
                 <p className="w-[calc(100%-2.5rem-.5rem)] lg:w-[calc(100%-3.75rem-.5rem)] text-gray-900 lg:text-lg font-semibold truncate">{userName}</p>
             </div>

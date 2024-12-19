@@ -5,6 +5,7 @@ import GenerateStar from "../../../components/GenerateStar/GenerateStar";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import PopularInstructorMobileSkeleton from "./PopularInstructorsSkeleton.jsx/PopularInstructorMobileSkeleton";
+import generateImageLink from "../../../utils/generateImageLink";
 
 const PopularInstructor = ({ isMobileView }) => {
 
@@ -73,7 +74,7 @@ const PopularInstructorCard = ({ instructorInfo }) => {
                 {/* Instructor Image */}
                 <figure className="w-full">
                     <img
-                        src={image}
+                        src={generateImageLink({ imageId: image, width: 400 })}
                         alt="instructor"
                         className={`object-cover object-top mx-auto h-48 duration-100 ease-in ${isCardHover ? 'w-full rounded-none' : 'w-48 rounded-full'}`}
                         onMouseOver={handleMouseEnter}
@@ -112,7 +113,7 @@ const PopularInstructorMobileCard = ({ instructorInfo }) => {
                 {/* Instructor Image */}
                 <figure className="w-full">
                     <img
-                        src={image}
+                        src={generateImageLink({ imageId: image, width: 400 })}
                         alt="instructor"
                         className={`w-full h-48 object-cover object-top mx-auto`}
                     />

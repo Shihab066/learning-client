@@ -7,6 +7,7 @@ import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDy
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import { Link } from "react-router-dom";
+import generateImageLink from "../../utils/generateImageLink";
 
 const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
     const { data: courses = [], isLoading } = useQuery({
@@ -143,10 +144,10 @@ const CourseCard = ({ item, instructorName }) => {
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
     return (
         <Link to={`/course/${_id}`}>
-            <div className="sm:w-[95%] h-[25.5rem] lg:h-[25rem] bg-white rounded-2xl p-3 lg:p-4 space-y-2 border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0">
+            <div className="sm:w-[95%] h-fit bg-white rounded-2xl p-3 lg:p-4 space-y-2 border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0">
                 <img
                     className="w-full h-40 object-cover object-top rounded-lg"
-                    src={courseThumbnail}
+                    src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
                     alt="course thumbnail"
                 />
                 <h3 className="h-14 lg:text-lg font-medium" title={courseName}>
@@ -155,6 +156,9 @@ const CourseCard = ({ item, instructorName }) => {
                 <p className="truncate">
                     By {instructorName}
                 </p>
+                <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">
+                    {level}
+                </div>
                 <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
                     <GenerateDynamicStar rating={rating} />
                     <span>

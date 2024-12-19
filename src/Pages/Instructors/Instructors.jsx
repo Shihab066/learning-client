@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import GenerateStar from '../../components/GenerateStar/GenerateStar';
 import InstructorsLoadingSkeleton from './InstructorsLoadingSkeleton';
+import generateImageLink from '../../utils/generateImageLink';
 
 const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
@@ -50,7 +51,7 @@ const InstructorCard = ({ instructorData }) => {
                 {/* Instructor Image */}
                 <figure className="w-full">
                     <img
-                        src={image}
+                        src={generateImageLink({ imageId: image, width: 400 })}
                         alt="instructor"
                         className={`w-full h-48 object-cover object-top mx-auto`}
                     />

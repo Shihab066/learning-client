@@ -25,9 +25,10 @@ const Navbar = () => {
 
   // Retrieve user role
   const [userRole] = useUserRole();
-  // const isAdmin = userRole === "admin";
-  // const isStudent = userRole === "student";
-  // const isInstructor = userRole === "instructor";
+  const isAdmin = userRole === "admin";
+  const isStudent = userRole === "student";
+  const isInstructor = userRole === "instructor";
+
 
   // Handle logout and redirect to home
   const signOut = () => {
@@ -186,7 +187,7 @@ const Navbar = () => {
                 <li><NavLink to="/courses">Courses</NavLink></li>
                 <li><NavLink to="/instructors">Instructors</NavLink></li>
                 {
-                  userRole === 'student' &&
+                  isStudent &&
                   <li><NavLink to="/my-classes">My Classes</NavLink></li>
                 }
               </ul>
@@ -252,7 +253,7 @@ const Navbar = () => {
                       {/* Child div that shows on hover and is interactive */}
                       <ul className="border-t absolute mt-4 top-full -right-4 w-52 h-fit space-y-1 p-2 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible duration-300 z-[9999] pointer-events-auto">
                         <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
-                          <button onClick={() => navigate('/user/profile')}>
+                          <button onClick={() => navigate(`/user/${isAdmin ? 'dashboard' : isInstructor ? 'profile' : isStudent ? 'profile' : ''}`)}>
                             Manage account
                           </button>
                         </li>

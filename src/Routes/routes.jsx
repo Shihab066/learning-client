@@ -4,19 +4,11 @@ import Login from "../Pages/Authentication/Login/Login";
 import SignUp from "../Pages/Authentication/SignUp/SignUp";
 import Home from "../Pages/Home/Home/Home";
 import Instructors from "../Pages/Instructors/Instructors";
-import DashBoard from "../Layout/DashBoard";
-// import SelectedClass from "../DashBoardPages/StudentDashBoard/SelectedClass";
-// import EnrolledClass from "../DashBoardPages/StudentDashBoard/EnrolledClass";
-// import PaymentHistory from "../DashBoardPages/StudentDashBoard/PaymentHistory";
 import AddClass from "../DashBoardPages/InstructorDashBoard/AddClass";
-// import MyClass from "../DashBoardPages/InstructorDashBoard/MyClass";
-import ManageClasses from "../DashBoardPages/AdminDashBoard/ManageClasses";
-import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import PrivateRoutes from "./PrivateRoutes";
 import InstructorRoute from "./InstructorRoute";
 import AdminRoutes from "./AdminRoutes";
-// import StudentRoutes from "./StudentRoutes";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import Profile from "../Pages/Authentication/Profile/Profile";
 import PasswordReset from "../Pages/Authentication/PassowrdReset/PasswordReset";
@@ -39,6 +31,11 @@ import PendingReviews from "../DashBoardPages/StudentDashboard/MyReviews/Pending
 import MyReviewsHistory from "../DashBoardPages/StudentDashboard/MyReviews/MyReviewsHistory";
 import Feedback from "../DashBoardPages/StudentDashboard/Feedback/Feedback";
 import ViewCourse from "../Pages/ViewCourse/ViewCourse";
+import Dashboard from "../DashBoardPages/AdminDashBoard/Dashboard/Dashboard";
+import ManageCourse from "../DashBoardPages/AdminDashBoard/ManageCourse/ManageCourse";
+import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser/ManageUser";
+import BannerManagement from "../DashBoardPages/AdminDashBoard/BannerManagement/BannerManagement";
+import SponsorMangement from "../DashBoardPages/AdminDashBoard/SponsorManagement/SponsorMangement";
 
 
 export const router = createBrowserRouter([
@@ -157,11 +154,32 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '/user',
-            element: <Navigate to='profile' />
+            element: <Navigate to='error404' />
           },
           {
             path: 'profile',
             element: <Profile />
+          },
+          // Admin Routes
+          {
+            path: 'dashboard',
+            element: <Dashboard />
+          },
+          {
+            path: 'manage-course',
+            element: <ManageCourse />
+          },
+          {
+            path: 'manage-user',
+            element: <ManageUser />
+          },
+          {
+            path: 'banner-management',
+            element: <BannerManagement />
+          },
+          {
+            path: 'sponsor-management',
+            element: <SponsorMangement />
           },
           // INSTRUCTOR ROUTES
           {
@@ -195,7 +213,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: '/user/my-reviews',
-                element: <Navigate to='pending-reviews'/>
+                element: <Navigate to='pending-reviews' />
               },
               {
                 path: 'pending-reviews',

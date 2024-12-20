@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, Navigate, NavLink, Outlet, useNavigate } from "react-router-dom";
 import shareIcon from '../assets/icon/shareicon.svg';
 import useAuth from "../hooks/useAuth";
 import dummyProfile from '../assets/icon/user_icon.png';
@@ -9,9 +9,19 @@ import generateImageLink from "../utils/generateImageLink";
 const ProfileLayout = () => {
     const { user } = useAuth();
     const [userRole] = useUserRole();
+    const navigate = useNavigate();
     const [links, setLinks] = useState([]);
 
     // link to navigate different section
+    const adminLinks = [
+        { text: 'Dashboard', url: 'dashboard' },
+        { text: 'Manage Course', url: 'manage-course' },
+        { text: 'Manage User', url: 'manage-user' },
+        { text: 'Banner Management', url: 'banner-management' },
+        { text: 'Sponsor Management', url: 'sponsor-management' },
+        { text: 'Setting', url: 'profile' }
+    ];
+
     const instructorLinks = [
         { text: 'Profile', url: 'profile' },
         { text: 'My Courses', url: 'myCourses' },
@@ -20,7 +30,7 @@ const ProfileLayout = () => {
     ];
 
     const studentLinks = [
-        { text: 'Profile', url: 'profile' },        
+        { text: 'Profile', url: 'profile' },
         { text: 'My Reviews', url: 'my-reviews' },
         { text: 'Purchase History', url: 'purchase-history' },
         { text: 'Feedback', url: 'feedback' }
@@ -31,9 +41,15 @@ const ProfileLayout = () => {
         switch (userRole) {
             case 'student':
                 setLinks(studentLinks);
+                // navigate('/user/profile');
                 break
             case 'instructor':
                 setLinks(instructorLinks);
+                // navigate('/user/profile');
+                break;
+            case 'admin':
+                setLinks(adminLinks);
+                // navigate('/user/dashboard')
                 break;
         }
     }, [userRole]);
@@ -110,7 +126,6 @@ const ProfileLayout = () => {
                                 </li>
                             )
                         }
-
                     </ul>
                 </aside>
             </div>

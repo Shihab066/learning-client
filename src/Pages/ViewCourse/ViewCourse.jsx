@@ -28,7 +28,7 @@ const ViewCourse = () => {
     const activeItemRef = useRef();
     const containerRef = useRef();
     const effect = useRef(true);
-    
+
     // Fetch data using React Query
     const { data = {} } = useQuery({
         queryKey: ['course-contents', courseId],
@@ -100,7 +100,7 @@ const ViewCourse = () => {
         const nextIndex = currentIndex + 1;
 
         if (nextIndex < videoIds.length) {
-            setVideoId(videoIds[nextIndex]);            
+            setVideoId(videoIds[nextIndex]);
         }
 
         if (!totalVideoWatched.includes(videoIds[currentIndex])) {
@@ -109,7 +109,7 @@ const ViewCourse = () => {
     };
 
     // Toggle Expand View
-    const handleExpandView = () => setExpandView((prev) => !prev);
+    const handleExpandView = () => setExpandView(!isExpandView);
 
     // Update Progress State
     useEffect(() => {
@@ -136,7 +136,7 @@ const ViewCourse = () => {
 
     const radialProgressStyle = {
         background: `conic-gradient(#a855f7 ${currentProgress || 0}%, #e0e0e0 ${currentProgress || 0}% 100%)`,
-    };
+    };    
 
     return (
         <>
@@ -223,14 +223,14 @@ const ViewCourse = () => {
                         {/* Video Player */}
                         {
                             videoId &&
-                            <VideoPlayer                                
-                                videoId={videoId}                                
+                            <VideoPlayer
+                                videoId={videoId}
                                 handleNextButton={handleNextButton}
                                 handlePrevButton={handlePrevButton}
-                                handleExpandView={handleExpandView}                                
-                                autoPlay={autoPlay}                                
+                                handleExpandView={handleExpandView}
+                                autoPlay={autoPlay}
                             />
-                        }
+                        }                        
 
                         {/* Navigation Buttons */}
                         {videoIds?.length > 0 && (

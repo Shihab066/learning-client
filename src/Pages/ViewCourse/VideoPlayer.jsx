@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
+import React from 'react';
 
 const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
     const cloudinaryRef = useRef();
     const playerRef = useRef();
+    const prevVideoId = useRef();
 
     useEffect(() => {
         if (!cloudinaryRef.current) {
@@ -39,7 +41,10 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
 
     useEffect(() => {
         if (playerRef.current && videoId) {
-            playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
+            if (prevVideoId.current !== videoId) {
+                playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
+            }
+            prevVideoId.current = videoId
             playerRef.current.on('ended', () => {
                 handleNextButton()
             });
@@ -195,7 +200,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
+   
     return (
         <div className='w-full aspect-video'>
             <video
@@ -204,7 +209,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
                 autoPlay={autoPlay}
             />
         </div>
-    );
+    );    
 };
 
 export default VideoPlayer;

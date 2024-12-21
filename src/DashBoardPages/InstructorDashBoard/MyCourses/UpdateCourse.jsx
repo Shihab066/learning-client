@@ -18,7 +18,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             const res = await axiosSecure.get(`http://localhost:5000/api/v1/course/instructorCourse?${courseId}`);
             return res.data;
         }
-    })
+    });
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [formData, setFormData] = useState(course);

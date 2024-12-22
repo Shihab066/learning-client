@@ -8,6 +8,7 @@ import Loading from "../../../components/Loading/Loading";
 import { useState } from "react";
 import AddBanner from "./AddBanner";
 import UpdateBanner from "./UpdateBanner";
+import { removeAlert, toastSuccess } from "../../../utils/toastUtils";
 
 const BannerManagement = () => {
     const [axiosSecure] = useAxiosSecure();
@@ -15,13 +16,21 @@ const BannerManagement = () => {
     const [isBannerUpdateEnable, setIsBannerUpdateEnable] = useState(false);
     const [currentBannerInfo, setCurrentBannerInfo] = useState(null);
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, refetch: refetchBanners } = useQuery({
         queryKey: ['banner'],
         queryFn: async () => {
             const res = await axiosSecure.get('http://localhost:5000/api/v1/banner/get');
             return res.data
         }
     });
+    console.log(data)
+    const handleDelete = async (bannerId) => {
+        const res = await axiosSecure.delete(`http://localhost:5000/api/v1/banner/delete/${bannerId}`);
+        if (res.data.deletedCount) {
+            toastSuccess('Banner removed');
+            refetchBanners();
+        }
+    };
 
     return (
         <div>
@@ -63,6 +72,7 @@ const BannerManagement = () => {
                                                 bannerData={bannerData}
                                                 setIsBannerUpdateEnable={setIsBannerUpdateEnable}
                                                 setCurrentBannerInfo={setCurrentBannerInfo}
+                                                handleDelete={handleDelete}
                                             />
                                         )
                                     }
@@ -76,13 +86,22 @@ const BannerManagement = () => {
     );
 };
 
-const BannerCard = ({ bannerData, setIsBannerUpdateEnable, setCurrentBannerInfo }) => {
-    const { bannerImage } = bannerData;
+const BannerCard = ({ bannerData, setIsBannerUpdateEnable, setCurrentBannerInfo, handleDelete }) => {
+    const { _id, bannerImage } = bannerData;
 
     const handleEdit = () => {
         setIsBannerUpdateEnable(true);
         setCurrentBannerInfo(bannerData);
-    }
+    };
+
+    const handleBannnerDelete = () => {
+        removeAlert()
+            .then(result => {
+                if (result.isConfirmed) {
+                    handleDelete(_id);
+                }
+            })
+    };
     return (
         <div className="flex items-center justify-between border rounded-md p-4 mt-4 usernoe">
             <img
@@ -95,7 +114,7 @@ const BannerCard = ({ bannerData, setIsBannerUpdateEnable, setCurrentBannerInfo 
                 <div onClick={handleEdit} className="bg-yellow-600 p-1 rounded text-white cursor-pointer" title="edit">
                     <EditIcon width={6} />
                 </div>
-                <div className="bg-red-600 p-1 rounded text-white cursor-pointer" title="delete">
+                <div onClick={handleBannnerDelete} className="bg-red-600 p-1 rounded text-white cursor-pointer" title="delete">
                     <DeleteIcon width={6} />
                 </div>
             </div>

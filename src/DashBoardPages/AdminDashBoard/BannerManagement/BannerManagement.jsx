@@ -23,7 +23,7 @@ const BannerManagement = () => {
             return res.data
         }
     });
-    console.log(data)
+    // console.log(data)
     const handleDelete = async (bannerId) => {
         const res = await axiosSecure.delete(`http://localhost:5000/api/v1/banner/delete/${bannerId}`);
         if (res.data.deletedCount) {

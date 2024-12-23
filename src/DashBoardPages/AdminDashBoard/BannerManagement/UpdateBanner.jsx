@@ -1,92 +1,118 @@
-import { useRef, useState } from "react";
-import getCroppedImg from "../../../utils/getCropImage";
+import { useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import CloseIcon from "../../../components/Icons/CloseIcon";
 import useUploadImage from "../../../hooks/useUploadImage";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { toastSuccess } from "../../../utils/toastUtils";
+import generateImageLink from "../../../utils/generateImageLink";
+import { useQueryClient } from "@tanstack/react-query";
 
-const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo }) => {
+const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInfo }) => {
+    const [currentBannerInfo, setCurrentBannerInfo] = useState(oldBannerInfo);
+    const { _id, bannerImage: oldBannerImage, zoom: bannerZoom, crop: bannerCrop } = currentBannerInfo;
 
-    console.log(currentBannerInfo)
     // State variables
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
+    const [crop, setCrop] = useState(bannerCrop);
+    const [zoom, setZoom] = useState(bannerZoom);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-    const [bannerImage, setBannerImage] = useState(null);
+    const [bannerImage, setBannerImage] = useState(generateImageLink({ imageId: oldBannerImage }));
     const bannerImageRef = useRef();
+    const [isUpdateBtnEnable, setIsUpdateBtnEnable] = useState(false);
+    const queryClient = useQueryClient();
 
     const { uploadImage } = useUploadImage();
     const [axiosSecure] = useAxiosSecure();
+
+    const resetBannerInfo = () => {
+        setBannerImage(generateImageLink({ imageId: oldBannerInfo.bannerImage }));
+        setZoom(oldBannerInfo.zoom);
+        setCrop(oldBannerInfo.crop);
+        setCurrentBannerInfo(oldBannerInfo);
+    };
 
     // Handle image selection for cropping
     const handleBannerImage = (event) => {
         const file = event.target.files[0];
         if (file && file.type.startsWith("image/")) {
             setBannerImage(URL.createObjectURL(file));
+            setCurrentBannerInfo((prevData) => ({ ...prevData, bannerImage: file }));
         } else if (!file) {
-            setBannerImage(null);
+            resetBannerInfo();
         } else {
             alert("Please select a valid image file.");
         }
     };
 
-    // Close the Add Banner modal
+    // Close the modal and reset state
     const handleCloseButton = () => {
         setIsBannerUpdateEnable(false);
         setBannerImage(null);
     };
 
-    // Capture the cropped area dimensions
+    // Update cropped area and other info
     const onCropComplete = (_, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
+        setCurrentBannerInfo((prevData) => ({ ...prevData, crop, zoom }));
     };
 
-    // Upload the cropped banner image
+    // Upload the updated banner image
     const handleUploadBanner = async () => {
         try {
-            const uploadedBannerImage = await uploadImage(bannerImageRef.current.files[0]);
+            const uploadedBannerImage =
+                (bannerImageRef.current?.files?.[0] && (await uploadImage(bannerImageRef.current.files[0]))) ||
+                oldBannerInfo.bannerImage;
+
             const bannerInfo = {
                 bannerImage: uploadedBannerImage,
                 cropArea: croppedAreaPixels,
+                crop,
+                zoom,
             };
-            const res = await axiosSecure.post("/banner/add", bannerInfo);
-            if (res.data.insertedId) {
-                toastSuccess("Banner added successfully");
+
+            const res = await axiosSecure.patch(`/banner/update/${_id}`, bannerInfo);
+            if (res.data.modifiedCount) {
+                toastSuccess("Banner updated successfully");
+                queryClient.refetchQueries(["banner"]);
                 handleCloseButton();
             }
         } catch (error) {
-            console.error("Failed to upload banner:", error);
+            console.error("Failed to update banner:", error);
         }
     };
+
+    // Enable update button only when there are changes
+    useEffect(() => {
+        const hasChanges = JSON.stringify(currentBannerInfo) !== JSON.stringify(oldBannerInfo);
+        setIsUpdateBtnEnable(hasChanges);
+    }, [currentBannerInfo, oldBannerInfo]);
 
     return (
         <div>
             {/* Input and Close Button */}
             <div className="flex items-start my-4 select-none">
                 <div className="flex flex-col grow">
-                    <label htmlFor="banner-image-input" className="w-fit font-medium">
-                        Banner Image
+                    <label htmlFor="banner-image-input" className="font-medium w-fit">
+                        Add New Image
                     </label>
                     <input
                         ref={bannerImageRef}
                         id="banner-image-input"
                         type="file"
                         accept="image/*"
-                        className="file-input file-input-bordered max-w-md mt-2 w-full focus:outline-none"
+                        className="file-input file-input-bordered w-full max-w-md mt-2 focus:outline-none"
                         onChange={handleBannerImage}
                     />
                 </div>
                 <button
                     onClick={handleCloseButton}
-                    className="p-1 duration-300 rounded-full hover:bg-base-300"
+                    className="p-1 rounded-full duration-300 hover:bg-base-300"
                 >
                     <CloseIcon width={6} />
                 </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="relative h-[600px] w-full bg-gray-300 border">
+            <div className="relative w-full h-[600px] border bg-gray-300">
                 <Cropper
                     image={bannerImage}
                     crop={crop}
@@ -98,9 +124,9 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo }) => {
                 />
             </div>
 
-            {/* Zoom and Add Button */}
+            {/* Zoom and Update Button */}
             {bannerImage && (
-                <div className="flex items-end justify-between">
+                <div className="flex justify-between items-end">
                     <div className="flex items-center gap-x-4 mt-8">
                         <label htmlFor="zoom">Zoom</label>
                         <input
@@ -110,15 +136,17 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo }) => {
                             max={3}
                             step={0.1}
                             value={zoom}
-                            className="my-2 h-[2px] w-[250px] focus:outline-none"
+                            className="w-[250px] h-[2px] my-2 focus:outline-none"
                             onChange={(e) => setZoom(parseFloat(e.target.value))}
                         />
                     </div>
                     <button
                         onClick={handleUploadBanner}
-                        className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded"
+                        className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded ${!isUpdateBtnEnable ? "opacity-50" : ""
+                            }`}
+                        disabled={!isUpdateBtnEnable}
                     >
-                        Add
+                        Update
                     </button>
                 </div>
             )}

@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import getCroppedImg from "../../../utils/getCropImage";
 import Cropper from "react-easy-crop";
 import CloseIcon from "../../../components/Icons/CloseIcon";
 import useUploadImage from "../../../hooks/useUploadImage";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { toastSuccess } from "../../../utils/toastUtils";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddBanner = ({ setAddBannerEnable }) => {
     // State variables
@@ -13,6 +13,8 @@ const AddBanner = ({ setAddBannerEnable }) => {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [bannerImage, setBannerImage] = useState(null);
     const bannerImageRef = useRef();
+    const queryClient = useQueryClient();
+    const [isBannerUploading, setIsBannerUploading] = useState(false);
 
     const { uploadImage } = useUploadImage();
     const [axiosSecure] = useAxiosSecure();
@@ -43,15 +45,20 @@ const AddBanner = ({ setAddBannerEnable }) => {
     // Upload the cropped banner image
     const handleUploadBanner = async () => {
         try {
+            setIsBannerUploading(true);
             const uploadedBannerImage = await uploadImage(bannerImageRef.current.files[0]);
             const bannerInfo = {
                 bannerImage: uploadedBannerImage,
                 cropArea: croppedAreaPixels,
+                crop,
+                zoom
             };
             const res = await axiosSecure.post("/banner/add", bannerInfo);
             if (res.data.insertedId) {
                 toastSuccess("Banner added successfully");
                 handleCloseButton();
+                queryClient.refetchQueries(['banner']);
+                setIsBannerUploading(false);
             }
         } catch (error) {
             console.error("Failed to upload banner:", error);
@@ -114,9 +121,9 @@ const AddBanner = ({ setAddBannerEnable }) => {
                     </div>
                     <button
                         onClick={handleUploadBanner}
-                        className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded"
+                        className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded ${isBannerUploading ? 'opacity-50 pointer-events-none' : ''}`}
                     >
-                        Add
+                        {isBannerUploading ? 'Uploading...' : 'Add'}
                     </button>
                 </div>
             )}

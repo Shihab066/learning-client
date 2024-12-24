@@ -17,8 +17,8 @@ const ProfileLayout = () => {
         { text: 'Dashboard', url: 'dashboard' },
         { text: 'Manage Course', url: 'manage-course' },
         { text: 'Manage User', url: 'manage-user' },
-        { text: 'Banner Management', url: 'banner-management' },
-        { text: 'Sponsor Management', url: 'sponsor-management' },
+        { text: 'Banner Management', url: 'banner-management' },       
+        { text: 'Suspension Control', url: 'manage-suspension' },       
         { text: 'Setting', url: 'profile' }
     ];
 

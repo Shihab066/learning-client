@@ -105,7 +105,7 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInf
                         id="banner-image-input"
                         type="file"
                         accept="image/*"
-                        className="file-input file-input-bordered w-full max-w-md mt-2 focus:outline-none"
+                        className="file-input file-input-sm md:file-input-md file-input-bordered w-full max-w-md mt-2 focus:outline-none"
                         onChange={handleBannerImage}
                     />
                 </div>
@@ -133,7 +133,7 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInf
             {
                 isLoaded &&
                 <>
-                    <div className={`relative w-full h-[600px] border bg-gray-300`}>
+                    <div className={`relative w-full h-[250px] sm:h-[400px] md:h-[600px] border bg-gray-300`}>
                         <Cropper
                             image={bannerImage}
                             crop={crop}
@@ -147,7 +147,7 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInf
 
 
                     {/* Zoom and Update Button */}
-                    <div className="flex justify-between items-end">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-y-4">
                         <div className="flex items-center gap-x-4 mt-8">
                             <label htmlFor="zoom">Zoom</label>
                             <input

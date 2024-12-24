@@ -34,7 +34,7 @@ const BannerManagement = () => {
 
     return (
         <div>
-            <div className="flex items-start justify-between border-b pb-2">
+            <div className="flex items-start justify-between border-b pb-2 mt-6 xl:mt-0">
                 <h2 className="font-bold text-lg">Banner Management</h2>
                 {
                     !isAddBannerEnable && !isBannerUpdateEnable &&
@@ -103,7 +103,7 @@ const BannerCard = ({ bannerData, setIsBannerUpdateEnable, setCurrentBannerInfo,
             })
     };
     return (
-        <div className="flex items-center justify-between border rounded-md p-4 mt-4 usernoe">
+        <div className="flex items-center justify-between border rounded-md p-2 sm:p-4 mt-4 usernoe">
             <img
                 className="w-40 aspect-[11/5] object-cover rounded"
                 src={generateImageLink({ imageId: bannerImage, width: 200 })}

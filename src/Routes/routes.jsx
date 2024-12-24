@@ -35,7 +35,6 @@ import Dashboard from "../DashBoardPages/AdminDashBoard/Dashboard/Dashboard";
 import ManageCourse from "../DashBoardPages/AdminDashBoard/ManageCourse/ManageCourse";
 import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser/ManageUser";
 import BannerManagement from "../DashBoardPages/AdminDashBoard/BannerManagement/BannerManagement";
-import SponsorMangement from "../DashBoardPages/AdminDashBoard/SponsorManagement/SponsorMangement";
 
 
 export const router = createBrowserRouter([
@@ -176,11 +175,7 @@ export const router = createBrowserRouter([
           {
             path: 'banner-management',
             element: <BannerManagement />
-          },
-          {
-            path: 'sponsor-management',
-            element: <SponsorMangement />
-          },
+          },         
           // INSTRUCTOR ROUTES
           {
             path: 'myCourses',

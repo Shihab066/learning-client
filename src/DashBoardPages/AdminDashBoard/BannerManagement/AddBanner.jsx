@@ -78,7 +78,7 @@ const AddBanner = ({ setAddBannerEnable }) => {
                         id="banner-image-input"
                         type="file"
                         accept="image/*"
-                        className="file-input file-input-bordered max-w-md mt-2 w-full focus:outline-none"
+                        className="file-input file-input-sm md:file-input-md file-input-bordered max-w-md mt-2 w-full focus:outline-none"
                         onChange={handleBannerImage}
                     />
                 </div>
@@ -91,7 +91,7 @@ const AddBanner = ({ setAddBannerEnable }) => {
             </div>
 
             {/* Cropper Area */}
-            <div className="relative h-[600px] w-full bg-gray-300 border">
+            <div className="relative h-[250px] sm:h-[400px] md:h-[600px] w-full bg-gray-300 border">
                 <Cropper
                     image={bannerImage}
                     crop={crop}
@@ -105,7 +105,7 @@ const AddBanner = ({ setAddBannerEnable }) => {
 
             {/* Zoom and Add Button */}
             {bannerImage && (
-                <div className="flex items-end justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-y-4">
                     <div className="flex items-center gap-x-4 mt-8">
                         <label htmlFor="zoom">Zoom</label>
                         <input
@@ -115,7 +115,7 @@ const AddBanner = ({ setAddBannerEnable }) => {
                             max={3}
                             step={0.1}
                             value={zoom}
-                            className="my-2 h-[2px] w-[250px] focus:outline-none"
+                            className="my-2 h-[2px] w-full max-w-[250px] focus:outline-none"
                             onChange={(e) => setZoom(parseFloat(e.target.value))}
                         />
                     </div>

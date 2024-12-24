@@ -49,21 +49,21 @@ const BannerManagement = () => {
                     ?
                     <Loading />
                     :
-                    data.length > 0
+                    isAddBannerEnable
                         ?
-                        isAddBannerEnable
+                        <AddBanner
+                            setAddBannerEnable={setAddBannerEnable}
+                        />
+                        :
+                        isBannerUpdateEnable
                             ?
-                            <AddBanner
-                                setAddBannerEnable={setAddBannerEnable}
+                            <UpdateBanner
+                                setIsBannerUpdateEnable={setIsBannerUpdateEnable}
+                                currentBannerInfo={currentBannerInfo}
                             />
                             :
-                            isBannerUpdateEnable
+                            data.length > 0
                                 ?
-                                <UpdateBanner
-                                    setIsBannerUpdateEnable={setIsBannerUpdateEnable}
-                                    currentBannerInfo={currentBannerInfo}
-                                />
-                                :
                                 <div className="mt-4">
                                     {
                                         data?.map((bannerData, index) =>
@@ -77,10 +77,10 @@ const BannerManagement = () => {
                                         )
                                     }
                                 </div>
-                        :
-                        <EmptyPage
-                            text="It looks like there are no banner items added."
-                        />
+                                :
+                                <EmptyPage
+                                    text="It looks like there are no banner items added."
+                                />
             }
         </div>
     );
@@ -105,8 +105,8 @@ const BannerCard = ({ bannerData, setIsBannerUpdateEnable, setCurrentBannerInfo,
     return (
         <div className="flex items-center justify-between border rounded-md p-4 mt-4 usernoe">
             <img
-                className="w-32 aspect-video rounded"
-                src={generateImageLink({ imageId: bannerImage, width: 128 })}
+                className="w-40 aspect-[11/5] object-cover rounded"
+                src={generateImageLink({ imageId: bannerImage, width: 200 })}
                 alt="banner image"
             />
 

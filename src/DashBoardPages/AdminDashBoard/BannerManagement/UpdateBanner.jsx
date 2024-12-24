@@ -86,6 +86,12 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInf
         setIsUpdateBtnEnable(hasChanges);
     }, [currentBannerInfo, oldBannerInfo]);
 
+    const [isLoaded, setIsLoaded] = useState(false);
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Mark the image as loaded
+    };
+    console.log(currentBannerInfo);
+    console.log(oldBannerInfo);
     return (
         <div>
             {/* Input and Close Button */}
@@ -112,44 +118,60 @@ const UpdateBanner = ({ setIsBannerUpdateEnable, currentBannerInfo: oldBannerInf
             </div>
 
             {/* Cropper Area */}
-            <div className="relative w-full h-[600px] border bg-gray-300">
-                <Cropper
-                    image={bannerImage}
-                    crop={crop}
-                    zoom={zoom}
-                    aspect={11 / 4}
-                    onCropChange={setCrop}
-                    onCropComplete={onCropComplete}
-                    onZoomChange={setZoom}
-                />
-            </div>
+            <img
+                className="hidden"
+                src={bannerImage}
+                onLoad={handleImageLoad}
+            />
+            {
+                !isLoaded &&
+                <div className={`w-full h-[600px] bg-gray-200 flex justify-center items-center`}>
+                    loading...
+                </div>
+            }
 
-            {/* Zoom and Update Button */}
-            {bannerImage && (
-                <div className="flex justify-between items-end">
-                    <div className="flex items-center gap-x-4 mt-8">
-                        <label htmlFor="zoom">Zoom</label>
-                        <input
-                            id="zoom"
-                            type="range"
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            value={zoom}
-                            className="w-[250px] h-[2px] my-2 focus:outline-none"
-                            onChange={(e) => setZoom(parseFloat(e.target.value))}
+            {
+                isLoaded &&
+                <>
+                    <div className={`relative w-full h-[600px] border bg-gray-300`}>
+                        <Cropper
+                            image={bannerImage}
+                            crop={crop}
+                            zoom={zoom}
+                            aspect={11 / 4}
+                            onCropChange={setCrop}
+                            onCropComplete={onCropComplete}
+                            onZoomChange={setZoom}
                         />
                     </div>
-                    <button
-                        onClick={handleUploadBanner}
-                        className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded ${!isUpdateBtnEnable ? "opacity-50" : ""
-                            }`}
-                        disabled={!isUpdateBtnEnable}
-                    >
-                        Update
-                    </button>
-                </div>
-            )}
+
+
+                    {/* Zoom and Update Button */}
+                    <div className="flex justify-between items-end">
+                        <div className="flex items-center gap-x-4 mt-8">
+                            <label htmlFor="zoom">Zoom</label>
+                            <input
+                                id="zoom"
+                                type="range"
+                                min={1}
+                                max={3}
+                                step={0.1}
+                                value={zoom}
+                                className="w-[250px] h-[2px] my-2 focus:outline-none"
+                                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                            />
+                        </div>
+                        <button
+                            onClick={handleUploadBanner}
+                            className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded ${!isUpdateBtnEnable ? "opacity-50" : ""
+                                }`}
+                            disabled={!isUpdateBtnEnable}
+                        >
+                            Update
+                        </button>
+                    </div>
+                </>
+            }
         </div>
     );
 };

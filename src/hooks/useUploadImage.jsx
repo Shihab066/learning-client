@@ -2,7 +2,6 @@ import axios from "axios";
 import useAxiosSecure from "./useAxiosSecure";
 import { useState } from "react";
 
-
 const useUploadImage = () => {
   const [axiosSecure] = useAxiosSecure();
   const [isUploading, setIsUploading] = useState(false);

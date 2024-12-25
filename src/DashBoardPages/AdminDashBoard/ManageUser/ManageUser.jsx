@@ -15,37 +15,43 @@ const ManageUser = () => {
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const [userInfo, setUserInfo] = useState({});
+    const [limit, setLimit] = useState(10);
+    const [searchValue, setSearchValue] = useState('');
 
-    const { data: users = [], isloading } = useQuery({
-        queryKey: ['fetch-users'],
+    const { data, isloading } = useQuery({
+        queryKey: ['fetch-users', limit, searchValue],
         enabled: !!user,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/user/all/${user.uid}`);
+            const res = await axiosSecure.get(`http://localhost:5000/api/v1/user/all/${user.uid}?limit=${limit}&search=${searchValue}`);
             return res.data;
         }
     });
+    console.log(data)
 
-    console.log(users);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSearchValue(e.target.search.value);
+    }
     return (
         <div>
             <div className="border-b pb-2 flex justify-between">
                 <h2 className="text-lg font-bold">Manage User</h2>
-                <div className="min-w-[250px] h-fit relative">
+                <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                     <input
-                        autoComplete='off'
-                        name='search'
+                        autoComplete="off"
+                        name="search"
                         type="text"
                         placeholder="Search User"
                         className="w-full border py-1.5 rounded-md pl-2 pr-10 focus:outline-none"
                     />
                     {/* search icon */}
-                    <button type='submit'>
+                    <button type="submit">
                         <img
                             className='w-6 absolute right-2 top-1/2 -translate-y-1/2'
                             src={searchIcon}
                             alt="search icon" />
                     </button>
-                </div>
+                </form>
             </div>
 
             <table className="table">
@@ -60,7 +66,7 @@ const ManageUser = () => {
                 </thead>
                 <tbody className="">
                     {
-                        users.map((data, index) =>
+                        data?.users.map((data, index) =>
                             <>
                                 {
                                     data._id !== user.uid &&
@@ -75,6 +81,13 @@ const ManageUser = () => {
                     }
                 </tbody>
             </table>
+
+            {
+                data?.totalUsers > 4 && data?.totalUsers !== data?.users.length &&
+                <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded m-4 hover:shadow-md duration-300`}>
+                    View more
+                </button>
+            }
             <ChangeRoleModal
                 userInfo={userInfo}
             />

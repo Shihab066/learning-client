@@ -91,11 +91,18 @@ const ManageUser = () => {
             <ChangeRoleModal
                 userInfo={userInfo}
             />
+
+            {
+                userInfo &&
+                <SuspendModal
+                // userInfo={userInfo}
+                />
+            }
         </div>
     );
 };
 
-const UserRow = ({ data, setUserInfo }) => {
+const UserRow = ({data, setUserInfo }) => {
     const { name, image, email, role } = data;
     return (
         <tr>
@@ -123,15 +130,15 @@ const UserRow = ({ data, setUserInfo }) => {
                 </div>
             </td>
             <th>
-                <div className="flex items-center gap-x-3">
+                <div className="flex items-center gap-x-3 select-none">
                     <label onClick={() => setUserInfo(data)} htmlFor="change-role" className="text-sm font-medium bg-black text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 48 48"><g fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4}><path d="M18 31h20V5"></path><path d="M30 21H10v22m34-32l-6-6l-6 6"></path><path d="m16 37l-6 6l-6-6"></path></g></svg>
                         Change Role
                     </label>
-                    <button className="text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit">
+                    <label onClick={() => setUserInfo(data)} htmlFor="suspend-user" className="text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer">
                         <BlockIcon width={5} />
                         Suspend
-                    </button>
+                    </label>
                 </div>
             </th>
         </tr>
@@ -188,6 +195,29 @@ const ChangeRoleModal = ({ userInfo }) => {
                     </div>
                     <div className="modal-action">
                         <label ref={closeModalRef} htmlFor="change-role" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                    </div>
+                </div>
+            </div>
+        </div >
+    )
+};
+
+const SuspendModal = () => {
+    const closeModalRef = useRef();
+    return (
+        <div>
+            < input type="checkbox" id="suspend-user" className="modal-toggle" />
+            <div className="modal" role="dialog">
+                <div className="modal-box">
+                    <h3 className="text-lg font-bold">Change Role</h3>
+                    <select defaultValue={'test'} className="select select-bordered w-full">
+                        <option value='test' disabled>Who shot first?</option>
+                        <option>Han Solo</option>
+                        <option>Greedo</option>
+                    </select>
+
+                    <div className="modal-action">
+                        <label ref={closeModalRef} htmlFor="suspend-user" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
                     </div>
                 </div>
             </div>

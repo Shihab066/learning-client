@@ -10,11 +10,15 @@ import StudentIcon from "../../../components/Icons/StudentIcon";
 import { toastSuccess } from "../../../utils/toastUtils";
 import Swal from "sweetalert2";
 import searchIcon from '../../../assets/icon/search_icon.svg';
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
+import { useForm } from "react-hook-form";
+import generateUniqueId from "../../../utils/generateUniqueId";
+import Loading from "../../../components/Loading/Loading";
 
 const ManageUser = () => {
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState(null);
     const [limit, setLimit] = useState(10);
     const [searchValue, setSearchValue] = useState('');
 
@@ -26,7 +30,6 @@ const ManageUser = () => {
             return res.data;
         }
     });
-    console.log(data)
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -54,56 +57,67 @@ const ManageUser = () => {
                 </form>
             </div>
 
-            <table className="table">
-                {/* Table Head */}
-                <thead className='hidden md:table-header-group'>
-                    <tr>
-                        <th className='w-[35%]'>User</th>
-                        <th className='w-[25%]'>Email</th>
-                        <th className='w-[15%]'>Role</th>
-                        <th className='w-[25%] min-w-[260px]'>Actions</th>
-                    </tr>
-                </thead>
-                <tbody className="">
-                    {
-                        data?.users.map((data, index) =>
-                            <>
-                                {
-                                    data._id !== user.uid &&
-                                    <UserRow
-                                        key={index}
-                                        data={data}
-                                        setUserInfo={setUserInfo}
-                                    />
-                                }
-                            </>
-                        )
-                    }
-                </tbody>
-            </table>
-
             {
-                data?.totalUsers > 4 && data?.totalUsers !== data?.users.length &&
-                <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded m-4 hover:shadow-md duration-300`}>
-                    View more
-                </button>
+                isloading
+                    ?
+                    <Loading />
+                    :
+                    data?.users.length > 0 &&
+                    <>
+                        <table className="table">
+                            {/* Table Head */}
+                            <thead className='hidden md:table-header-group'>
+                                <tr>
+                                    <th className='w-[35%]'>User</th>
+                                    <th className='w-[25%]'>Email</th>
+                                    <th className='w-[15%]'>Role</th>
+                                    <th className='w-[25%] min-w-[260px]'>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    data?.users.map((userData, index) => {
+                                        if (userData._id !== user.uid) {
+                                            return (
+                                                <UserRow
+                                                    key={index}
+                                                    data={userData}
+                                                    setUserInfo={setUserInfo}
+                                                />
+                                            );
+                                        }
+                                        return null;
+                                    })}
+                            </tbody>
+                        </table>
+
+                        {
+                            data?.totalUsers > 4 && data?.totalUsers !== data?.users.length &&
+                            <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded m-4 hover:shadow-md duration-300`}>
+                                View more
+                            </button>
+                        }
+                    </>
             }
-            <ChangeRoleModal
-                userInfo={userInfo}
-            />
 
             {
                 userInfo &&
-                <SuspendModal
-                // userInfo={userInfo}
-                />
+                <>
+                    <ChangeRoleModal
+                        userInfo={userInfo}
+                    />
+                    <SuspendModal
+                        userInfo={userInfo}
+                        setUserInfo={setUserInfo}
+                    />
+                </>
             }
         </div>
     );
 };
 
-const UserRow = ({data, setUserInfo }) => {
-    const { name, image, email, role } = data;
+const UserRow = ({ data, setUserInfo }) => {
+    const { name, image, email, role, suspended } = data;
     return (
         <tr>
             <td>
@@ -135,7 +149,7 @@ const UserRow = ({data, setUserInfo }) => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 48 48"><g fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4}><path d="M18 31h20V5"></path><path d="M30 21H10v22m34-32l-6-6l-6 6"></path><path d="m16 37l-6 6l-6-6"></path></g></svg>
                         Change Role
                     </label>
-                    <label onClick={() => setUserInfo(data)} htmlFor="suspend-user" className="text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer">
+                    <label onClick={() => setUserInfo(data)} htmlFor="suspend-user" className={`text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer ${suspended ? 'pointer-events-none opacity-50' : ''}`}>
                         <BlockIcon width={5} />
                         Suspend
                     </label>
@@ -202,22 +216,133 @@ const ChangeRoleModal = ({ userInfo }) => {
     )
 };
 
-const SuspendModal = () => {
+const SuspendModal = ({ userInfo, setUserInfo }) => {
     const closeModalRef = useRef();
+    const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
+    const queryClient = useQueryClient();
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const onSubmit = (data) => {
+        try {
+            const { suspendReason, suspentionDetails } = data;
+            const suspendData = {
+                suspend_id: generateUniqueId(),
+                user_id: userInfo._id,
+                suspention_reason: suspendReason,
+                suspention_details: suspentionDetails,
+                suspension_date: new Date(),
+                admin_id: user.uid,
+            };
+            Swal.fire({
+                title: "Are you sure?",
+                text: `Suspend ${userInfo.name}?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#000",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Suspend"
+            })
+                .then(async (result) => {
+                    if (result.isConfirmed) {
+                        const res = await axiosSecure.post(`http://localhost:5000/api/v1/suspention/addUser`, suspendData);
+                        if (res.data.insertedId) {
+                            toastSuccess('User added to suspended list');
+                            queryClient.refetchQueries(['fetch-users']);
+                            closeModalRef.current.click();
+                        }
+                    }
+                });
+        } catch (error) {
+            console.log('error adding user to suspention list')
+        }
+    }
     return (
         <div>
             < input type="checkbox" id="suspend-user" className="modal-toggle" />
-            <div className="modal" role="dialog">
-                <div className="modal-box">
-                    <h3 className="text-lg font-bold">Change Role</h3>
-                    <select defaultValue={'test'} className="select select-bordered w-full">
-                        <option value='test' disabled>Who shot first?</option>
-                        <option>Han Solo</option>
-                        <option>Greedo</option>
-                    </select>
+            <div className="modal overflow-auto" role="dialog">
+                <div className="modal-box w-11/12 max-w-xl my-auto min-h-fit">
+                    <h3 className="text-lg font-bold mb-4">Suspend User</h3>
+
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        {/* suspend reason selection */}
+                        <div className="flex flex-col gap-y-2">
+                            <label
+                                htmlFor="suspensionReason"
+                                className="text-sm font-medium"
+                            >
+                                Suspend Reason
+                            </label>
+                            <select
+                                defaultValue={""}
+                                id="suspensionReason"
+                                className="select select-bordered w-full focus:outline-none border-black rounded-none"
+                                {...register('suspendReason', { required: true })}
+                            >
+                                <option value="" disabled>Select Suspension Reason</option>
+
+                                {/* Reasons for Learners  */}
+                                <optgroup label="Learners">
+                                    <option value="plagiarized_assignments">Plagiarized Assignments</option>
+                                    <option value="abusive_language">Abusive Language in Discussions</option>
+                                    <option value="repeated_policy_violations">Repeated Policy Violations</option>
+                                    <option value="account_sharing">Account Sharing</option>
+                                    <option value="fraudulent_payment">Fraudulent Payment</option>
+                                    <option value="spamming_forums">Spamming Forums</option>
+                                    <option value="harassment_of_instructors">Harassment of Instructors</option>
+                                </optgroup>
+
+                                {/* Reasons for Instructors  */}
+                                <optgroup label="Instructors">
+                                    <option value="copyright_infringement">Copyright Infringement</option>
+                                    <option value="low_quality_content">Low-Quality Content</option>
+                                    <option value="misleading_information">Misleading Information</option>
+                                    <option value="violation_of_platform_policies">Violation of Platform Policies</option>
+                                    <option value="inappropriate_content">Inappropriate Content</option>
+                                    <option value="manipulating_reviews">Manipulating Reviews</option>
+                                    <option value="non_compliance_with_refund_policy">Non-compliance with Refund Policy</option>
+                                </optgroup>
+
+                                {/* General Reasons */}
+                                <optgroup label="General">
+                                    <option value="multiple_complaints">Multiple Complaints</option>
+                                    <option value="impersonation">Impersonation</option>
+                                    <option value="unauthorized_access_attempts">Unauthorized Access Attempts</option>
+                                    <option value="selling_courses_outside_platform">Selling Courses Outside the Platform</option>
+                                </optgroup>
+                            </select>
+                            {errors.suspendReason && <span className="text-red-600">Field is required</span>}
+                        </div>
+
+                        {/* suspend reason in detail */}
+                        <div className="flex flex-col gap-y-2 mt-6">
+                            <label
+                                htmlFor="suspend-note"
+                                className="text-sm font-medium"
+                            >
+                                Note
+                            </label>
+                            <textarea
+                                id="suspend-note"
+                                rows={8}
+                                className="resize-none border border-black focus:outline-none p-4"
+                                placeholder="Enter details about the suspension reason..."
+                                {...register('suspentionDetails', { required: true })}
+                            />
+                            {errors.suspentionDetails && <span className="text-red-600">Field is required</span>}
+                        </div>
+
+                        {/* submit button */}
+                        <div className="flex justify-end mt-4">
+                            <PrimaryButton
+                                type="submit"
+                                text="Suspend"
+                            />
+                        </div>
+                    </form>
 
                     <div className="modal-action">
-                        <label ref={closeModalRef} htmlFor="suspend-user" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                        <label onClick={() => setUserInfo(null)} ref={closeModalRef} htmlFor="suspend-user" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
                     </div>
                 </div>
             </div>

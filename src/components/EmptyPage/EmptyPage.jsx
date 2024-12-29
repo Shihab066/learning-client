@@ -4,7 +4,7 @@ const EmptyPage = ({ text, height = 'h-[30rem]', btn = false, btnText = "Keep sh
   const navigate = useNavigate();
   return (
     <div className={`${height} flex flex-col gap-y-6 items-center justify-center`}>
-      <p className="font-medium text-center text-gray-400 sm:text-lg md:text-xl">
+      <p className="font-medium text-center text-gray-400 sm:text-base md:text-lg">
         {text}
       </p>
       {

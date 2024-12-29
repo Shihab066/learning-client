@@ -62,7 +62,7 @@ const ManageUser = () => {
                     ?
                     <Loading />
                     :
-                    data?.users.length > 0 &&
+                    data?.users?.length > 0 &&
                     <>
                         <table className="table">
                             {/* Table Head */}
@@ -92,7 +92,7 @@ const ManageUser = () => {
                         </table>
 
                         {
-                            data?.totalUsers > 4 && data?.totalUsers !== data?.users.length &&
+                            data?.totalUsers > 10 && data?.totalUsers !== data?.users.length &&
                             <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded m-4 hover:shadow-md duration-300`}>
                                 View more
                             </button>
@@ -180,7 +180,7 @@ const ChangeRoleModal = ({ userInfo }) => {
                 if (resut.isConfirmed) {
                     const res = await axiosSecure.patch(`http://localhost:5000/api/v1/user/role/${user.uid}`, { role, userId });
                     if (res.data.modifiedCount) {
-                        toastSuccess('User Data updated');
+                        toastSuccess('User role updated');
                         queryClient.refetchQueries(['fetch-users']);
                         closeModalRef.current.click();
                     }
@@ -229,8 +229,8 @@ const SuspendModal = ({ userInfo, setUserInfo }) => {
             const suspendData = {
                 suspend_id: generateUniqueId(),
                 user_id: userInfo._id,
-                suspention_reason: suspendReason,
-                suspention_details: suspentionDetails,
+                suspension_reason: suspendReason,
+                suspension_details: suspentionDetails,
                 suspension_date: new Date(),
                 admin_id: user.uid,
             };

@@ -5,6 +5,10 @@ export const toastSuccess = (successMessage) => {
     toast.success(successMessage);
 };
 
+export const toastError = (errorMessage) => {
+    toast.error(errorMessage);
+};
+
 export const removeAlert = () => {
     return Swal.fire({
         title: "Are you sure?",

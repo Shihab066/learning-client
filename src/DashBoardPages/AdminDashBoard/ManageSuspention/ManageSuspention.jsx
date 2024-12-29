@@ -18,7 +18,7 @@ const ManageSuspention = () => {
     const [limit, setLimit] = useState(10);
     const [searchValue, setSearchValue] = useState('');
 
-    const { data, isloading, refetch: refetchSuspendedUsers } = useQuery({
+    const { data, isLoading, refetch: refetchSuspendedUsers } = useQuery({
         queryKey: ['fetch-suspended-users', limit, searchValue],
         enabled: !!user,
         queryFn: async () => {
@@ -26,8 +26,7 @@ const ManageSuspention = () => {
             return res.data;
         }
     });
-
-
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         setSearchValue(e.target.search.value);
@@ -57,8 +56,8 @@ const ManageSuspention = () => {
     }
     return (
         <>
-            <div>
-                <div className="border-b pb-2 flex justify-between">
+            <div className="mt-6 xl:mt-0">
+                <div className="border-b pb-2 flex flex-col sm:flex-row justify-between gap-y-2">
                     <h2 className="text-lg font-bold">Manage Suspended Users</h2>
                     <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                         <input
@@ -79,7 +78,7 @@ const ManageSuspention = () => {
                 </div>
 
                 {
-                    isloading
+                    isLoading
                         ?
                         <Loading />
                         :
@@ -87,14 +86,14 @@ const ManageSuspention = () => {
                             <>
                                 <table className="table">
                                     {/* Table Head */}
-                                    <thead className='hidden md:table-header-group'>
+                                    <thead className='hidden lg:table-header-group'>
                                         <tr>
                                             <th className='w-[30%]'>User</th>
                                             <th className=''>Suspend ID</th>
                                             <th className='min-w-[100px]'>Details</th>
                                             <th className='min-w-[120px]'>Date</th>
                                             <th className=''>Suspended by</th>
-                                            <th className='min-w-[170px]'></th>
+                                            <th className='2xl:min-w-[170px]'></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -145,8 +144,8 @@ const UserRow = ({ userData, setSuspensionDetails, handleRemoveSuspension }) => 
         suspension_details
     }
     return (
-        <tr>
-            <td>
+        <tr className="flex flex-col lg:table-row">
+            <td className="px-0 sm:px-4">
                 <div className="flex items-start gap-3">
                     <div className="avatar">
                         <div className="mask mask-squircle h-12 w-12">
@@ -158,43 +157,59 @@ const UserRow = ({ userData, setSuspensionDetails, handleRemoveSuspension }) => 
                     </div>
                     <div className="space-y-2">
                         <div className="font-bold">{user_name}</div>
+                        <div className="hidden lg:block font-medium text-gray-500">{user_email}</div>
                         <div className="badge badge-ghost">{user_role}</div>
-                        <div>{user_email}</div>
                     </div>
                 </div>
             </td>
 
-            <td>
-                <div className="badge badge-ghost">
-                    <span className="text-gray-500">{suspend_id}</span>
+            <td className="lg:hidden px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden'>User Email</div>
+                    <div className="block lg:hidden font-medium text-gray-500">{user_email}</div>
                 </div>
             </td>
 
-            <td>
-                <div>
-                    <label onClick={() => setSuspensionDetails(suspensionDetailsData)} htmlFor="suspension-details-modal" className="text-blue-600">
+            <td className="px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden'>Suspend ID</div>
+                    <div className="badge badge-ghost">
+                        <span className="text-gray-500">{suspend_id}</span>
+                    </div>
+                </div>
+            </td>
+
+            <td className="px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden'>Details</div>
+                    <label onClick={() => setSuspensionDetails(suspensionDetailsData)} htmlFor="suspension-details-modal" className="text-blue-600 cursor-pointer">
                         See details
                     </label>
                 </div>
             </td>
 
-            <td>
-                <div>
+            <td className="px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden'>Date</div>
                     {date}
                 </div>
             </td>
 
-            <td>
-                <div className="space-y-2">
-                    <div className="font-bold">{admin_name}</div>
-                    <div>{admin_email}</div>
+            <td className="px-0 sm:px-4">
+                <div className="flex  items-start">
+                    <div className='w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden'>Suspended by</div>
+                    <div className="space-y-2">
+                        <div className="font-bold">{admin_name}</div>
+                        <div>{admin_email}</div>
+                    </div>
                 </div>
             </td>
 
-            <td>
+            <td className="px-0 sm:px-4">
                 <SecondaryButton
                     onClick={() => handleRemoveSuspension({ user_name, user_id, suspend_id })}
                     text="Restore Access"
+                    customClass='w-full lg:w-fit'
                 />
             </td>
         </tr>

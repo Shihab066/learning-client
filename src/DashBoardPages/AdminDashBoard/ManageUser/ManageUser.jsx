@@ -36,8 +36,8 @@ const ManageUser = () => {
         setSearchValue(e.target.search.value);
     }
     return (
-        <div>
-            <div className="border-b pb-2 flex justify-between">
+        <div className="mt-6 xl:mt-0">
+            <div className="border-b pb-2 flex flex-col sm:flex-row sm:justify-between gap-y-2">
                 <h2 className="text-lg font-bold">Manage User</h2>
                 <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                     <input
@@ -71,7 +71,7 @@ const ManageUser = () => {
                                     <th className='w-[35%]'>User</th>
                                     <th className='w-[25%]'>Email</th>
                                     <th className='w-[15%]'>Role</th>
-                                    <th className='w-[25%] min-w-[260px]'>Actions</th>
+                                    <th className='md:min-w-[160px] lg:min-w-[260px]'>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,7 +93,7 @@ const ManageUser = () => {
 
                         {
                             data?.totalUsers > 10 && data?.totalUsers !== data?.users.length &&
-                            <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded m-4 hover:shadow-md duration-300`}>
+                            <button onClick={() => setLimit(limit + 10)} className={`text-sm font-medium text-gray-600 border border-gray-500 px-2.5 py-2 rounded mt-4 sm:m-4 hover:shadow-md duration-300`}>
                                 View more
                             </button>
                         }
@@ -119,15 +119,16 @@ const ManageUser = () => {
 const UserRow = ({ data, setUserInfo }) => {
     const { name, image, email, role, suspended } = data;
     return (
-        <tr>
-            <td>
+        <tr className="flex flex-col md:table-row">
+            <td className="px-0 sm:px-4">
                 <div className="flex items-center gap-3">
                     <div className="avatar">
                         <div className="mask mask-squircle h-12 w-12">
                             <img
                                 className="object-cover"
                                 src={generateImageLink({ imageId: image, width: 128 })}
-                                alt="user image" />
+                                alt="user image"
+                            />
                         </div>
                     </div>
                     <div>
@@ -135,21 +136,27 @@ const UserRow = ({ data, setUserInfo }) => {
                     </div>
                 </div>
             </td>
-            <td>
-                {email}
-            </td>
-            <td>
-                <div className="badge badge-ghost">
-                    {role}
+            <td className="px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[25%] font-medium text-gray-500 md:hidden'>Email</div>
+                    {email}
                 </div>
             </td>
-            <th>
-                <div className="flex items-center gap-x-3 select-none">
-                    <label onClick={() => setUserInfo(data)} htmlFor="change-role" className="text-sm font-medium bg-black text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer">
+            <td className="px-0 sm:px-4">
+                <div className="flex items-center">
+                    <div className='w-[25%] font-medium text-gray-500 md:hidden'>Role</div>                   
+                    <div className="badge badge-ghost">
+                        {role}
+                    </div>
+                </div>
+            </td>
+            <th className="px-0 sm:px-4">
+                <div className="flex flex-col md:flex-col lg:flex-row lg:items-center gap-3 select-none">
+                    <label onClick={() => setUserInfo(data)} htmlFor="change-role" className="w-full md:w-fit text-sm font-medium bg-black text-white px-2 py-2 rounded-md flex justify-center items-center gap-x-1 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 48 48"><g fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={4}><path d="M18 31h20V5"></path><path d="M30 21H10v22m34-32l-6-6l-6 6"></path><path d="m16 37l-6 6l-6-6"></path></g></svg>
                         Change Role
                     </label>
-                    <label onClick={() => setUserInfo(data)} htmlFor="suspend-user" className={`text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex items-center gap-x-1 w-fit cursor-pointer ${suspended ? 'pointer-events-none opacity-50' : ''}`}>
+                    <label onClick={() => setUserInfo(data)} htmlFor="suspend-user" className={`w-full md:w-fit text-sm font-medium bg-red-500 text-white px-2 py-2 rounded-md flex justify-center items-center gap-x-1 cursor-pointer ${suspended ? 'pointer-events-none opacity-50' : ''}`}>
                         <BlockIcon width={5} />
                         Suspend
                     </label>

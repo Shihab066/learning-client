@@ -23,7 +23,7 @@ const ManageSuspention = () => {
         enabled: !!user,
         queryFn: async () => {
             const res = await axiosSecure.get(
-                `http://localhost:5000/api/v1/suspention/getUsers?limit=${limit}&search=${searchValue}`
+                `/suspention/getUsers?limit=${limit}&search=${searchValue}`
             );
             return res.data;
         },
@@ -48,7 +48,7 @@ const ManageSuspention = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const res = await axiosSecure.delete(
-                    `http://localhost:5000/api/v1/suspention/remove/${user_id}/${suspend_id}`
+                    `/suspention/remove/${user_id}/${suspend_id}`
                 );
                 if (res.data.deletedCount) {
                     toastSuccess("Operation successful");
@@ -177,7 +177,7 @@ const UserRow = ({ userData, setSuspensionDetails, handleRemoveSuspension }) => 
                             <img
                                 className="object-cover"
                                 src={generateImageLink({ imageId: user_image, width: 128 })}
-                                alt={`${user_name}'s image`}
+                                alt={`user image`}
                             />
                         </div>
                     </div>

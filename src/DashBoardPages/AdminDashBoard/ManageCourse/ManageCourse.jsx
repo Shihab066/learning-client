@@ -1,8 +1,8 @@
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import searchIcon from '../../../assets/icon/search_icon.svg';
 import Loading from "../../../components/Loading/Loading";
 import generateImageLink from "../../../utils/generateImageLink";
@@ -16,16 +16,17 @@ import TickCircle from "../../../components/Icons/TickCircle";
 import CloseIcon from "../../../components/Icons/CloseIcon";
 import CloseCircle from "../../../components/Icons/CloseCircle";
 import { useNavigate } from "react-router-dom";
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 
 const ManageCourse = () => {
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
-    const [suspensionDetails, setSuspensionDetails] = useState(null);
+    const [feedbackData, setFeedbackData] = useState(null);
     const [limit, setLimit] = useState(10);
     const [searchValue, setSearchValue] = useState("");
 
     const { data, isLoading, refetch: refetchAllCourses } = useQuery({
-        queryKey: ["fetch-all-courses", limit, searchValue],
+        queryKey: ["fetch-courses-by-admin", limit, searchValue],
         enabled: !!user,
         queryFn: async () => {
             const res = await axiosSecure.get(
@@ -43,7 +44,8 @@ const ManageCourse = () => {
     };
 
     const handleCourseStatus = (courseInfo) => {
-        const { _id: courseId, status } = courseInfo;
+        const { _id: courseId, status, currentStatus } = courseInfo;
+        if (status === currentStatus) return;
         Swal.fire({
             title: "Are you sure?",
             text: `${status === 'approved' ? 'Approve' : 'Deny'} this course?`,
@@ -58,7 +60,7 @@ const ManageCourse = () => {
                     `/course/status/${courseId}`, { status }
                 );
                 if (res.data.modifiedCount) {
-                    toastSuccess("Course status update successfully");
+                    toastSuccess("Course status updated");
                     refetchAllCourses();
                 }
             }
@@ -115,7 +117,7 @@ const ManageCourse = () => {
                                     <UserRow
                                         key={index}
                                         courseData={courseData}
-                                        setSuspensionDetails={setSuspensionDetails}                                        
+                                        setFeedbackData={setFeedbackData}
                                         handleCourseStatus={handleCourseStatus}
                                     />
                                 ))}
@@ -139,17 +141,17 @@ const ManageCourse = () => {
             </div>
 
             {/* Suspension Details Modal */}
-            {suspensionDetails && (
-                <SuspensionDetailsModal
-                    suspensionDetails={suspensionDetails}
-                    setSuspensionDetails={setSuspensionDetails}
+            {feedbackData && (
+                <FeedbackModal
+                    feedbackData={feedbackData}
+                    setFeedbackData={setFeedbackData}
                 />
             )}
         </>
     );
 };
 
-const UserRow = ({ courseData, setSuspensionDetails, handleRemoveSuspension, handleCourseStatus}) => {
+const UserRow = ({ courseData, setFeedbackData, handleCourseStatus }) => {
 
     const navigate = useNavigate();
 
@@ -163,7 +165,7 @@ const UserRow = ({ courseData, setSuspensionDetails, handleRemoveSuspension, han
         instructorName,
         feedback
 
-    } = courseData;   
+    } = courseData;
 
     // Format the date
     // const date = formatDate(suspension_date);
@@ -220,11 +222,11 @@ const UserRow = ({ courseData, setSuspensionDetails, handleRemoveSuspension, han
             {/* Suspended By Information */}
             <td className="px-0 sm:px-4 select-none">
                 <div className="flex items-start gap-x-3">
-                    <div onClick={() => handleCourseStatus({_id, status: 'approved'})} className={`flex items-center gap-x-1 bg-green-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'approved' ? 'pointer-events-none opacity-50' : ''}`}>
+                    <div onClick={() => handleCourseStatus({ _id, status: 'approved', currentStatus: status })} className={`flex items-center gap-x-1 bg-green-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'approved' ? 'pointer-events-none opacity-50' : ''}`}>
                         <TickCircle />
                         Approve
                     </div>
-                    <div onClick={() => handleCourseStatus({_id, status: 'denied'})} className={`flex items-center gap-x-1 bg-red-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'denied' ? 'pointer-events-none opacity-50' : ''}`}>
+                    <div onClick={() => handleCourseStatus({ _id, status: 'denied', currentStatus: status })} className={`flex items-center gap-x-1 bg-red-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'denied' ? 'pointer-events-none opacity-50' : ''}`}>
                         <CloseCircle />
                         Deny
                     </div>
@@ -232,46 +234,69 @@ const UserRow = ({ courseData, setSuspensionDetails, handleRemoveSuspension, han
             </td>
 
             <td className="px-0 sm:px-4">
-                <div className="w-fit text-white bg-black p-1 rounded cursor-pointer mx-auto">
+                <label
+                    onClick={() => setFeedbackData({ _id, feedback })}
+                    htmlFor="send-feedback-modal"
+                    className="w-fit flex text-white bg-black p-1 rounded cursor-pointer mx-auto">
                     <EditIcon />
-                </div>
+                </label>
             </td>
         </tr >
     );
 };
 
-const SuspensionDetailsModal = ({ suspensionDetails, setSuspensionDetails }) => {
-    const { suspension_reason, suspension_details } = suspensionDetails;
+const FeedbackModal = ({ feedbackData, setFeedbackData }) => {
+    const { _id: courseId, feedback } = feedbackData
+    const [axiosSecure] = useAxiosSecure();
+    const [newFeedbackData, setNewFeedbackData] = useState(feedback);
+    const isSubmitDisable = newFeedbackData === feedback;
+    const colseModalRef = useRef();
+    const queryClient = useQueryClient();
 
+    const handleSendFeedback = async () => {        
+        const res = await axiosSecure.patch(`/course/updatefeedback/${courseId}`, { feedback: newFeedbackData });
+        if (res.data.modifiedCount) {
+            toastSuccess(`Feedback ${feedback ? 'updated' : 'added'} successfully.`)
+            colseModalRef.current.click();
+            queryClient.refetchQueries(['fetch-courses-by-admin']);
+        }
+    }
     return (
         <div>
             {/* Modal Toggle Input */}
-            <input type="checkbox" id="suspension-details-modal" className="modal-toggle" />
+            <input type="checkbox" id="send-feedback-modal" className="modal-toggle" />
 
             {/* Modal Content */}
             <div className="modal overflow-auto" role="dialog" aria-labelledby="suspension-details-title">
                 <div className="modal-box space-y-4 w-11/12 max-w-xl my-auto min-h-fit">
-                    {/* Suspension Reason */}
-                    <div>
-                        <h3 id="suspension-details-title" className="text-sm font-medium">Suspend Reason</h3>
-                        <div className="w-full border border-black mt-2 py-2 px-2 font-medium text-sm capitalize">
-                            {suspension_reason || 'No reason provided'}
-                        </div>
-                    </div>
 
                     {/* Suspension Details */}
                     <div>
-                        <h3 className="text-sm font-medium">Suspend Details</h3>
-                        <div className="w-full h-[15rem] overflow-y-auto border border-black mt-2 py-2 px-2 font-medium text-sm">
-                            {suspension_details || 'No details provided'}
-                        </div>
+                        <label id="feedback-input" className="text-sm font-medium">Feedback</label>
+                        <textarea
+                            id="feedback-input"
+                            rows="10"
+                            className="w-full border border-black focus:outline-none p-4 mt-4 resize-none"
+                            placeholder="Provide feedback on why the course is denied, suggest updates, or highlight issues with the course content here."
+                            value={newFeedbackData}
+                            onChange={(e) => setNewFeedbackData(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={`flex justify-end `}>
+                        <PrimaryButton
+                            onClick={handleSendFeedback}
+                            text="Send"
+                            customClass={`${isSubmitDisable ? 'pointer-events-none opacity-50' : ''}`}
+                        />
                     </div>
 
                     {/* Close Button */}
                     <div className="modal-action">
                         <label
-                            onClick={() => setSuspensionDetails(null)}
-                            htmlFor="suspension-details-modal"
+                            ref={colseModalRef}
+                            onClick={() => setFeedbackData(null)}
+                            htmlFor="send-feedback-modal"
                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             aria-label="Close Suspension Details Modal"
                         >

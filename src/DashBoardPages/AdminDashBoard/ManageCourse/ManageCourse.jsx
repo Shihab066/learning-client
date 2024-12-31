@@ -192,7 +192,7 @@ const UserRow = ({ courseData, setFeedbackData, handleCourseStatus }) => {
                     </div>
                     <div>
                         <div className="font-bold">{courseName}</div>
-                        <div className="hidden lg:block text-gray-500">by {instructorName}</div>
+                        <div className="text-gray-500">by {instructorName}</div>
                     </div>
                 </div>
             </td>
@@ -200,46 +200,55 @@ const UserRow = ({ courseData, setFeedbackData, handleCourseStatus }) => {
             {/* Price */}
             <td className="px-0 sm:px-4">
                 <div className="flex items-center">
-                    <div className="w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden">User Email</div>
+                    <div className="w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden">Price</div>
                     <div className="font-medium text-gray-500">${price}</div>
                 </div>
             </td>
 
             {/* Details page */}
             <td className="px-0 sm:px-4">
-                <div onClick={() => navigate(`/course/${_id}`)} className="text-blue-500 cursor-pointer">
-                    Details page
+                <div className="flex items-center">
+                    <div className="w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden">Details</div>
+                    <div onClick={() => navigate(`/course/${_id}`)} className="text-blue-500 cursor-pointer">
+                        Details page
+                    </div>
                 </div>
             </td>
 
             {/* Status */}
             <td className="px-0 sm:px-4">
-                <div className={`font-medium capitalize ${status === 'approved' ? 'text-green-600' : status === 'pending' ? 'text-blue-500' : status === 'denied' ? 'text-red-500' : ''}`}>
-                    {status}
+                <div className="flex items-center">
+                    <div className="w-[35%] sm:w-[25%] font-medium text-gray-500 lg:hidden">Status</div>
+                    <div className={`font-medium capitalize ${status === 'approved' ? 'text-green-600' : status === 'pending' ? 'text-blue-500' : status === 'denied' ? 'text-red-500' : ''}`}>
+                        {status}
+                    </div>
                 </div>
             </td>
 
             {/* Suspended By Information */}
-            <td className="px-0 sm:px-4 select-none">
-                <div className="flex items-start gap-x-3">
-                    <div onClick={() => handleCourseStatus({ _id, status: 'approved', currentStatus: status })} className={`flex items-center gap-x-1 bg-green-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'approved' ? 'pointer-events-none opacity-50' : ''}`}>
+            <td className="px-0 sm:px-4 select-none order-6 lg:order-5">
+                <div className="flex flex-col sm:flex-row items-start gap-3">
+                    <div onClick={() => handleCourseStatus({ _id, status: 'approved', currentStatus: status })} className={`w-full sm:w-fit flex justify-center items-center gap-x-1 bg-green-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'approved' ? 'pointer-events-none opacity-50' : ''}`}>
                         <TickCircle />
                         Approve
                     </div>
-                    <div onClick={() => handleCourseStatus({ _id, status: 'denied', currentStatus: status })} className={`flex items-center gap-x-1 bg-red-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'denied' ? 'pointer-events-none opacity-50' : ''}`}>
+                    <div onClick={() => handleCourseStatus({ _id, status: 'denied', currentStatus: status })} className={`w-full sm:w-fit flex justify-center items-center gap-x-1 bg-red-600 text-white px-1.5 py-1.5 rounded cursor-pointer ${status === 'denied' ? 'pointer-events-none opacity-50' : ''}`}>
                         <CloseCircle />
                         Deny
                     </div>
                 </div>
             </td>
 
-            <td className="px-0 sm:px-4">
-                <label
-                    onClick={() => setFeedbackData({ _id, feedback })}
-                    htmlFor="send-feedback-modal"
-                    className="w-fit flex text-white bg-black p-1 rounded cursor-pointer mx-auto">
-                    <EditIcon />
-                </label>
+            <td className="px-0 sm:px-4 order-5 lg:order-6">
+                <div className="flex items-center">
+                    <div className="w-[40%] sm:w-[25%] font-medium text-gray-500 lg:hidden">Send Feedback</div>
+                    <label
+                        onClick={() => setFeedbackData({ _id, feedback })}
+                        htmlFor="send-feedback-modal"
+                        className="w-fit flex text-white bg-black p-1 rounded cursor-pointer lg:mx-auto">
+                        <EditIcon />
+                    </label>
+                </div>
             </td>
         </tr >
     );
@@ -253,7 +262,7 @@ const FeedbackModal = ({ feedbackData, setFeedbackData }) => {
     const colseModalRef = useRef();
     const queryClient = useQueryClient();
 
-    const handleSendFeedback = async () => {        
+    const handleSendFeedback = async () => {
         const res = await axiosSecure.patch(`/course/updatefeedback/${courseId}`, { feedback: newFeedbackData });
         if (res.data.modifiedCount) {
             toastSuccess(`Feedback ${feedback ? 'updated' : 'added'} successfully.`)

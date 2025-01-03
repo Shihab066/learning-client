@@ -155,7 +155,6 @@ const ManageCourse = () => {
     );
 };
 
-
 const CourseRow = ({ courseData, setFeedbackData, handleCourseStatus }) => {
     const navigate = useNavigate();
 

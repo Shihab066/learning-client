@@ -1,6 +1,6 @@
-const formatNumber = (num) => {
+const formatNumber = ({num, showFraction = true}) => {
     if (num === undefined || num === null) return "0";
-    if (typeof num !== "bigint") num = BigInt(parseInt(num)); // Convert to BigInt if needed
+    if (typeof num !== "bigint" && num >= 1000) num = BigInt(parseInt(num)); // Convert to BigInt if needed
 
     const thresholds = [
         { value: 1_000_000_000_000n, suffix: "t" },
@@ -20,7 +20,11 @@ const formatNumber = (num) => {
         }
     }
 
-    return parseFloat(num).toFixed(1).toString(); // Return plain number if below 1k
+    if (showFraction) {
+        return parseFloat(num).toFixed(1).toString(); // Return plain number if below 1k
+    } else {
+        return num.toString(); 
+    }
 };
 
 export default formatNumber;

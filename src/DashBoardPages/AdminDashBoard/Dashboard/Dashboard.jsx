@@ -7,53 +7,45 @@ import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
     const [axiosSecure] = useAxiosSecure();
-    const { data: totalSalesInfo = {} } = useQuery({
-        queryKey: ['total_sales_info'],
+    const { data: totalSalesData = {}, isLoading } = useQuery({
+        queryKey: ['total_sales_data'],
         queryFn: async () => {
-            const res = await axiosSecure.get('/dashboard/admin/getTotalSaleInfo');
+            const res = await axiosSecure.get('/dashboard/admin/getTotalSalesData');
             return res.data;
         }
     });
 
-    const { data: totalSalesChartInfo = [] } = useQuery({
-        queryKey: ['total_sales_chart_info'],
-        queryFn: async () => {
-            const res = await axiosSecure.get('/dashboard/admin/getTotalSalesChartInfo');
-            return res.data;
-        }
-    });
+    const [salesData, setSalesData] = useState(totalSalesData);
 
-    const { data: totalSalesAmountChartInfo = [] } = useQuery({
-        queryKey: ['total_sales_amount_chart_info'],
-        queryFn: async () => {
-            const res = await axiosSecure.get('/dashboard/admin/getTotalSalesAmountChartInfo');
-            return res.data;
-        }
-    });
+    const { totalSales = {}, totalSalesCount, totalSalesChartData, totalSalesAmountChartData } = salesData;
+
+    const { totalSalesAmount, thisYearSalesAmount, thisMonthSalesAmount } = totalSales;
+
+    useEffect(() => {
+        setSalesData(totalSalesData);
+    }, [totalSalesData])  
 
     // state to manage sales chart
     const [showYearlySalesStats, setShowYearlySalesStats] = useState(false);
     const [salesChartData, setSalesChartData] = useState([]);
-    const totalSalesYears = totalSalesChartInfo?.map(data => data.year).reverse();
+    const totalSalesYears = totalSalesChartData?.map(data => data.year).reverse();
     const [currentSalesYear, setCurrentSalesYear] = useState('default');
 
     // state to manage sales amount chart
     const [showYearlySalesAmountStats, setShowYearlySalesAmountStats] = useState(true);
     const [salesAmountChartData, setSalesAmountChartData] = useState([]);
-    const totalSalesAmountYears = totalSalesAmountChartInfo?.map(data => data.year).reverse();
+    const totalSalesAmountYears = totalSalesAmountChartData?.map(data => data.year).reverse();
     const [currentSalesAmountYear, setCurrentSalesAmountYear] = useState('default');
-
-    console.log(currentSalesAmountYear)
 
     // chart color
     const color = ['#F2C94C', '#27AE60', '#165DFF', '#10b981', '#8b5cf6', '#fda4af'];
-    const [randomColor, setRandomColor] = useState('#F2C94C');
-    const [randomColor2, setRandomColor2] = useState('#F2C94C');
+    const [randomColor, setRandomColor] = useState(color[0]);
+    const [randomColor2, setRandomColor2] = useState(color[0]);
 
     // effect for sales chart data
     useEffect(() => {
         if (showYearlySalesStats) {
-            const chartData = totalSalesChartInfo?.map(data => ({
+            const chartData = totalSalesChartData?.map(data => ({
                 name: data.year,
                 unit: data.yearlySales
             }));
@@ -68,18 +60,18 @@ const Dashboard = () => {
                 const currentMonthData = {
                     name: `${i + 1}`
                 }
-                totalSalesChartInfo?.forEach(({ year, monthlySales }) => currentMonthData[year] = formatNumber({ num: monthlySales[i], showFraction: false }));
+                totalSalesChartData?.forEach(({ year, monthlySales }) => currentMonthData[year] = formatNumber({ num: monthlySales[i], showFraction: false }));
                 monthlyChart.push(currentMonthData);
             }
             setSalesChartData(monthlyChart);
         }
 
-    }, [totalSalesChartInfo, showYearlySalesStats]);
+    }, [totalSalesChartData, showYearlySalesStats]);
 
     // effect for sales amount chart data
     useEffect(() => {
         if (showYearlySalesAmountStats) {
-            const chartData = totalSalesAmountChartInfo?.map(data => ({
+            const chartData = totalSalesAmountChartData?.map(data => ({
                 name: data.year,
                 $: data.yearlySalesAmount
             }));
@@ -94,92 +86,19 @@ const Dashboard = () => {
                 const currentMonthData = {
                     name: `${i + 1}`
                 }
-                totalSalesAmountChartInfo?.forEach(({ year, monthlySalesAmount }) => currentMonthData[`${year + '$'}`] = formatNumber({ num: monthlySalesAmount[i], showFraction: true }));
+                totalSalesAmountChartData?.forEach(({ year, monthlySalesAmount }) => currentMonthData[`${year + '$'}`] = formatNumber({ num: monthlySalesAmount[i], showFraction: true }));
                 monthlyChart.push(currentMonthData);
             }
             setSalesAmountChartData(monthlyChart);
         }
 
-    }, [totalSalesAmountChartInfo, showYearlySalesAmountStats]);
+    }, [totalSalesAmountChartData, showYearlySalesAmountStats]);
 
-    const totalSalesAmount = formatNumber({ num: totalSalesInfo.totalSalesAmount });
-    const thisYearSalesAmount = formatNumber({ num: totalSalesInfo.thisYearSalesAmount });
-    const thisMonthSalesAmount = formatNumber({ num: totalSalesInfo.thisMonthSalesAmount });
+    // format card number with specifc suffix
+    const lifeTimeSalesAmount = formatNumber({ num: totalSalesAmount });
+    const currentYearsSalesAmount = formatNumber({ num: thisYearSalesAmount });
+    const currentMonthSalesAmount = formatNumber({ num: thisMonthSalesAmount });
 
-    const saleAmount = [
-        {
-            name: "2021",
-            $: 0,
-            pv: 1200,
-            amt: 2400,
-        },
-        {
-            name: "2022",
-            $: 300,
-            pv: 1400,
-            amt: 2210,
-        },
-        {
-            name: "2023",
-            $: 800,
-            pv: 1600,
-            amt: 2290,
-        },
-        {
-            name: "2024",
-            $: 1000,
-            pv: 1800,
-            amt: 2000,
-        },
-        {
-            name: "2025",
-            $: 1400,
-            pv: 2000,
-            amt: 2181,
-        },
-        // {
-        //     name: "6",
-        //     uv: 1600,
-        //     pv: 2200,
-        //     amt: 2500,
-        // },
-        // {
-        //     name: "7",
-        //     uv: 2200,
-        //     pv: 2400,
-        //     amt: 2100,
-        // },
-        // {
-        //     name: "8",
-        //     uv: 2600,
-        //     pv: 2600,
-        //     amt: 2100,
-        // },
-        // {
-        //     name: "9",
-        //     uv: 3000,
-        //     pv: 2800,
-        //     amt: 2100,
-        // },
-        // {
-        //     name: "10",
-        //     uv: 2400,
-        //     pv: 3000,
-        //     amt: 2100,
-        // },
-        // {
-        //     name: "11",
-        //     uv: 3000,
-        //     pv: 3200,
-        //     amt: 2100,
-        // },
-        // {
-        //     name: "12",
-        //     uv: 3000,
-        //     pv: 3400,
-        //     amt: 2100,
-        // },
-    ];
     return (
         <div className="mt-6 xl:mt-0 select-none">
             <h2 className="text-lg font-bold border-b pb-2">Dashboard</h2>
@@ -192,7 +111,7 @@ const Dashboard = () => {
                             <GraphIncrease width={10} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-2xl uppercase">${totalSalesAmount}</h3>
+                            <h3 className="font-bold text-2xl uppercase">${lifeTimeSalesAmount}</h3>
                             <p className="text-gray-500">Life time course commision</p>
                         </div>
                     </div>
@@ -203,7 +122,7 @@ const Dashboard = () => {
                             <GraphIncrease width={10} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-2xl uppercase">${thisYearSalesAmount}</h3>
+                            <h3 className="font-bold text-2xl uppercase">${currentYearsSalesAmount}</h3>
                             <p className="text-gray-500">This year course commision</p>
                         </div>
                     </div>
@@ -214,16 +133,16 @@ const Dashboard = () => {
                             <GraphIncrease width={10} />
                         </div>
                         <div>
-                            <h3 className="font-bold text-2xl uppercase">${thisMonthSalesAmount}</h3>
+                            <h3 className="font-bold text-2xl uppercase">${currentMonthSalesAmount}</h3>
                             <p className="text-gray-500">Monthly Sales</p>
                         </div>
                     </div>
                 </div>
 
-                {/* chart */}
+                {/* total sales count chart */}
                 <div className="grow w-full h-[406px] border border-[#E2E8F0] rounded-lg p-4 shadow bg-ro">
                     <div className="mb-4 flex justify-between items-center">
-                        <h3 className="font-medium text-xl">Life Time Sales: <span className="text-violet-400">175K</span></h3>
+                        <h3 className="font-medium text-xl">Life Time Sales: <span className="text-violet-400">{totalSalesCount}</span></h3>
 
                         <div className="flex items-center gap-x-6">
                             <div onClick={() => setShowYearlySalesStats(true)} className={`flex items-center gap-x-2 cursor-pointer ${showYearlySalesStats ? 'opacity-100' : 'opacity-60 hover:opacity-90'}`}>
@@ -269,8 +188,8 @@ const Dashboard = () => {
                                             ?
                                             <>
                                                 {
-                                                    totalSalesChartInfo?.map((data, index) => {
-                                                        if (index !== totalSalesChartInfo.length) {
+                                                    totalSalesChartData?.map((data, index) => {
+                                                        if (index !== totalSalesChartData.length) {
                                                             return (
                                                                 <React.Fragment key={index}>
                                                                     <Area
@@ -300,7 +219,7 @@ const Dashboard = () => {
                                                 <Area
                                                     type="linear"
                                                     dataKey={currentSalesYear}
-                                                    stroke={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesYear)]}
+                                                    stroke={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesYear)]}
                                                     fill={`url(#monthlyColor)`}
                                                     strokeWidth="2"
                                                     stackId="1"
@@ -308,8 +227,8 @@ const Dashboard = () => {
                                                 />
                                                 <defs>
                                                     <linearGradient id={`monthlyColor`} x1="0" y1="1" x2="0" y2="0">
-                                                        <stop offset="0%" stopColor={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesYear)]} stopOpacity={0} />
-                                                        <stop offset="100%" stopColor={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesYear)]} stopOpacity={1} />
+                                                        <stop offset="0%" stopColor={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesYear)]} stopOpacity={0} />
+                                                        <stop offset="100%" stopColor={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesYear)]} stopOpacity={1} />
                                                     </linearGradient>
                                                 </defs>
                                             </>
@@ -342,7 +261,7 @@ const Dashboard = () => {
             {/* total sales amount chart*/}
             <div className="w-full h-[406px] border border-[#E2E8F0] rounded-lg p-4 mt-10">
                 <div className="mb-4 flex justify-between items-center">
-                    <h3 className="font-medium text-xl">Life Time Sales Amount $: <span className="text-yellow-500">576K</span></h3>
+                    <h3 className="font-medium text-xl">Life Time Sales Amount $: <span className="text-yellow-500 uppercase">{lifeTimeSalesAmount}</span></h3>
 
                     <div className="flex items-center gap-x-6">
                         <div onClick={() => setShowYearlySalesAmountStats(true)} className={`flex items-center gap-x-2 cursor-pointer ${showYearlySalesAmountStats ? 'opacity-100' : 'opacity-60 hover:opacity-90'}`}>
@@ -388,8 +307,8 @@ const Dashboard = () => {
                                         ?
                                         <>
                                             {
-                                                totalSalesAmountChartInfo?.map((data, index) => {
-                                                    if (index !== totalSalesAmountChartInfo.length) {
+                                                totalSalesAmountChartData?.map((data, index) => {
+                                                    if (index !== totalSalesAmountChartData.length) {
                                                         return (
                                                             <React.Fragment key={index}>
                                                                 <Area
@@ -419,7 +338,7 @@ const Dashboard = () => {
                                             <Area
                                                 type="linear"
                                                 dataKey={currentSalesAmountYear + '$'}
-                                                stroke={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesAmountYear)]}
+                                                stroke={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesAmountYear)]}
                                                 fill={`url(#yearlyColor)`}
                                                 strokeWidth="2"
                                                 stackId="1"
@@ -427,8 +346,8 @@ const Dashboard = () => {
                                             />
                                             <defs>
                                                 <linearGradient id={`yearlyColor`} x1="0" y1="1" x2="0" y2="0">
-                                                    <stop offset="0%" stopColor={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesAmountYear)]} stopOpacity={0} />
-                                                    <stop offset="100%" stopColor={color[totalSalesChartInfo.findIndex(obj => obj.year === currentSalesAmountYear)]} stopOpacity={1} />
+                                                    <stop offset="0%" stopColor={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesAmountYear)]} stopOpacity={0} />
+                                                    <stop offset="100%" stopColor={color[totalSalesChartData.findIndex(obj => obj.year === currentSalesAmountYear)]} stopOpacity={1} />
                                                 </linearGradient>
                                             </defs>
                                         </>

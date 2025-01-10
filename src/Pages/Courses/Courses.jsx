@@ -99,7 +99,7 @@ const Courses = () => {
         queryFn: () => fetchCartItems(user?.uid)
     });
 
-    const handleAddToCart = (courseId) => {
+    const handleAddToCart = ({_id: courseId, _instructorId}) => {
         if (!user) {
             Swal.fire({
                 text: "Please log in to add this course to your cart.",
@@ -114,7 +114,7 @@ const Courses = () => {
                 }
             });
         } else {
-            addCourseToCart(user.uid, courseId, refetchCartItems)
+            addCourseToCart(user.uid, courseId, _instructorId, refetchCartItems)
                 .then(() => queryClient.refetchQueries(['cartCount']))
         }
 
@@ -247,7 +247,7 @@ const CourseCard = ({
     cartItems,
     handleAddToCart
 }) => {
-    const { _id, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
+    const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const isCourseInWishlist = wishlist.find(course => course.courseId === _id);
     const isCourseInCart = cartItems.find(course => course.courseId === _id);
@@ -313,7 +313,7 @@ const CourseCard = ({
                             Go To Cart
                         </button>
                         :
-                        <button onClick={() => handleAddToCart(_id)} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                        <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
                             Add To Cart
                         </button>
                 }

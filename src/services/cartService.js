@@ -6,8 +6,8 @@ export const fetchCartItems = async (userId) => {
     return res.data;
 };
 
-export const addCourseToCart = async (userId, courseId, refetchCart) => {
-    const res = await api.post(`cart/add`, { userId, courseId });
+export const addCourseToCart = async (userId, courseId, _instructorId, refetchCart) => {
+    const res = await api.post(`cart/add`, { userId, courseId, _instructorId });
     if (res.data.insertedId) {
         toastSuccess('Course added to Cart');
         refetchCart();

@@ -253,7 +253,7 @@ const Navbar = () => {
                       {/* Child div that shows on hover and is interactive */}
                       <ul className="border-t absolute mt-4 top-full -right-4 w-52 h-fit space-y-1 p-2 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible duration-300 z-[9999] pointer-events-auto">
                         <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
-                          <button onClick={() => navigate(`/user/${isAdmin ? 'dashboard' : isInstructor ? 'profile' : isStudent ? 'profile' : ''}`)}>
+                          <button onClick={() => navigate(`/user/${isAdmin ? 'dashboard' : isInstructor ? 'instructor_dashboard' : isStudent ? 'profile' : ''}`)}>
                             Manage account
                           </button>
                         </li>

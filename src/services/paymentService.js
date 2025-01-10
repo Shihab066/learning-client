@@ -22,8 +22,8 @@ export const checkout = async (products, userId) => {
   }
 };
 
-export const expireSession = async (sessionId) => {
-  await api.post(`payment/expire-session`, { sessionId });
+export const expireSession = async (sessionInfo) => {
+  await api.post(`payment/expire-session`, sessionInfo);
 };
 
 export const getPurchaseHistory = async (studentId) => {

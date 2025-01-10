@@ -23,10 +23,11 @@ const ProfileLayout = () => {
     ];
 
     const instructorLinks = [
-        { text: 'Profile', url: 'profile' },
+        { text: 'Dashboard', url: 'instructor_dashboard' },
         { text: 'My Courses', url: 'myCourses' },
         { text: 'Add Course', url: 'addCourse' },
-        { text: 'Reviews', url: 'courseReviews' }
+        { text: 'Reviews', url: 'courseReviews' },
+        { text: 'Profile', url: 'profile' },
     ];
 
     const studentLinks = [

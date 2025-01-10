@@ -36,6 +36,7 @@ import ManageCourse from "../DashBoardPages/AdminDashBoard/ManageCourse/ManageCo
 import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser/ManageUser";
 import BannerManagement from "../DashBoardPages/AdminDashBoard/BannerManagement/BannerManagement";
 import ManageSuspention from "../DashBoardPages/AdminDashBoard/ManageSuspention/ManageSuspention";
+import InstructorDasboard from "../DashBoardPages/InstructorDashBoard/Dashboard/InstructorDashboard";
 
 
 export const router = createBrowserRouter([
@@ -182,6 +183,10 @@ export const router = createBrowserRouter([
             element: <ManageSuspention />
           },         
           // INSTRUCTOR ROUTES
+          {
+            path: 'instructor_dashboard',
+            element: <InstructorDasboard/>
+          },
           {
             path: 'myCourses',
             element: <MyCourses />

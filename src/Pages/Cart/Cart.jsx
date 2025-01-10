@@ -27,7 +27,7 @@ const Cart = () => {
         enabled: user !== null,
         queryFn: () => fetchCourse()
     });
-
+    
     const activeCartItems = cartCourses?.filter(course => course.savedForLater === false);
     const inActiveCartItems = cartCourses?.filter(course => course.savedForLater === true);
 
@@ -54,11 +54,12 @@ const Cart = () => {
 
     // handle checkout 
     const handleCheckout = () => {
-        const cartItemForCheckout = activeCartItems?.map(({ _id, courseName, courseThumbnail, price, discount }) => {
+        const cartItemForCheckout = activeCartItems?.map(({ _id, _instructorId, courseName, courseThumbnail, price, discount }) => {
             const image = generateImageLink({ imageId: courseThumbnail, height: 300, aspectRatio: '1.0', cropMode: 'fill' });
             const coursePrice = Number((price - (price * (discount / 100))).toFixed(2));
             const courseData = {
                 courseId: _id,
+                _instructorId : _instructorId,
                 name: courseName,
                 image: image,
                 price: coursePrice
@@ -72,13 +73,15 @@ const Cart = () => {
     // // handle cancel checkout
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
-        const sessionId = queryParams.get('cancel');
+        const token = queryParams.get('cancel');
+        const sessionId = queryParams.get('session');
 
-        if (sessionId) {
-            expireSession(sessionId);
+        if (sessionId && token) {
+            expireSession({ token, sessionId });
 
             // Remove 'cancel' parameter from the URL without reloading the page
             queryParams.delete('cancel');
+            queryParams.delete('session');
             const newUrl = `${window.location.origin}${window.location.pathname}?${queryParams.toString()}`;
             window.history.replaceState({}, document.title, newUrl);
         }

@@ -5,13 +5,16 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import formatNumber from "../../../utils/FormateNumber";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
+import useAuth from "../../../hooks/useAuth";
 
-const Dashboard = () => {
+const InstructorDasboard = () => {
+    const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const { data: totalSalesData = {}, isLoading } = useQuery({
-        queryKey: ['total_sales_data'],
+        queryKey: ['instructor_total_sales_data'],
+        enabled: !!user,
         queryFn: async () => {
-            const response = await axiosSecure.get('/dashboard/admin/getTotalSalesData');
+            const response = await axiosSecure.get(`/dashboard/instructor/getTotalSalesData/${user.uid}`);
             return response.data;
         }
     });
@@ -228,7 +231,7 @@ const SalesChart = ({
                         <select
                             onChange={(e) => setCurrentYear(e.target.value)}
                             value={currentYear}
-                            className="select select-bordered select-xs rounded-sm w-16 ml-1 pr-[20px!important] focus:outline-none"
+                            className="select select-bordered select-xs rounded-sm w-16 ml-1 pr-[20px!important] focus:outline-none bg-[calc(100%-10px)calc(1px+50%),calc(100%-6px)calc(1px+50%)]"
                         >
                             <option value="default">All</option>
                             {totalYears?.map((year, index) => (
@@ -312,4 +315,4 @@ const SalesChart = ({
     </div>
 );
 
-export default Dashboard;
+export default InstructorDasboard;

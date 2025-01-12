@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../../../components/Loading/Loading';
 import Swal from 'sweetalert2';
 import generateImageLink from '../../../utils/generateImageLink';
+import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.jpg';
+import { toastSuccess } from '../../../utils/toastUtils';
 
 
 const MyCourses = () => {
@@ -17,13 +19,14 @@ const MyCourses = () => {
     const [courseId, setCourseId] = useState('');
     const [isUpdateCourseOpen, setIsUpdateCourseOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
+    const [currentFeedback, setCurrentFeedback] = useState(null);
 
     // fetch all courses
-    const { data: courses = [], refetch, isLoading } = useQuery({
+    const { data: courses = [], refetch: refetchCourses, isLoading } = useQuery({
         queryKey: ['courses', user?.uid, searchValue],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/course/instructorCourses/${user?.uid}?search=${searchValue}`);
+            const res = await axiosSecure.get(`/course/instructorCourses/${user?.uid}?search=${searchValue}`);
             return res.data;
         }
     });
@@ -35,7 +38,7 @@ const MyCourses = () => {
     };
 
     // change publish status
-    const handlePublishStatus = ({ insturctorId, courseId, publishStatus, refetchCourses }) => {
+    const handlePublishStatus = ({ insturctorId, courseId, publishStatus }) => {
         const confirmBtnText = publishStatus ? 'Publish' : 'Unpublish';
         Swal.fire({
             title: "Are you sure?",
@@ -46,9 +49,9 @@ const MyCourses = () => {
             confirmButtonText: confirmBtnText
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.patch(`http://localhost:5000/api/v1/course/updatePublishStatus?id=${insturctorId}&courseId=${courseId}`, { publish: publishStatus }).then(res => {
+                axiosSecure.patch(`/course/updatePublishStatus?id=${insturctorId}&courseId=${courseId}`, { publish: publishStatus }).then(res => {
                     if (res.data.result.modifiedCount) {
-                        toast('Publish Status Updated');
+                        toastSuccess('Publish Status Updated');
                         refetchCourses();
                     }
                 })
@@ -56,7 +59,19 @@ const MyCourses = () => {
         });
     };
 
-    const deleteCourse = ({ insturctorId, courseId, refetchCourses }) => {
+    const changeFeedbackReadStatus = async (courseId, isFeedbackRead) => {
+        if (isFeedbackRead) return;
+        const res = await axiosSecure.patch(`/course/updateFeedbackReadStatus/${courseId}`, { readStatus: true });
+        if (res.data.modifiedCount) {
+            refetchCourses();
+        }
+    }
+
+    const handleFeedbackView = async (courseId, isFeedbackRead, feedback) => {
+        setCurrentFeedback(feedback);
+        changeFeedbackReadStatus(courseId, isFeedbackRead);
+    }
+    const deleteCourse = ({ insturctorId, courseId }) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -67,9 +82,9 @@ const MyCourses = () => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.delete(`http://localhost:5000/api/v1/course/delete?id=${insturctorId}&courseId=${courseId}`).then(res => {
+                axiosSecure.delete(`/course/delete?id=${insturctorId}&courseId=${courseId}`).then(res => {
                     if (res.data.result.deletedCount) {
-                        toast('Course Deleted');
+                        toastSuccess('Course Deleted');
                         refetchCourses();
                     }
                 })
@@ -77,92 +92,100 @@ const MyCourses = () => {
         });
     };
 
-    const toast = (message) => {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: message,
-            showConfirmButton: false,
-            timer: 2000
-        });
-    };
     return (
-        <div className='relative pt-14 xl:pt-0'>
-            <div className="space-y-3">
-                <h2 className="text-lg font-medium">Courses</h2>
-                <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
-                    <input
-                        autoComplete='off'
-                        name='search'
-                        type="text"
-                        placeholder="Search Course"
-                        className="w-full border py-1.5 rounded-md pl-2 pr-10 focus:outline-none"
-                    />
-                    {/* search icon */}
-                    <button type='submit'>
-                        <img
-                            className='w-6 absolute right-2 top-1/2 -translate-y-1/2'
-                            src={searchIcon}
-                            alt="search icon" />
-                    </button>
-                </form>
-            </div>
-
-            <div className='mt-8'>
-                {isLoading
-                    ?
-                    <Loading />
-                    :
-                    isUpdateCourseOpen
-                        ?
-                        <UpdateCourse
-                            setIsUpdateCourseOpen={setIsUpdateCourseOpen}
-                            courseId={courseId}
-                            setCourseId={setCourseId}
-                            refetchCourses={refetch}
+        <>
+            <div className='relative pt-14 xl:pt-0'>
+                <div className="space-y-3">
+                    <h2 className="text-lg font-medium">Courses</h2>
+                    <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
+                        <input
+                            autoComplete='off'
+                            name='search'
+                            type="text"
+                            placeholder="Search Course"
+                            className="w-full border py-1.5 rounded-md pl-2 pr-10 focus:outline-none"
                         />
+                        {/* search icon */}
+                        <button type='submit'>
+                            <img
+                                className='w-6 absolute right-2 top-1/2 -translate-y-1/2'
+                                src={searchIcon}
+                                alt="search icon" />
+                        </button>
+                    </form>
+                </div>
+
+                <div className='mt-8'>
+                    {isLoading
+                        ?
+                        <Loading />
                         :
-                        <>
-                            {courses.length > 0 ?
-                                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                                    {courses.map((course, index) =>
-                                        <MyCourseCard
-                                            key={index}
-                                            course={course}
-                                            setCourseId={setCourseId}
-                                            setIsUpdateCourseOpen={setIsUpdateCourseOpen}
-                                            handlePublishStatus={handlePublishStatus}
-                                            deleteCourse={deleteCourse}
-                                            refetchCourses={refetch}
-                                        />
-                                    )}
-                                </div>
-                                :
-                                <div className="h-[500px] flex items-center justify-center">
-                                    <p className="text-gray-400 text-lg font-medium">No Courses Found</p>
-                                </div>
-                            }
-                        </>
-                }
+                        isUpdateCourseOpen
+                            ?
+                            <UpdateCourse
+                                setIsUpdateCourseOpen={setIsUpdateCourseOpen}
+                                courseId={courseId}
+                                setCourseId={setCourseId}
+                                refetchCourses={refetchCourses}
+                            />
+                            :
+                            <>
+                                {courses.length > 0 ?
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 xl:px-2'>
+                                        {courses.map((course, index) =>
+                                            <MyCourseCard
+                                                key={index}
+                                                course={course}
+                                                setCourseId={setCourseId}
+                                                setIsUpdateCourseOpen={setIsUpdateCourseOpen}
+                                                handlePublishStatus={handlePublishStatus}
+                                                deleteCourse={deleteCourse}
+                                                handleFeedbackView={handleFeedbackView}
+                                            />
+                                        )}
+                                    </div>
+                                    :
+                                    <div className="h-[500px] flex items-center justify-center">
+                                        <p className="text-gray-400 text-lg font-medium">No Courses Found</p>
+                                    </div>
+                                }
+                            </>
+                    }
+                </div>
             </div>
 
-        </div>
+            {
+                currentFeedback !== null &&
+                <FeedbackModal feedback={currentFeedback} />
+            }
+        </>
     );
 };
 
-const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, refetchCourses }) => {
-    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, rating, totalReviews } = course;
+const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublishStatus, deleteCourse, handleFeedbackView }) => {
+    const { _id, _instructorId, courseName, courseThumbnail, price, discount, feedback, level, status, publish, rating, totalReviews, isFeedbackRead } = course;
+    const [isLoaded, setIsLoaded] = useState(false);
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Mark the image as loaded
+    };
 
     return (
         <>
             <div className="w-full xl:w-[18rem] 2xl:w-[20rem] bg-white border border-[#E2E8F0] shadow-[0px_0px_8px_0px] shadow-[#3b82f61f] rounded-2xl justify-self-center">
-                <div className="p-4 space-y-2">
+                <div className="p-3 lg:p-4 space-y-2">
                     {/* Thumbnail */}
                     <figure className="basis-1/2">
                         <img
-                            className="w-full h-[10.5rem] md:h-[12.5rem] object-top object-cover rounded-lg"
-                            src={generateImageLink({imageId: courseThumbnail})}
-                            alt="Course Thumbnail"
+                            src={dummyCourseThumbnail}
+                            alt="Placeholder"
+                            id="dummy"
+                            className={`${isLoaded ? 'hidden' : 'block rounded-md'}`}
+                        />
+                        <img
+                            className={`w-full object-cover ${isLoaded ? 'block rounded-md' : 'hidden'}`}
+                            src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
+                            alt="course thumbnail"
+                            onLoad={handleImageLoad}
                         />
                     </figure>
 
@@ -179,7 +202,7 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                     {/* status */}
                     <p>
                         Status:
-                        <span className={`ml-2 font-medium capitalize ${status === 'pending' ? 'text-blue-600' : status === 'active' ? 'text-green-600' : status === 'reject' ? 'text-red-600' : ''}`}>
+                        <span className={`ml-2 font-medium capitalize ${status === 'pending' ? 'text-blue-600' : status === 'approved' ? 'text-green-600' : status === 'denied' ? 'text-red-600' : ''}`}>
                             {status}
                         </span>
                     </p>
@@ -227,12 +250,17 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                     {/* class modificatoin button */}
                     <div className="text-white flex justify-start items-center gap-x-2 mt-[20px!important]">
                         {/* feedbaack */}
-                        <label htmlFor="my-modal-1" className='w-fit border rounded-md px-2 py-1.5 bg-green-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='feedback'>
+                        <label onClick={() => { handleFeedbackView(_id, isFeedbackRead, feedback) }} htmlFor="feedback-view-modal" className='relative w-fit border rounded-md px-2 py-1.5 bg-black hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='feedback'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-6'>
                                 <path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-7 12h-2v-2h2zm0-4h-2V6h2z"></path>
                             </svg>
+                            {feedback && !isFeedbackRead &&
+                                <>
+                                    <div className={`w-3 h-3 rounded-full bg-sky-400 opacity-75 absolute -right-1 -top-1 animate-ping`}></div>
+                                    <div className={`w-3 h-3 rounded-full bg-sky-500 absolute -right-1 -top-1`}></div>
+                                </>
+                            }
                         </label>
-                        <FeedbackModal feedback={feedback} />
 
                         {/* edit */}
                         <button
@@ -260,7 +288,6 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                                     {
                                         insturctorId: _instructorId,
                                         courseId: _id,
-                                        refetchCourses
                                     }
                                 )
                             }}
@@ -279,7 +306,6 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                                     insturctorId: _instructorId,
                                     courseId: _id,
                                     publishStatus: !publish,
-                                    refetchCourses
                                 }
                             )
                         }
@@ -296,12 +322,18 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
 const FeedbackModal = ({ feedback }) => {
     return (
         <>
-            <input type="checkbox" id={`my-modal-1`} className="modal-toggle" />
+            <input type="checkbox" id={`feedback-view-modal`} className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box relative w-11/12 max-w-5xl text-gray-900">
-                    <label htmlFor={`my-modal-1`} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                <div className="modal-box relative w-11/12 max-w-2xl text-gray-900">
+                    <label htmlFor={`feedback-view-modal`} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <h3 className="text-lg font-bold">Feedback</h3>
-                    <p className="py-4">{feedback}</p>
+                    <textarea
+                        className='w-full resize-none border border-black focus:outline-none p-4 mt-2'
+                        rows="10"
+                        value={feedback}
+                        placeholder='No feedback found'
+                        disabled
+                    />
                 </div>
             </div>
         </>

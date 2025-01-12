@@ -5,6 +5,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import searchIcon from '../../../assets/icon/search_icon.svg';
 import CourseReviewsSkeleton from "./CourseReviewsSkeleton";
+import generateImageLink from "../../../utils/generateImageLink";
 
 const CourseReviews = () => {
     const { user, loading } = useAuth();
@@ -28,8 +29,8 @@ const CourseReviews = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-top">
+        <div>
+            <div className="flex justify-between items-top mb-6">
                 <h2 className="text-lg font-medium">Reviews</h2>
                 <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                     <input
@@ -48,7 +49,7 @@ const CourseReviews = () => {
                     </button>
                 </form>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 pb-5">
                 {
                     isLoading
                         ?
@@ -66,7 +67,7 @@ const CourseReviews = () => {
                                 }
                                 {
                                     data?.totalReviews > 4 && data?.totalReviews !== data?.reviews.length &&
-                                    <button onClick={() => setLimit(limit + 6)} className={`btn btn-md capitalize outline outline-1 outline-gray-900  text-sm sm:text-base text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300`}>
+                                    <button onClick={() => setLimit(limit + 6)} className={`btn btn-md capitalize outline outline-1 outline-gray-900  text-sm sm:text-base text-gray-900 font-medium bg-white hover:bg-white hover:shadow-lg duration-300 ml-1`}>
                                         View more Reviews
                                     </button>
                                 }
@@ -138,7 +139,7 @@ const CourseReviewCard = ({ reviewData }) => {
                 <figure>
                     <img
                         className="w-12 h-12 rounded-full object-cover"
-                        src={userImage}
+                        src={generateImageLink({ imageId: userImage, width: '128', cropMode: 'fill', aspactRatio: '1.0' })}
                         alt="reviewer image"
                     />
                 </figure>

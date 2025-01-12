@@ -243,7 +243,7 @@ const SalesChart = ({
             <ResponsiveContainer width="100%">
                 <AreaChart key={currentYear + chartKey} data={chartData}>
                     <XAxis dataKey="name" axisLine={{ stroke: '#E2E8F0', strokeWidth: 1 }} tickLine={false} padding={{ left: 20 }} />
-                    <YAxis axisLine={false} tickLine={false} tickCount={6} width={YAxisWidth * 10} />
+                    <YAxis axisLine={false} tickLine={false} allowDecimals={false} tickCount={6} width={YAxisWidth * 10} />
                     <Tooltip />
                     {!showStats
                         ? currentYear === 'default'

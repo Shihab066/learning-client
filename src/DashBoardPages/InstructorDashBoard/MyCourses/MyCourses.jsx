@@ -208,13 +208,13 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                     </p>
 
                     {/* rating */}
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-x-4">
+                    <div className="flex flex-col md:flex-row flex-wrap lg:items-center gap-x-4">
                         <div className='flex items-center gap-x-1'>
                             {
                                 rating
                                     ?
                                     <span className='font-medium text-gray-700'>
-                                        {rating}
+                                        {parseFloat(rating).toFixed(1)}
                                     </span>
                                     :
                                     ''
@@ -222,7 +222,7 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                             <GenerateDynamicStar rating={rating} />
                         </div>
                         <span>
-                            ({totalReviews} Ratings)
+                            ({totalReviews})
                         </span>
                     </div>
 
@@ -234,15 +234,15 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                                     {
                                         discount < 100
                                             ?
-                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(2)}</p>
+                                            <p className="text-gray-900 text-xl lg:text-2xl lg:leading-[1.625rem] font-medium">${(price - (price * (discount / 100))).toFixed(2)}</p>
                                             :
-                                            <p className="text-gray-900 text-2xl leading-[1.625rem] font-medium">Free</p>
+                                            <p className="text-gray-900 text-xl lg:text-2xl leading-[1.625rem] font-medium">Free</p>
                                     }
                                     <p className="text-[#94A3B8] text-lg"><del>${price}</del></p>
-                                    <p className="text-green-600 text-xl font-medium">{discount}% Off</p>
+                                    <p className="text-green-600 text-lg lg:text-xl font-medium">{discount}% Off</p>
                                 </div>
                             ) : (
-                                <p className="text-gray-900 text-2xl font-medium">${price}</p>
+                                <p className="text-gray-900 text-xl lg:text-2xl font-medium">${price}</p>
                             )
                         }
                     </div>

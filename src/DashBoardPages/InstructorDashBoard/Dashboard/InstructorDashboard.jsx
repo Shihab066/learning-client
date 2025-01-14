@@ -6,6 +6,7 @@ import formatNumber from "../../../utils/FormateNumber";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import useAuth from "../../../hooks/useAuth";
+import ReviewsSection from "./ReviewsSection/ReviewsSection";
 
 const InstructorDasboard = () => {
     const { user } = useAuth();
@@ -34,7 +35,7 @@ const InstructorDasboard = () => {
 
     // State to hold sales data for the charts
     const [salesChartData, setSalesChartData] = useState([]);
-    const [salesAmountChartData, setSalesAmountChartData] = useState([]); console.log(salesAmountChartData)
+    const [salesAmountChartData, setSalesAmountChartData] = useState([]);
 
     // State to manage the current selected year
     const [currentSalesYear, setCurrentSalesYear] = useState('default');
@@ -180,6 +181,9 @@ const InstructorDasboard = () => {
                             YAxisWidth={totalSalesAmount?.split('.')[0].length}
                         />
                     </div>
+
+                    {/* reviews section */}
+                    <ReviewsSection />
                 </div>
             )}
         </>
@@ -246,7 +250,7 @@ const SalesChart = ({
             <ResponsiveContainer width="100%">
                 <AreaChart key={currentYear + chartKey} data={chartData}>
                     <XAxis dataKey="name" axisLine={{ stroke: '#E2E8F0', strokeWidth: 1 }} tickLine={false} padding={{ left: 20 }} />
-                    <YAxis axisLine={false} tickLine={false} allowDecimals={false} tickCount={6} width={YAxisWidth * 12}  />
+                    <YAxis axisLine={false} tickLine={false} allowDecimals={false} tickCount={6} width={YAxisWidth * 12} />
                     <Tooltip />
                     {!showStats
                         ? currentYear === 'default'

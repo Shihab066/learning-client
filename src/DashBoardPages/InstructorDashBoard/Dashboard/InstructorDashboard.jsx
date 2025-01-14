@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import useAuth from "../../../hooks/useAuth";
 import ReviewsStatistics from "./ReviewsStatistics/ReviewsStatistics";
+import CourseStatistics from "./CourseStatistics/CourseStatistics";
 
 const InstructorDasboard = () => {
     const { user } = useAuth();
@@ -184,6 +185,9 @@ const InstructorDasboard = () => {
 
                     {/* reviews section */}
                     <ReviewsStatistics />
+
+                    {/* course statistics section */}
+                    <CourseStatistics />
                 </div>
             )}
         </>

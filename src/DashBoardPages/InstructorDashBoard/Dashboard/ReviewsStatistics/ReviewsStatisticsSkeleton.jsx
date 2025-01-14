@@ -1,16 +1,16 @@
 
-const ReviewsSectionSkeleton = () => {
+const ReviewsStatisticsSkeleton = () => {
     const SkeletonCount = new Array(6).fill(0);
     return (
         <>
             {
-                SkeletonCount.map((item, index) => <ReviewsSectionSkeletonCard key={index} />)
+                SkeletonCount.map((item, index) => <ReviewsStatisticsSkeletonCard key={index} />)
             }
         </>
     );
 };
 
-const ReviewsSectionSkeletonCard = () => {
+const ReviewsStatisticsSkeletonCard = () => {
     return (
         <div className="px-5 py-8 rounded-lg bg-gray-50">
             <div className={`space-y-2 animate-pulse`}>
@@ -21,4 +21,4 @@ const ReviewsSectionSkeletonCard = () => {
     );
 };
 
-export default ReviewsSectionSkeleton;
+export default ReviewsStatisticsSkeleton;

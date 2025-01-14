@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 import formatNumber from "../../../../utils/FormateNumber";
-import ReviewsSectionSkeleton from "./ReviewsSectionSkeleton";
+import ReviewsStatisticsSkeleton from "./ReviewsStatisticsSkeleton";
 
 
-const ReviewsSection = () => {
+const ReviewsStatistics = () => {
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
 
@@ -28,7 +28,7 @@ const ReviewsSection = () => {
             
             <div className="grid gap-2 mt-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
                 {isLoading ? (
-                    <ReviewsSectionSkeleton />
+                    <ReviewsStatisticsSkeleton />
                 ) : (
                     <>
                         {/* Total Reviews Card */}
@@ -86,4 +86,4 @@ const ReviewsStatisticsCard = ({ star, ratingBg, totalRating }) => {
 };
 
 
-export default ReviewsSection;
+export default ReviewsStatistics;

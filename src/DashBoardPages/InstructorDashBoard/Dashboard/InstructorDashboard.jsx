@@ -6,7 +6,7 @@ import formatNumber from "../../../utils/FormateNumber";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import useAuth from "../../../hooks/useAuth";
-import ReviewsSection from "./ReviewsSection/ReviewsSection";
+import ReviewsStatistics from "./ReviewsStatistics/ReviewsStatistics";
 
 const InstructorDasboard = () => {
     const { user } = useAuth();
@@ -183,7 +183,7 @@ const InstructorDasboard = () => {
                     </div>
 
                     {/* reviews section */}
-                    <ReviewsSection />
+                    <ReviewsStatistics />
                 </div>
             )}
         </>

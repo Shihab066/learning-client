@@ -14,6 +14,7 @@ import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '..
 import { addCourseToCart, fetchCartItems } from '../../services/cartService';
 import generateImageLink from '../../utils/generateImageLink';
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
+import formateCourseDuration from '../../utils/formateCourseDuration';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -247,10 +248,11 @@ const CourseCard = ({
     cartItems,
     handleAddToCart
 }) => {
-    const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount } = item;
+    const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount, courseDuration } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const isCourseInWishlist = wishlist.find(course => course.courseId === _id);
     const isCourseInCart = cartItems.find(course => course.courseId === _id);
+    const totalCourseDuration = formateCourseDuration(courseDuration || 0);
     const [isLoaded, setIsLoaded] = useState(false);
     const handleImageLoad = () => {
         setIsLoaded(true); // Mark the image as loaded
@@ -282,13 +284,13 @@ const CourseCard = ({
                         {level}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-2">
-                        {rating > 0 && <span className='font-medium'>{rating}</span>}
+                        {rating > 0 && <span className='font-medium'>{parseFloat(rating).toFixed(1)}</span>}
                         <GenerateDynamicStar rating={rating} />
                         <span>
                             ({totalReviews})
                         </span>
                     </div>
-                    <p>{22} Total Hours. {totalModules} Modules.</p>
+                    <p className='capitalize'>{totalCourseDuration}. {totalModules} Modules.</p>
                     <div>
                         {discount > 0
                             ? (

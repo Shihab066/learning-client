@@ -15,21 +15,10 @@ import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
 import GenerateStar from "../../components/GenerateStar/GenerateStar";
 import generateImageLink from "../../utils/generateImageLink";
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
+import formatTimeWithHours from "../../utils/formatTimeWithHours";
+import formateCourseDuration from "../../utils/formateCourseDuration";
 
 const CourseDetails = () => {
-    const courseDetails = {
-        id: '4g65a4ga56g4a65g4a65',
-        courseThumbnail: 'https://i.ibb.co.com/hXCZhdt/thumbnail.jpg',
-        courseName: 'Introduction to User Experience Design',
-        shortDescription: 'This course is meticulously crafted to provide you with a foundational understanding of the principles, methodologies, and tools that drive exceptional user experiences in the digital landscape.',
-        fullDescription: 'This interactive e-learning course will introduce you to User Experience (UX) design, the art of creating products and services that are intuitive, enjoyable, and user-friendly. Gain a solid foundation in UX principles and learn to apply them in real-world scenarios through engaging modules and interactive exercises.',
-        rating: 3.6,
-        totalReviews: 1456,
-        courseDuration: 22,
-        totalLectures: 155,
-        price: 105,
-        discount: 0.5 || 0
-    }
     const { courseId } = useParams();
     // Fetch popular courses
     const { data = {}, isLoading } = useQuery({
@@ -40,11 +29,10 @@ const CourseDetails = () => {
         },
     });
 
-    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience } = data;
-    const { courseDuration } = courseDetails;
+    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience, courseDuration } = data;
     const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
     const totalStudentsWithCommas = formatNumberWithCommas(totalStudents);
-
+    const totalCourseDuration = formateCourseDuration(courseDuration || 0);
 
     // Store the star ratings in state
     const [starTypes, setStarTypes] = useState([]);
@@ -77,7 +65,7 @@ const CourseDetails = () => {
 
     // State to manage active link
     const [activeLink, setActiveLink] = useState(0);
-    const [isLoaded, setIsLoaded] = useState(false);                   
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const handleClick = (index) => {
         setActiveLink(index);
@@ -118,7 +106,10 @@ const CourseDetails = () => {
                         </div>
                         <span>({totalReviews} reviews)</span>
                         <p>|</p>
-                        <p>{courseDuration} Total Hours. {totalModules} Modules. {level}</p>
+                        <p className="capitalize">{totalCourseDuration}. {totalModules} Modules.</p>
+                        <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">
+                            {level}
+                        </div>
                     </div>
 
                     {/* Instructor Info */}
@@ -354,24 +345,6 @@ const ShareLinks = () => {
 
 // CourseOutline Components: Renders Course Outline section
 const CourseOutline = ({ courseInfo }) => {
-    // Dummy milestone data for demonstration purposes
-    const milestonesData = [
-        {
-            _id: '4fd6s4fs4f65d46fa4',
-            milestoneName: 'Milestone1: Welcome',
-            milestoneDetails: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, accusamus.'
-        },
-        {
-            _id: '4fd6s4fs4f65d46fa468',
-            milestoneName: 'Milestone2: Welcome2',
-            milestoneDetails: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, accusamus.'
-        },
-        {
-            _id: '4fd6s4fs4f5rtyd46fa4',
-            milestoneName: 'Milestone3: Welcom3',
-            milestoneDetails: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, accusamus.'
-        }
-    ];
     return (
         <>
             {
@@ -388,7 +361,8 @@ const CourseOutline = ({ courseInfo }) => {
 };
 
 const CourseOutlineItem = ({ className, milestoneData }) => {
-    const { milestoneName, milestoneDetails, totalModules } = milestoneData;
+    const { milestoneName, milestoneDetails, totalModules, duration } = milestoneData;
+    const milestoneDuration = formatTimeWithHours(duration);
     return (
         <div className={className}>
             <input type="checkbox" name="courseOutline" />
@@ -397,7 +371,7 @@ const CourseOutlineItem = ({ className, milestoneData }) => {
                     {milestoneName}
                 </span>
                 <span className="text-sm text-gray-900 font-normal">
-                    {totalModules}&nbsp;Modules&nbsp;12&nbsp;hours
+                    {totalModules} Modules {milestoneDuration}
                 </span>
             </div>
             <div className="collapse-content">

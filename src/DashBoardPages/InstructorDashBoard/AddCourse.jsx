@@ -8,7 +8,7 @@ import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 import useUploadImage from "../../hooks/useUploadImage";
 
-const AddClass = () => {
+const AddCourse = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
@@ -77,6 +77,16 @@ const AddClass = () => {
 
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
+   
+    // Calculate Course Duration
+    const totalCourseDuration = milestonesData?.reduce((totalDuration, { milestoneModules }) => {
+        const moduleDuration = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
+            const itemsDuration = moduleItems.reduce((itemTotal, { duration }) => itemTotal + (duration || 0), 0);
+            return moduleTotal + itemsDuration;
+        }, 0);
+        return totalDuration + moduleDuration;
+    }, 0) ?? 0;
+    
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
@@ -100,11 +110,12 @@ const AddClass = () => {
             price: parseFloat(price),
             discount: 0,
             courseContents: milestonesData,
+            courseDuration: totalCourseDuration,
             publish: true,
             totalModules
         };
 
-        axiosSecure.post('http://localhost:5000/api/v1/course/add', newClass).then(res => {
+        axiosSecure.post('/course/add', newClass).then(res => {
             if (res.data.result.insertedId) {
                 resetForm();
                 showSuccessMessage();
@@ -313,4 +324,4 @@ const AddClass = () => {
     );
 };
 
-export default AddClass;
+export default AddCourse;

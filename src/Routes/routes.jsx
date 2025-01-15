@@ -4,7 +4,6 @@ import Login from "../Pages/Authentication/Login/Login";
 import SignUp from "../Pages/Authentication/SignUp/SignUp";
 import Home from "../Pages/Home/Home/Home";
 import Instructors from "../Pages/Instructors/Instructors";
-import AddClass from "../DashBoardPages/InstructorDashBoard/AddClass";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import PrivateRoutes from "./PrivateRoutes";
 import InstructorRoute from "./InstructorRoute";
@@ -37,6 +36,7 @@ import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser/ManageUser";
 import BannerManagement from "../DashBoardPages/AdminDashBoard/BannerManagement/BannerManagement";
 import ManageSuspention from "../DashBoardPages/AdminDashBoard/ManageSuspention/ManageSuspention";
 import InstructorDasboard from "../DashBoardPages/InstructorDashBoard/Dashboard/InstructorDashboard";
+import AddCourse from "../DashBoardPages/InstructorDashBoard/AddCourse";
 
 
 export const router = createBrowserRouter([
@@ -193,7 +193,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'addCourse',
-            element: <AddClass />
+            element: <AddCourse />
           },
           {
             path: 'updateCourse',

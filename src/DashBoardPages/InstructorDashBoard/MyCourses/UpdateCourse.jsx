@@ -124,6 +124,15 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);    
 
+    // Calculate Course Duration
+    const totalCourseDuration = milestonesData?.reduce((totalDuration, { milestoneModules }) => {
+        const moduleDuration = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
+            const itemsDuration = moduleItems.reduce((itemTotal, { duration }) => itemTotal + (duration || 0), 0);
+            return moduleTotal + itemsDuration;
+        }, 0);
+        return totalDuration + moduleDuration;
+    }, 0) ?? 0;
+    
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseThumbnail, seats, price, discount } = data;
@@ -139,6 +148,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             price: parseFloat(price),
             discount: parseFloat(discount) || 0,
             courseContents: milestonesData,
+            courseDuration: totalCourseDuration,
             totalModules
         };
 
@@ -209,7 +219,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                                     <div className="sm:w-[26rem] sm:h-[16rem] border rounded-xl sm:p-4 relative">
                                         <img
                                             className="w-full h-full object-cover rounded-lg"
-                                            src={thumbnail || generateImageLink({imageId: courseThumbnail}) || dummyThumbnail}
+                                            src={thumbnail || generateImageLink({ imageId: courseThumbnail }) || dummyThumbnail}
                                             alt="course-thumbnail"
                                         />
                                         {

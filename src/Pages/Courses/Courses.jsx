@@ -11,6 +11,7 @@ import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
 import CoursesLoadingSkeleton from './CoursesLoadingSkeleton';
 import { addCourseToWishList, fetchWishlist, removeCourseFromWishList } from '../../services/wishlistService';
+import { getEnrollmentCoursesId } from '../../services/enrollmentCoursesService';
 import { addCourseToCart, fetchCartItems } from '../../services/cartService';
 import generateImageLink from '../../utils/generateImageLink';
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
@@ -100,7 +101,7 @@ const Courses = () => {
         queryFn: () => fetchCartItems(user?.uid)
     });
 
-    const handleAddToCart = ({_id: courseId, _instructorId}) => {
+    const handleAddToCart = ({ _id: courseId, _instructorId }) => {
         if (!user) {
             Swal.fire({
                 text: "Please log in to add this course to your cart.",
@@ -120,6 +121,15 @@ const Courses = () => {
         }
 
     };
+
+    // -------Handle Enrolled Course--------
+
+    // Fetch enrolled items
+    const { data: enrolledCourses = [], refetch: refetchEnrolledCourses } = useQuery({
+        queryKey: ['enrolled-courses', user],
+        enabled: user !== null,
+        queryFn: () => getEnrollmentCoursesId(axiosSecure, user?.uid)
+    });
 
     const totalItems = data?.coursesCount;
     const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
@@ -186,6 +196,7 @@ const Courses = () => {
                             handleRemoveFromWishlist={handleRemoveFromWishlist}
                             cartItems={cartItems}
                             handleAddToCart={handleAddToCart}
+                            enrolledCourses={enrolledCourses}
                         />
                     ))}
             </div>
@@ -246,12 +257,14 @@ const CourseCard = ({
     handleAddToWishlist,
     handleRemoveFromWishlist,
     cartItems,
-    handleAddToCart
+    handleAddToCart,
+    enrolledCourses
 }) => {
     const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount, courseDuration } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const isCourseInWishlist = wishlist.find(course => course.courseId === _id);
     const isCourseInCart = cartItems.find(course => course.courseId === _id);
+    const isCourseEnrolled = enrolledCourses.find(course => course.courseId === _id);
     const totalCourseDuration = formateCourseDuration(courseDuration || 0);
     const [isLoaded, setIsLoaded] = useState(false);
     const handleImageLoad = () => {
@@ -315,9 +328,15 @@ const CourseCard = ({
                             Go To Cart
                         </button>
                         :
-                        <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                            Add To Cart
-                        </button>
+                        isCourseEnrolled
+                            ?
+                            <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                Enrolled
+                            </button>
+                            :
+                            <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                Add To Cart
+                            </button>
                 }
                 {/* wishlist button */}
                 {

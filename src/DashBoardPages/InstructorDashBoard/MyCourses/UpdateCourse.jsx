@@ -124,6 +124,15 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);    
 
+    // Calculate Total Videoes
+    const totalVideos = milestonesData?.reduce((totalItems, { milestoneModules }) => {
+        const moduleItemsCount = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
+            const itemsCount = moduleItems.length; // Count the number of items
+            return moduleTotal + itemsCount;
+        }, 0);
+        return totalItems + moduleItemsCount;
+    }, 0) ?? 0;
+      
     // Calculate Course Duration
     const totalCourseDuration = milestonesData?.reduce((totalDuration, { milestoneModules }) => {
         const moduleDuration = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
@@ -149,7 +158,8 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             discount: parseFloat(discount) || 0,
             courseContents: milestonesData,
             courseDuration: totalCourseDuration,
-            totalModules
+            totalModules,
+            totalVideos
         };
 
         axiosSecure.patch(`http://localhost:5000/api/v1/course/update?${courseId}`, updatedCourse).then(res => {

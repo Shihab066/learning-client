@@ -7,6 +7,7 @@ import EmptyPage from "../../../components/EmptyPage/EmptyPage";
 import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.jpg';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import calculatePercentage from "../../../utils/calculatePercentage";
 
 const MyClasses = () => {
     const { user } = useAuth();
@@ -56,8 +57,9 @@ const MyClasses = () => {
 };
 
 const MyClassCard = ({ courseData }) => {
-    const { courseId, courseName, courseThumbnail, instructorName, courseCompletePercent } = courseData;
+    const { courseId, courseName, courseThumbnail, instructorName, totalLecturesWatched, totalVideos } = courseData;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
+    const courseCompletePercent = calculatePercentage(totalVideos, totalLecturesWatched);
 
     const [isLoaded, setIsLoaded] = useState(false);
     const navigate = useNavigate();
@@ -87,14 +89,26 @@ const MyClassCard = ({ courseData }) => {
                     By {instructorName}
                 </p>
                 <div className="w-full h-2.5 border rounded-full overflow-hidden">
-                    <div className={`h-full ${courseCompletePercent ? `w-[${courseCompletePercent}%]`: 'w-0'} rounded-full bg-blue-500`}></div>
+                    <div className={`h-full ${courseCompletePercent ? `w-[${courseCompletePercent}%]` : 'w-0'} rounded-full bg-blue-500`}></div>
                 </div>
-                <p className="font-medium">
-                    {courseCompletePercent || 0}% Complete
-                </p>
+                {
+                    courseCompletePercent > 0
+                        ?
+                        <p className="font-medium">
+                            {courseCompletePercent}% Complete
+                        </p>
+                        :
+                        <p className="h-6"></p>
+                }
 
                 <button onClick={() => navigate(`/course/view/${courseId}`)} className="btn w-full normal-case bg-black hover:bg-black hover:bg-opacity-80 duration-300 text-white py-2 rounded-md">
-                    Continue Learning
+                    {
+                        totalLecturesWatched === 0
+                            ?
+                            'Start Course'
+                            :
+                            'Continue Learning'
+                    }
                 </button>
             </div>
         </div>

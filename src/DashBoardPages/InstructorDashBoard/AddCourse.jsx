@@ -17,7 +17,7 @@ const AddCourse = () => {
     const [milestonesData, setMilestonesData] = useState([]);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
-    const [isCoursePublishing, setIsCoursePublishing] = useState(false);    
+    const [isCoursePublishing, setIsCoursePublishing] = useState(false);
 
     // Prevent form submission when pressing Enter key. It's used because enter button trigger the submit button when adding course contents items.
     const handleEnterButton = (e) => {
@@ -77,7 +77,16 @@ const AddCourse = () => {
 
     // Calculate Total Modules
     const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
-   
+
+    // Calculate Total Videoes
+    const totalVideos = milestonesData?.reduce((totalItems, { milestoneModules }) => {
+        const moduleItemsCount = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
+            const itemsCount = moduleItems.length; // Count the number of items
+            return moduleTotal + itemsCount;
+        }, 0);
+        return totalItems + moduleItemsCount;
+    }, 0) ?? 0;
+
     // Calculate Course Duration
     const totalCourseDuration = milestonesData?.reduce((totalDuration, { milestoneModules }) => {
         const moduleDuration = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
@@ -86,7 +95,7 @@ const AddCourse = () => {
         }, 0);
         return totalDuration + moduleDuration;
     }, 0) ?? 0;
-    
+
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
@@ -112,7 +121,8 @@ const AddCourse = () => {
             courseContents: milestonesData,
             courseDuration: totalCourseDuration,
             publish: true,
-            totalModules
+            totalModules,
+            totalVideos
         };
 
         axiosSecure.post('/course/add', newClass).then(res => {
@@ -158,7 +168,7 @@ const AddCourse = () => {
                         {...register('courseName', { required: true })}
                     />
                     {errors.courseName && <span className="text-red-600">Field is required</span>}
-                </div>                
+                </div>
 
                 {/* Image Upload */}
                 <div className="form-control">

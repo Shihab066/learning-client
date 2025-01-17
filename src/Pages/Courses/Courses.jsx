@@ -125,8 +125,8 @@ const Courses = () => {
     // -------Handle Enrolled Course--------
 
     // Fetch enrolled items
-    const { data: enrolledCourses = [], refetch: refetchEnrolledCourses } = useQuery({
-        queryKey: ['enrolled-courses', user],
+    const { data: enrolledCourses = [] } = useQuery({
+        queryKey: ['enrolled-courses'],
         enabled: user !== null,
         queryFn: () => getEnrollmentCoursesId(axiosSecure, user?.uid)
     });

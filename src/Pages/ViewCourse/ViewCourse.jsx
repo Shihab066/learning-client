@@ -121,13 +121,9 @@ const ViewCourse = () => {
 
     // Update Learning Progress on Server
     useEffect(() => {
-        if (
-            totalVideoWatched.length > data?.currentProgress?.totalLecturesWatched ||
-            currentProgress > data?.currentProgress?.courseCompletePercent
-        ) {
+        if (totalVideoWatched.length > data?.currentProgress?.totalLecturesWatched) {
             const updateDoc = {
-                totalVideoWatched: totalVideoWatched.length,
-                currentProgress,
+                totalVideoWatched: totalVideoWatched.length                
             };
 
             updateLearingProgress(user.uid, courseId, updateDoc);
@@ -136,7 +132,7 @@ const ViewCourse = () => {
 
     const radialProgressStyle = {
         background: `conic-gradient(#a855f7 ${currentProgress || 0}%, #e0e0e0 ${currentProgress || 0}% 100%)`,
-    };    
+    };
 
     return (
         <>
@@ -230,7 +226,7 @@ const ViewCourse = () => {
                                 handleExpandView={handleExpandView}
                                 autoPlay={autoPlay}
                             />
-                        }                        
+                        }
 
                         {/* Navigation Buttons */}
                         {videoIds?.length > 0 && (

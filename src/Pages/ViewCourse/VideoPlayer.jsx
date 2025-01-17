@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import React from 'react';
 
 const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
     const cloudinaryRef = useRef();
@@ -20,8 +19,8 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
         }
 
         // Disable right-click on video element
-        const playerElement = document.getElementById('vjs_video_3_html5_api');
-        const videoElement = document.getElementById('vjs_video_3');
+        const playerElement = document.querySelector('.video-container').firstChild;
+        const videoElement = document.getElementById('video-element-container');
         if (playerElement) {
             playerElement.volume = 0.5;
         }
@@ -33,9 +32,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
             return () => {
                 videoElement.removeEventListener('contextmenu', handleContextMenu);
             };
-        }
-
-        // inital player volume
+        }       
 
     }, []);
 
@@ -173,7 +170,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
     useEffect(() => {
         const handleResize = () => {
             const bodyWidth = window.innerWidth;
-            const playerElement = document.getElementById('vjs_video_3');
+            const playerElement = document.querySelector('.video-container');
             const replayBtn = document.querySelector('.vjs-icon-replay-10');
             const forwardBtn = document.querySelector('.vjs-icon-forward-10');
             const playBtn = document.querySelector('.vjs-big-play-button');
@@ -202,10 +199,10 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
     }, []);
    
     return (
-        <div className='w-full aspect-video'>
+        <div className='w-full aspect-video' id='video-element-container'>
             <video
                 ref={playerRef}
-                className={`w-full h-full`}
+                className={`w-full h-full video-container`}
                 autoPlay={autoPlay}
             />
         </div>

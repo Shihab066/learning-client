@@ -8,7 +8,6 @@ import img3 from '../../../assets/home/3.jpg';
 import img4 from '../../../assets/home/4.jpg';
 import img5 from '../../../assets/home/5.jpg';
 
-
 const Slider = () => {
     return (
         <Carousel className='' animationHandler='fade' swipeable={false} showThumbs={false} showStatus={false} autoPlay={true} infiniteLoop={true} autoFocus={true} interval={4000} transitionTime={500} stopOnHover={true} showArrows={false}>

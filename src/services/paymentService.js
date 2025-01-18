@@ -8,7 +8,7 @@ export const checkout = async (products, userId) => {
   const stripe = await stripePromise;
 
   // Call backend to create a checkout session
-  const response = await api.post(`payment/create-checkout-session`, { userId, products });
+  const response = await api.post(`/payment/create-checkout-session`, { userId, products });
 
   const session = response.data;
 
@@ -23,10 +23,10 @@ export const checkout = async (products, userId) => {
 };
 
 export const expireSession = async (sessionInfo) => {
-  await api.post(`payment/expire-session`, sessionInfo);
+  await api.post(`/payment/expire-session`, sessionInfo);
 };
 
 export const getPurchaseHistory = async (studentId) => {
-  const res = await api.get(`payment/get/${studentId}`);
+  const res = await api.get(`/payment/get/${studentId}`);
   return res.data;
 };

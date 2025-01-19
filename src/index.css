@@ -9,7 +9,6 @@ html {
 
 ::-webkit-scrollbar {
     width: 6px;
-
 }
 
 ::-webkit-scrollbar-thumb {
@@ -48,7 +47,7 @@ html {
     margin-right: 5px;
 }
 
-.profile a.active{
+.profile a.active {
     color: white;
     background: #111827;
 }
@@ -152,7 +151,7 @@ html {
     }
 }
 
-.overlay-fade-in{
+.overlay-fade-in {
     animation: bg-overlay-animation .25s ease-in;
 }
 
@@ -194,64 +193,125 @@ html {
     align-items: center;
     justify-content: center;
     width: 50px;
-    height: 50px;    
+    height: 50px;
     background-color: #2563eb;
     /* background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%); */
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
     animation: morphing 10s infinite;
     overflow: hidden;
-  }
+}
 
-  @keyframes morphing {
+@keyframes morphing {
     0% {
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-      box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
     }
+
     25% {
-      border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
     }
+
     50% {
-      border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
-      box-shadow: -10px -5px 50px rgba(0, 0, 0, 0.2);
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+        box-shadow: -10px -5px 50px rgba(0, 0, 0, 0.2);
     }
+
     75% {
-      border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
     }
+
     100% {
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-      box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        box-shadow: 15px 15px 50px rgba(0, 0, 0, 0.2);
     }
-  }
+}
 
 
-  .shake{
+.shake {
     animation: horizontal-shaking 0.3s linear;
-  }
+}
+
 /* shaking animation */
-  @keyframes horizontal-shaking {
-    0% { transform: translateX(0) }
-    25% { transform: translateX(5px) }
-    50% { transform: translateX(-5px) }
-    75% { transform: translateX(5px) }
-    100% { transform: translateX(0) }
-   }
+@keyframes horizontal-shaking {
+    0% {
+        transform: translateX(0)
+    }
+
+    25% {
+        transform: translateX(5px)
+    }
+
+    50% {
+        transform: translateX(-5px)
+    }
+
+    75% {
+        transform: translateX(5px)
+    }
+
+    100% {
+        transform: translateX(0)
+    }
+}
 
 /* accordian custom icon */
 
 .collapse-custom .collapse-custom-icon:after {
     position: absolute;
-    display: block;     
-    top: 15px;    
+    display: block;
+    top: 15px;
     right: 1.4rem;
     content: url('./assets/icon/plus.svg');
-    pointer-events: none;    
+    pointer-events: none;
 }
 
 .collapse[open].collapse-custom .collapse-custom-icon:after,
 .collapse-open.collapse-custom .collapse-custom-icon:after,
 .collapse-custom:focus:not(.collapse-close) .collapse-custom-icon:after,
-.collapse-custom:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-custom-icon:after,
-.collapse-custom:not(.collapse-close) input[type="radio"]:checked ~ .collapse-custom-icon:after {   
+.collapse-custom:not(.collapse-close) input[type="checkbox"]:checked~.collapse-custom-icon:after,
+.collapse-custom:not(.collapse-close) input[type="radio"]:checked~.collapse-custom-icon:after {
     content: url('./assets/icon/minus.svg');
+}
+
+/* skeleton style */
+.skeleton {
+    /* Using Tailwind @apply for reusable classes */
+    @apply bg-base-300;
+
+    /* Animation properties */
+    will-change: background-position;
+    animation: skeleton 1.8s ease-in-out infinite;
+
+    /* Define background gradient */
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        transparent 40%,
+        /* Ensure the theme function is properly scoped */
+        var(--tw-color-base-100, #ffffff) 50%, /* Fallback color for theme */
+        transparent 60%,
+        transparent 100%
+    );
+
+    /* Background animation settings */
+    background-size: 200% auto;
+    background-repeat: no-repeat;
+    background-position-x: -50%;
+}
+
+@media (prefers-reduced-motion) {
+    .skeleton {
+        animation-duration: 15s;
+    }
+}
+
+@keyframes skeleton {
+    from {
+        background-position: 150%;
+    }
+
+    to {
+        background-position: -50%;
+    }
 }

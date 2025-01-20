@@ -10,7 +10,7 @@ const Slider = () => {
     const { data: banners = [], isLoading } = useQuery({
         queryKey: ["client-banner"],
         queryFn: async () => {
-            const res = await api.get("/banner/get");
+            const res = await api.get("/banner/slider-images");
             const rawBanners = res.data;
 
             // Process banners directly in the query function to cache them

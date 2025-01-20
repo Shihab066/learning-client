@@ -23,7 +23,7 @@ const ManageSuspention = () => {
         enabled: !!user,
         queryFn: async () => {
             const res = await axiosSecure.get(
-                `/suspention/getUsers?limit=${limit}&search=${searchValue}`
+                `/suspension/getUsers?limit=${limit}&search=${searchValue}`
             );
             return res.data;
         },

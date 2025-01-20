@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCartItems } from "../../services/cartService";
 import useUserRole from "../../hooks/useUserRole";
 import generateImageLink from "../../utils/generateImageLink";
+import SuspendedMessageBar from "../../components/SuspendedMessageBar/SuspendedMessageBar";
+import useUserSuspensionStatus from "../../hooks/useUserSuspensionStatus";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -29,6 +31,9 @@ const Navbar = () => {
   const isStudent = userRole === "student";
   const isInstructor = userRole === "instructor";
 
+  // Retrieve user suspension status
+  const { isUserSuspended } = useUserSuspensionStatus();
+  console.log(isUserSuspended);
 
   // Handle logout and redirect to home
   const signOut = () => {
@@ -136,172 +141,178 @@ const Navbar = () => {
       <Helmet>
         {/* Add theme change logic here if needed */}
       </Helmet>
-      <div className={`bg-white z-50 sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"} relative h-fit`}>
-        <div className="lg-container flex items-center justify-between gap-x-4 pr-3  lg:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-1 lg:py-2.5">
-          <div className="flex items-center z-20">
-            {/* Hamburger icon */}
-            <div onClick={() => setIsHamburgerOpen(!isHamburgerOpen)} className="lg:hidden h-12 flex items-center">
-              {/* <Hamburger isHamburgerOpen={isHamburgerOpen} /> */}
-              <Hamburger
-                size={25}
-                toggle={setIsHamburgerOpen}
-                toggled={isHamburgerOpen}
-                direction="right"
-                rounded={true}
-              />
-            </div>
-
-            {/* Site Logo */}
-            <div onClick={() => navigate('/')} className="flex gap-x-1 items-center cursor-pointer">
-              <img src={logo} className="w-8 lg:w-10" alt="Learning Point Logo" />
-              <a className="text-gray-900 tracking-wide normal-case text-lg lg:text-xl xl:text-2xl font-bold">
-                Learning Point
-              </a>
-            </div>
-          </div>
-
-          {/* Search input */}
-          <div className={`absolute lg:static top-[3.5rem] left-0 grow`}>
-            <form onSubmit={handleSearch} className={`w-full h-fit relative`}>
-              <input
-                onChange={(e) => setSearchValue(e.target.value)}
-                type="text"
-                name="search"
-                className={`w-screen lg:w-full shadow-lg lg:shadow-none lg:border lg:rounded lg:border-black focus:outline-none pl-3 pr-10 py-2 overflow-hidden ${isSearchOpen ? "border-t block" : " hidden lg:block"
-                  }`}
-                placeholder="Search"
-                autoComplete="off"
-                value={searchValue}
-              />
-              {/* Search icon */}
-              <button type="submit" className={`cursor-pointer absolute right-[10px] top-1/2 -translate-y-1/2 lg:block ${!isSearchOpen && "hidden"}`}>
-                <img className="text-gray-600" src={searchIcon} alt="Search Icon" />
-              </button>
-            </form>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="flex items-center">
-            <div className="hidden lg:flex">
-              <ul className="menu menu-horizontal px-1 font-medium">
-                <li><NavLink to="/courses">Courses</NavLink></li>
-                <li><NavLink to="/instructors">Instructors</NavLink></li>
-                {
-                  isStudent &&
-                  <li><NavLink to="/my-classes">My Classes</NavLink></li>
-                }
-              </ul>
-            </div>
-
-            <div className="flex justify-center items-center gap-4">
-              {/* Search icon for mobile */}
-              <div
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`cursor-pointer lg:hidden ${isSearchOpen ? "text-blue-500" : "text-[#434343]"}`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 -960 960 960" width="1.5rem" fill="currentColor">
-                  <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
-                </svg>
-              </div>
-
-              {
-                user &&
-                <div className="flex items-center gap-x-6">
-                  {/* wishlist */}
-                  <Link to='/wishlist' className="hidden lg:block">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                  </Link>
-
-                  {/* cart */}
-                  <Link to='/cart'>
-                    <div className="w-fit h-fit relative mr-1 lg:mr-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M17 18a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.75 1.03H8.1l-.9 1.63l-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1zm6 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l2.36 5z"></path></svg>
-                      {
-                        cartItemCount > 0 &&
-                        <div className={`w-[1.4rem] h-5 flex justify-center items-center rounded-full bg-pink-500 text-white ${cartItemCount > 99 ? 'text-xs' : 'text-xs'} font-medium absolute -top-2.5 -right-2.5`}>
-                          {cartItemCount > 99 ? '99+' : cartItemCount}
-                        </div>
-                      }
-                    </div>
-                  </Link>
-
-                  {/* notification */}
-                  <Link to='notification' className="hidden lg:block">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M10 21h4c0 1.1-.9 2-2 2s-2-.9-2-2m11-2v1H3v-1l2-2v-6c0-3.1 2-5.8 5-6.7V4c0-1.1.9-2 2-2s2 .9 2 2v.3c3 .9 5 3.6 5 6.7v6zm-4-8c0-2.8-2.2-5-5-5s-5 2.2-5 5v7h10z"></path></svg>
-                  </Link>
-                </div>
-              }
-
-              {/* Profile or Login */}
-              <div className="hidden lg:block">
-                {loading
-                  ?
-                  <span className="loading loading-ring loading-lg"></span>
-                  :
-                  user
-                    ?
-                    <ul className="group relative">
-                      <li className="hidden lg:block">
-                        <img
-                          src={user.photoURL ? generateImageLink({ imageId: user.photoURL, height: 40, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
-                          className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
-                          referrerPolicy="no-referrer"
-                          alt="User Profile"
-                        />
-                      </li>
-
-                      {/* Child div that shows on hover and is interactive */}
-                      <ul className="border-t absolute mt-4 top-full -right-4 w-52 h-fit space-y-1 p-2 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible duration-300 z-[9999] pointer-events-auto">
-                        <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
-                          <button onClick={() => navigate(`/user/${isAdmin ? 'dashboard' : isInstructor ? 'instructor_dashboard' : isStudent ? 'profile' : ''}`)}>
-                            Manage account
-                          </button>
-                        </li>
-                        <hr />
-                        <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
-                          <button onClick={signOut}>
-                            Logout
-                          </button>
-                        </li>
-                      </ul>
-                    </ul>
-                    :
-                    <div className="items-center gap-x-4 text-sm hidden sm:flex">
-                      <Link to="/login" className="bg-white hover:bg-base-300 text-black border border-black rounded-none px-4 py-2 font-bold">
-                        Log in
-                      </Link>
-                      <Link to="/signup" className="bg-black hover:bg-opacity-80 text-white border border-black rounded-none px-4 py-2 font-bold">
-                        Sign up
-                      </Link>
-                    </div>
-                }
-              </div>
-            </div>
-          </nav>
-        </div>
+      <>
         {
-          window.innerWidth < 1024 &&
-          <>
-            {/* Dropdown menu */}
-            <ul
-              onClick={handleDropdownItemClick}
-              className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
-            >
-              <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
-                {navbarMobileItem}
-              </div>
-            </ul>
-            {/* Dark background overlay for dropdown */}
-            {
-              isHamburgerOpen &&
-              <div
-                onClick={() => setIsHamburgerOpen(false)}
-                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
-              ></div>
-            }
-          </>
+          isUserSuspended &&
+          <SuspendedMessageBar />
         }
-      </div>
+        <div className={`bg-white z-50 sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"} relative h-fit`}>
+          <div className="lg-container flex items-center justify-between gap-x-4 pr-3  lg:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-1 lg:py-2.5">
+            <div className="flex items-center z-20">
+              {/* Hamburger icon */}
+              <div onClick={() => setIsHamburgerOpen(!isHamburgerOpen)} className="lg:hidden h-12 flex items-center">
+                {/* <Hamburger isHamburgerOpen={isHamburgerOpen} /> */}
+                <Hamburger
+                  size={25}
+                  toggle={setIsHamburgerOpen}
+                  toggled={isHamburgerOpen}
+                  direction="right"
+                  rounded={true}
+                />
+              </div>
+
+              {/* Site Logo */}
+              <div onClick={() => navigate('/')} className="flex gap-x-1 items-center cursor-pointer">
+                <img src={logo} className="w-8 lg:w-10" alt="Learning Point Logo" />
+                <a className="text-gray-900 tracking-wide normal-case text-lg lg:text-xl xl:text-2xl font-bold">
+                  Learning Point
+                </a>
+              </div>
+            </div>
+
+            {/* Search input */}
+            <div className={`absolute lg:static top-[3.5rem] left-0 grow`}>
+              <form onSubmit={handleSearch} className={`w-full h-fit relative`}>
+                <input
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  type="text"
+                  name="search"
+                  className={`w-screen lg:w-full shadow-lg lg:shadow-none lg:border lg:rounded lg:border-black focus:outline-none pl-3 pr-10 py-2 overflow-hidden ${isSearchOpen ? "border-t block" : " hidden lg:block"
+                    }`}
+                  placeholder="Search"
+                  autoComplete="off"
+                  value={searchValue}
+                />
+                {/* Search icon */}
+                <button type="submit" className={`cursor-pointer absolute right-[10px] top-1/2 -translate-y-1/2 lg:block ${!isSearchOpen && "hidden"}`}>
+                  <img className="text-gray-600" src={searchIcon} alt="Search Icon" />
+                </button>
+              </form>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="flex items-center">
+              <div className="hidden lg:flex">
+                <ul className="menu menu-horizontal px-1 font-medium">
+                  <li><NavLink to="/courses">Courses</NavLink></li>
+                  <li><NavLink to="/instructors">Instructors</NavLink></li>
+                  {
+                    isStudent &&
+                    <li><NavLink to="/my-classes">My Classes</NavLink></li>
+                  }
+                </ul>
+              </div>
+
+              <div className="flex justify-center items-center gap-4">
+                {/* Search icon for mobile */}
+                <div
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className={`cursor-pointer lg:hidden ${isSearchOpen ? "text-blue-500" : "text-[#434343]"}`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 -960 960 960" width="1.5rem" fill="currentColor">
+                    <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+                  </svg>
+                </div>
+
+                {
+                  user &&
+                  <div className="flex items-center gap-x-6">
+                    {/* wishlist */}
+                    <Link to='/wishlist' className="hidden lg:block">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                    </Link>
+
+                    {/* cart */}
+                    <Link to='/cart'>
+                      <div className="w-fit h-fit relative mr-1 lg:mr-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M17 18a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.75 1.03H8.1l-.9 1.63l-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1zm6 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l2.36 5z"></path></svg>
+                        {
+                          cartItemCount > 0 &&
+                          <div className={`w-[1.4rem] h-5 flex justify-center items-center rounded-full bg-pink-500 text-white ${cartItemCount > 99 ? 'text-xs' : 'text-xs'} font-medium absolute -top-2.5 -right-2.5`}>
+                            {cartItemCount > 99 ? '99+' : cartItemCount}
+                          </div>
+                        }
+                      </div>
+                    </Link>
+
+                    {/* notification */}
+                    <Link to='notification' className="hidden lg:block">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M10 21h4c0 1.1-.9 2-2 2s-2-.9-2-2m11-2v1H3v-1l2-2v-6c0-3.1 2-5.8 5-6.7V4c0-1.1.9-2 2-2s2 .9 2 2v.3c3 .9 5 3.6 5 6.7v6zm-4-8c0-2.8-2.2-5-5-5s-5 2.2-5 5v7h10z"></path></svg>
+                    </Link>
+                  </div>
+                }
+
+                {/* Profile or Login */}
+                <div className="hidden lg:block">
+                  {loading
+                    ?
+                    <span className="loading loading-ring loading-lg"></span>
+                    :
+                    user
+                      ?
+                      <ul className="group relative">
+                        <li className="hidden lg:block">
+                          <img
+                            src={user.photoURL ? generateImageLink({ imageId: user.photoURL, height: 40, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
+                            className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
+                            referrerPolicy="no-referrer"
+                            alt="User Profile"
+                          />
+                        </li>
+
+                        {/* Child div that shows on hover and is interactive */}
+                        <ul className="border-t absolute mt-4 top-full -right-4 w-52 h-fit space-y-1 p-2 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible duration-300 z-[9999] pointer-events-auto">
+                          <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
+                            <button onClick={() => navigate(`/user/${isAdmin ? 'dashboard' : isInstructor ? 'instructor_dashboard' : isStudent ? 'profile' : ''}`)}>
+                              Manage account
+                            </button>
+                          </li>
+                          <hr />
+                          <li className="p-1 rounded text-center hover:bg-black hover:text-white duration-300">
+                            <button onClick={signOut}>
+                              Logout
+                            </button>
+                          </li>
+                        </ul>
+                      </ul>
+                      :
+                      <div className="items-center gap-x-4 text-sm hidden sm:flex">
+                        <Link to="/login" className="bg-white hover:bg-base-300 text-black border border-black rounded-none px-4 py-2 font-bold">
+                          Log in
+                        </Link>
+                        <Link to="/signup" className="bg-black hover:bg-opacity-80 text-white border border-black rounded-none px-4 py-2 font-bold">
+                          Sign up
+                        </Link>
+                      </div>
+                  }
+                </div>
+              </div>
+            </nav>
+          </div>
+          {
+            window.innerWidth < 1024 &&
+            <>
+              {/* Dropdown menu */}
+              <ul
+                onClick={handleDropdownItemClick}
+                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
+              >
+                <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
+                  {navbarMobileItem}
+                </div>
+              </ul>
+              {/* Dark background overlay for dropdown */}
+              {
+                isHamburgerOpen &&
+                <div
+                  onClick={() => setIsHamburgerOpen(false)}
+                  className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
+                ></div>
+              }
+            </>
+          }
+        </div>
+      </>
     </>
   );
 };

@@ -1,8 +1,13 @@
 import { toastSuccess } from '../utils/toastUtils';
 import api from './baseAPI';
 
-export const fetchCartItems = async (userId) => {
-    const res = await api.get(`/cart/get/${userId}`);
+export const fetchCartItems = async (axiosSecure, userId) => {
+    const res = await axiosSecure.get(`/cart/get/${userId}`);
+    return res.data;
+};
+
+export const fetchCartCourses = async (axiosSecure, cartItems) => {
+    const res = await axiosSecure.post(`/cart/courses`, { cartItems });
     return res.data;
 };
 
@@ -26,9 +31,4 @@ export const removeCourseFromCart = async (userId, courseId, refetchCart) => {
     if (res.data.deletedCount) {
         refetchCart();
     }
-};
-
-export const fetchCartCourses = async (cartItems) => {
-    const res = await api.post(`/cart/courses`, { cartItems });
-    return res.data;
 };

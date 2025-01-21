@@ -12,6 +12,7 @@ import useUserRole from "../../hooks/useUserRole";
 import generateImageLink from "../../utils/generateImageLink";
 import SuspendedMessageBar from "../../components/SuspendedMessageBar/SuspendedMessageBar";
 import useUserSuspensionStatus from "../../hooks/useUserSuspensionStatus";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -21,6 +22,7 @@ function usePathQuery() {
 
 const Navbar = () => {
   const { user, logOut, loading } = useAuth();
+  const [axiosSecure] = useAxiosSecure();
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +35,6 @@ const Navbar = () => {
 
   // Retrieve user suspension status
   const { isUserSuspended } = useUserSuspensionStatus();
-  console.log(isUserSuspended);
 
   // Handle logout and redirect to home
   const signOut = () => {
@@ -128,10 +129,10 @@ const Navbar = () => {
 
   // cart items count 
   const { data: cartItemCount } = useQuery({
-    queryKey: ['cartCount', user],
-    enabled: user !== null,
-    queryFn: async () => {
-      const cartItems = await fetchCartItems(user?.uid);
+    queryKey: ['cartCount', user, isStudent],
+    enabled: user !== null && isStudent,
+    queryFn: async () => {            
+      const cartItems = await fetchCartItems(axiosSecure, user?.uid);
       return cartItems.filter(item => item.savedForLater === false).length;
     }
   });

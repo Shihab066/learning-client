@@ -302,7 +302,7 @@ const SuspendModal = ({ userInfo, setUserInfo }) => {
 
             if (confirmAction.isConfirmed) {
                 const res = await axiosSecure.post(
-                    `http://localhost:5000/api/v1/suspention/addUser`,
+                    `/suspension/addUser`,
                     suspendData
                 );
 

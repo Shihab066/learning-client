@@ -48,7 +48,7 @@ const ManageSuspention = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const res = await axiosSecure.delete(
-                    `/suspention/remove/${user_id}/${suspend_id}`
+                    `/suspension/remove/${user_id}/${suspend_id}`
                 );
                 if (res.data.deletedCount) {
                     toastSuccess("Operation successful");

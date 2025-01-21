@@ -8,35 +8,41 @@ import Loading from "../../components/Loading/Loading";
 import EmptyPage from "../../components/EmptyPage/EmptyPage";
 import { checkout, expireSession } from "../../services/paymentService";
 import { useEffect } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useUserRole from "../../hooks/useUserRole";
 
 const Cart = () => {
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
+    const [userRole] = useUserRole();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const fetchCourse = async () => {
-        const cartItems = await fetchCartItems(user?.uid);
-        const cartCourses = await fetchCartCourses(cartItems);
-        queryClient.refetchQueries(['cartCount']);
+    const fetchCourse = async () => {        
+        const cartItems = await fetchCartItems(axiosSecure, user?.uid);
+        const cartCourses = await fetchCartCourses(axiosSecure, cartItems);
+        // queryClient.refetchQueries(['cartCount']);
         return cartCourses;
     };
 
     // Fetch courses of cartItems
     const { data: cartCourses = [], refetch: refetchCartItems, isLoading: isCartCourseLoading } = useQuery({
-        queryKey: ['cartCourses', user],
-        enabled: user !== null,
+        queryKey: ['cartCourses', user, userRole],
+        enabled: (user !== null && userRole === 'student'),
         queryFn: () => fetchCourse()
     });
-    
+
     const activeCartItems = cartCourses?.filter(course => course.savedForLater === false);
     const inActiveCartItems = cartCourses?.filter(course => course.savedForLater === true);
 
     const handleCartItemStatus = (courseId, savedForLater) => {
         updateCartItemStatus(user.uid, courseId, savedForLater, refetchCartItems);
+        queryClient.refetchQueries(['cartCount']);
     };
 
     const handleRemoveFromCart = (courseId) => {
         removeCourseFromCart(user.uid, courseId, refetchCartItems);
+        queryClient.refetchQueries(['cartCount']);
     };
 
     // calculate course price 
@@ -59,7 +65,7 @@ const Cart = () => {
             const coursePrice = Number((price - (price * (discount / 100))).toFixed(2));
             const courseData = {
                 courseId: _id,
-                _instructorId : _instructorId,
+                _instructorId: _instructorId,
                 name: courseName,
                 image: image,
                 price: coursePrice

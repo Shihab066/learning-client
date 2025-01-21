@@ -16,6 +16,7 @@ import { addCourseToCart, fetchCartItems } from '../../services/cartService';
 import generateImageLink from '../../utils/generateImageLink';
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
 import formateCourseDuration from '../../utils/formateCourseDuration';
+import useUserRole from '../../hooks/useUserRole';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -26,6 +27,7 @@ const Courses = () => {
     const { user } = useAuth();
     const email = user?.email;
     const [axiosSecure] = useAxiosSecure();
+    const [userRole] = useUserRole();
     const navigate = useNavigate();
     const location = useLocation();
     const query = usePathQuery();
@@ -96,9 +98,9 @@ const Courses = () => {
 
     // Fetch cart items
     const { data: cartItems = [], refetch: refetchCartItems } = useQuery({
-        queryKey: ['cart', user],
-        enabled: user !== null,
-        queryFn: () => fetchCartItems(user?.uid)
+        queryKey: ['cart', user, userRole],
+        enabled: user !== null && userRole === 'student',
+        queryFn: () => fetchCartItems(axiosSecure, user?.uid)
     });
 
     const handleAddToCart = ({ _id: courseId, _instructorId }) => {

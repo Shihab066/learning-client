@@ -8,14 +8,16 @@ import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.j
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import calculatePercentage from "../../../utils/calculatePercentage";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const MyClasses = () => {
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
 
     const { data: enrollmentCourses = [], isLoading: isEnrollmentcourseLoading } = useQuery({
         queryKey: ['myClasses', user],
         enabled: user !== null,
-        queryFn: () => getEnrollmentCourses(user.uid)
+        queryFn: () => getEnrollmentCourses(axiosSecure, user.uid)
     });
 
     console.log(enrollmentCourses);

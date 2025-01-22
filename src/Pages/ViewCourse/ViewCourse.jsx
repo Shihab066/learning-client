@@ -7,10 +7,12 @@ import formatTimeWithMin from "../../utils/formatTimeWithMin";
 import { getEnrollmentCourseContents, updateLearingProgress } from "../../services/enrollmentCoursesService";
 import useAuth from "../../hooks/useAuth";
 import CourseCompleteAnimation from "./CourseCompleteAnimation";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ViewCourse = () => {
     const { courseId } = useParams();
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
 
     // State management
@@ -31,8 +33,9 @@ const ViewCourse = () => {
 
     // Fetch data using React Query
     const { data = {} } = useQuery({
-        queryKey: ['course-contents', courseId],
-        queryFn: async () => await getEnrollmentCourseContents('fs', courseId),
+        queryKey: ['course-contents', user, courseId],
+        enabled: !!user,
+        queryFn: async () => await getEnrollmentCourseContents(axiosSecure, user.uid, courseId)
     });
 
     // Automatically enable autoplay if progress is less than 100%
@@ -123,10 +126,10 @@ const ViewCourse = () => {
     useEffect(() => {
         if (totalVideoWatched.length > data?.currentProgress?.totalLecturesWatched) {
             const updateDoc = {
-                totalVideoWatched: totalVideoWatched.length                
+                totalVideoWatched: totalVideoWatched.length
             };
 
-            updateLearingProgress(user.uid, courseId, updateDoc);
+            updateLearingProgress(axiosSecure, user.uid, courseId, updateDoc);
         }
     }, [totalVideoWatched, currentProgress]);
 

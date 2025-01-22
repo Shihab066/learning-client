@@ -31,9 +31,7 @@ const SignUp = () => {
                 const userData = {
                     _id: result?.user?.uid,
                     name: name || "anonymous",
-                    email,
-                    image,
-                    role: 'student',
+                    email,                                       
                     signupMethod: 'password'
                 }
                 axios.post('http://localhost:5000/api/v1/user/add', userData)

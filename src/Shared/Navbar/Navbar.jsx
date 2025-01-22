@@ -129,7 +129,7 @@ const Navbar = () => {
 
   // cart items count 
   const { data: cartItemCount } = useQuery({
-    queryKey: ['cartCount', user, isStudent],
+    queryKey: ['cartCount', user, userRole],
     enabled: user !== null && isStudent,
     queryFn: async () => {            
       const cartItems = await fetchCartItems(axiosSecure, user?.uid);

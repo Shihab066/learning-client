@@ -118,8 +118,8 @@ const Courses = () => {
                 }
             });
         } else {
-            addCourseToCart(user.uid, courseId, _instructorId, refetchCartItems)
-                .then(() => queryClient.refetchQueries(['cartCount']))
+            addCourseToCart(axiosSecure, user.uid, courseId, _instructorId, refetchCartItems)
+                .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
         }
 
     };

@@ -18,7 +18,7 @@ const Cart = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const fetchCourse = async () => {        
+    const fetchCourse = async () => {
         const cartItems = await fetchCartItems(axiosSecure, user?.uid);
         const cartCourses = await fetchCartCourses(axiosSecure, cartItems);
         // queryClient.refetchQueries(['cartCount']);
@@ -36,13 +36,13 @@ const Cart = () => {
     const inActiveCartItems = cartCourses?.filter(course => course.savedForLater === true);
 
     const handleCartItemStatus = (courseId, savedForLater) => {
-        updateCartItemStatus(user.uid, courseId, savedForLater, refetchCartItems);
-        queryClient.refetchQueries(['cartCount']);
+        updateCartItemStatus(axiosSecure, user.uid, courseId, savedForLater, refetchCartItems)
+            .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
     };
 
     const handleRemoveFromCart = (courseId) => {
-        removeCourseFromCart(user.uid, courseId, refetchCartItems);
-        queryClient.refetchQueries(['cartCount']);
+        removeCourseFromCart(axiosSecure, user.uid, courseId, refetchCartItems)
+            .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
     };
 
     // calculate course price 

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Loading from '../../../components/Loading/Loading';
 import EmptyPage from '../../../components/EmptyPage/EmptyPage';
 import formatDate from '../../../utils/formatDate';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 // Order row component for each purchase item
 const OrderRow = ({ data }) => (
@@ -60,10 +61,11 @@ const OrderRow = ({ data }) => (
 
 const PurchaseHistory = () => {
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
     const { data: purchaseData = [], isLoading: isPurchaseDataLoading } = useQuery({
         queryKey: ['paymentsData'],
         enabled: !!user,
-        queryFn: () => getPurchaseHistory(user.uid)
+        queryFn: () => getPurchaseHistory(axiosSecure, user.uid)
     });
 
     return (

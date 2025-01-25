@@ -1,14 +1,13 @@
 import { loadStripe } from '@stripe/stripe-js';
-import api from './baseAPI';
 
 // Load your publishable key from the Stripe Dashboard
 const stripePromise = loadStripe(import.meta.env.VITE_PAYMENT_KEY);
 
-export const checkout = async (products, userId) => {
+export const checkout = async (axiosSecure, products, userId) => {
   const stripe = await stripePromise;
 
   // Call backend to create a checkout session
-  const response = await api.post(`/payment/create-checkout-session`, { userId, products });
+  const response = await axiosSecure.post(`/payment/create-checkout-session`, { userId, products });
 
   const session = response.data;
 
@@ -22,11 +21,11 @@ export const checkout = async (products, userId) => {
   }
 };
 
-export const expireSession = async (sessionInfo) => {
-  await api.post(`/payment/expire-session`, sessionInfo);
+export const expireSession = async (axiosSecure, sessionInfo) => {
+  await axiosSecure.post(`/payment/expire-session`, sessionInfo);
 };
 
-export const getPurchaseHistory = async (studentId) => {
-  const res = await api.get(`/payment/get/${studentId}`);
+export const getPurchaseHistory = async (axiosSecure, studentId) => {
+  const res = await axiosSecure.get(`/payment/get/${studentId}`);
   return res.data;
 };

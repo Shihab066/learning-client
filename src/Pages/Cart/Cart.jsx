@@ -73,7 +73,7 @@ const Cart = () => {
             return courseData;
         });
 
-        checkout(cartItemForCheckout, user.uid);
+        checkout(axiosSecure, cartItemForCheckout, user.uid);
     };
 
     // // handle cancel checkout
@@ -83,7 +83,7 @@ const Cart = () => {
         const sessionId = queryParams.get('session');
 
         if (sessionId && token) {
-            expireSession({ token, sessionId });
+            expireSession(axiosSecure, { token, sessionId });
 
             // Remove 'cancel' parameter from the URL without reloading the page
             queryParams.delete('cancel');

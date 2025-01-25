@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 import EditIcon from "../../../components/Icons/EditIcon";
 import DeleteIcon from "../../../components/Icons/DeleteIcon";
 import Loading from "../../../components/Loading/Loading";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Feedback = () => {
     const { user } = useAuth(); // Retrieve the authenticated user
+    const [axiosSecure] = useAxiosSecure();
     const { data: feedback, isLoading } = useQuery({
         queryKey: ["my-feedback"],
         enabled: !!user, // Enable the query only if a user exists
         queryFn: async () => {
-            const res = await getFeedbackById(user.uid);
+            const res = await getFeedbackById(axiosSecure, user.uid);
             return res;
         },
     });
@@ -28,7 +30,7 @@ const Feedback = () => {
 
             {/* Content Section */}
             {isLoading ? (
-                <Loading /> 
+                <Loading />
             ) : (
                 <>
                     {/* Show feedback if data exists, otherwise render the feedback form */}
@@ -44,6 +46,7 @@ const Feedback = () => {
 };
 
 const FeedbackForm = ({ user }) => {
+    const [axiosSecure] = useAxiosSecure();
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -63,7 +66,7 @@ const FeedbackForm = ({ user }) => {
         };
 
         // Submit feedback
-        const res = await addFeedback(feedbackData);
+        const res = await addFeedback(axiosSecure, feedbackData);
         if (res.insertedId) {
             toastSuccess('Your feedback has been submitted.');
             form.reset(); // Reset form fields
@@ -111,6 +114,7 @@ const FeedbackForm = ({ user }) => {
 };
 
 const MyFeedback = ({ user, data }) => {
+    const [axiosSecure] = useAxiosSecure();
     const { headline, feedback } = data;
 
     // Prepare feedback data for edit form
@@ -127,7 +131,7 @@ const MyFeedback = ({ user, data }) => {
     const handleRemoveFeedback = () => {
         removeAlert().then(async (result) => {
             if (result.isConfirmed) {
-                const res = await removeFeedback(user.uid);
+                const res = await removeFeedback(axiosSecure, user.uid);
                 if (res.deletedCount) {
                     toastSuccess('Your feedback has been removed');
                     queryClient.refetchQueries(['my-feedback']); // Refetch feedback data
@@ -180,6 +184,7 @@ const FeedbackUpdateForm = ({ feedbackData, setIsEditEnable }) => {
     const { headline, feedback } = formData; // Destructure current form values
     const [isUpdateBtnDisable, setIsUpdateBtnDisable] = useState(true); // Track button state
     const queryClient = useQueryClient(); // React Query client for data refetching
+    const [axiosSecure] = useAxiosSecure();
 
     // Handle input field changes
     const handleInputChange = (e) => {
@@ -190,7 +195,7 @@ const FeedbackUpdateForm = ({ feedbackData, setIsEditEnable }) => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await updateFeedback(formData);
+        const res = await updateFeedback(axiosSecure, formData);
         if (res.modifiedCount) {
             toastSuccess('Feedback updated successfully');
             setIsEditEnable(false);
@@ -244,9 +249,8 @@ const FeedbackUpdateForm = ({ feedbackData, setIsEditEnable }) => {
                 <input
                     type="submit"
                     value="Save"
-                    className={`w-fit rounded px-4 py-2.5 text-sm font-medium text-white bg-black cursor-pointer ${
-                        isUpdateBtnDisable ? 'opacity-50 pointer-events-none cursor-not-allowed' : ''
-                    }`}
+                    className={`w-fit rounded px-4 py-2.5 text-sm font-medium text-white bg-black cursor-pointer ${isUpdateBtnDisable ? 'opacity-50 pointer-events-none cursor-not-allowed' : ''
+                        }`}
                 />
             </form>
 

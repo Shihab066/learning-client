@@ -5,22 +5,22 @@ export const getAllFeedback = async () => {
     return res.data;
 };
 
-export const getFeedbackById = async (userId) => {
-    const res = await api.get(`/feedback/get/${userId}`);
+export const getFeedbackById = async (axiosSecure, userId) => {
+    const res = await axiosSecure.get(`/feedback/get/${userId}`);
     return res.data;
 };
 
-export const addFeedback = async (feedback) => {
-    const res = await api.post(`/feedback/add`, feedback);
+export const addFeedback = async (axiosSecure, feedback) => {
+    const res = await axiosSecure.post(`/feedback/add`, feedback);
     return res.data;
 };
 
-export const updateFeedback = async (updatedFeedback) => {
-    const res = await api.patch(`/feedback/update`, updatedFeedback);
+export const updateFeedback = async (axiosSecure, updatedFeedback) => {
+    const res = await axiosSecure.patch(`/feedback/update`, updatedFeedback);
     return res.data;
 };
 
-export const removeFeedback = async (userId) => {
-    const res = await api.delete(`/feedback/delete/${userId}`);
+export const removeFeedback = async (axiosSecure, userId) => {
+    const res = await axiosSecure.delete(`/feedback/delete/${userId}`);
     return res.data;
 };

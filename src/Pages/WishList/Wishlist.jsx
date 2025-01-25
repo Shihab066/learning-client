@@ -4,13 +4,15 @@ import useAuth from "../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWishlist, fetchWishlistCourses, removeCourseFromWishList } from "../../services/wishlistService";
 import generateImageLink from "../../utils/generateImageLink";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Wishlist = () => {
-    const { user } = useAuth();    
+    const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
 
     const fetchCourse = async () => {
-        const wishlist = await fetchWishlist(user?.uid);
-        const wishlistCourses = await fetchWishlistCourses(wishlist)
+        const wishlist = await fetchWishlist(axiosSecure, user?.uid);
+        const wishlistCourses = await fetchWishlistCourses(axiosSecure, wishlist)
         return wishlistCourses;
     };
 
@@ -22,7 +24,7 @@ const Wishlist = () => {
     });
 
     const handleRemoveFromWishlist = (courseId) => {
-        removeCourseFromWishList(user.uid, courseId, refetchWishlist);
+        removeCourseFromWishList(axiosSecure, user.uid, courseId, refetchWishlist);
     };
 
     return (
@@ -78,7 +80,7 @@ const CourseCard = ({ courseData, handleRemoveFromWishlist }) => {
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top"
-                    src={generateImageLink({imageId: courseThumbnail})}
+                    src={generateImageLink({ imageId: courseThumbnail })}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>

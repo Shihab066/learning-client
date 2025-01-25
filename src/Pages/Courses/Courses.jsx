@@ -83,15 +83,15 @@ const Courses = () => {
     const { data: wishlist = [], refetch: refetchWishlist } = useQuery({
         queryKey: ['wishlist', user],
         enabled: user !== null,
-        queryFn: () => fetchWishlist(user?.uid)
+        queryFn: () => fetchWishlist(axiosSecure, user?.uid)
     });
 
     const handleAddToWishlist = (courseId) => {
-        addCourseToWishList(user.uid, courseId, refetchWishlist);
+        addCourseToWishList(axiosSecure, user.uid, courseId, refetchWishlist);
     };
 
     const handleRemoveFromWishlist = (courseId) => {
-        removeCourseFromWishList(user.uid, courseId, refetchWishlist);
+        removeCourseFromWishList(axiosSecure, user.uid, courseId, refetchWishlist);
     };
 
     // -------Handle Cart--------

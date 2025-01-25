@@ -8,10 +8,12 @@ import generateImageLink from "../../../utils/generateImageLink";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
 import Loading from "../../../components/Loading/Loading";
 import EmptyPage from "../../../components/EmptyPage/EmptyPage";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const MyReviewsHistory = () => {
     // Extract user data from the authentication context
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
 
     // State to track the selected review data for the update modal
     const [selectedReview, setSelectedReview] = useState(null);
@@ -25,7 +27,7 @@ const MyReviewsHistory = () => {
     } = useQuery({
         queryKey: ['my-reviews', limit],
         enabled: !!user,          // Only enable the query if the user is authenticated
-        queryFn: async () => await getStudentReviews(user.uid, limit),
+        queryFn: async () => await getStudentReviews(axiosSecure, user.uid, limit),
     });
 
     // Render a loading indicator if the data is still being fetched
@@ -158,6 +160,7 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
 
     const closeRef = useRef(); // Ref to close the modal
     const { user } = useAuth(); // Access authenticated user data
+    const [axiosSecure] = useAxiosSecure();
 
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true); // State to toggle the update button
 
@@ -191,7 +194,7 @@ const UpdateReviewModal = ({ selectedReview, setSelectedReview, refetch }) => {
             review,
         };
 
-        const res = await updateReview(reviewData);
+        const res = await updateReview(axiosSecure, reviewData);
 
         if (res.modifiedCount) {
             toastSuccess("Your review has been updated.");

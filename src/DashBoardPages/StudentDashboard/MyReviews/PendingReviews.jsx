@@ -7,17 +7,19 @@ import { Link } from "react-router-dom";
 import generateImageLink from "../../../utils/generateImageLink";
 import { useRef, useState } from "react";
 import { toastSuccess } from "../../../utils/toastUtils";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const PendingReviews = () => {
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
     const [courseIdForReview, setCourseIdForReview] = useState(''); // this state is used in addCourseModal to add review for specific course
     const [limit, setLimit] = useState(6);
-    
+
     // Fetch pending reviews data using React Query
     const { data, isLoading } = useQuery({
         queryKey: ['pending-reviews', limit],
         enabled: !!user, // Ensure query runs only if the user is logged in
-        queryFn: () => getPendingReviews(user.uid, limit),
+        queryFn: () => getPendingReviews(axiosSecure, user.uid, limit),
     });
 
     return (
@@ -110,6 +112,7 @@ const PendingReviewCard = ({ data, setCourseIdForReview }) => {
 const AddReviewModal = ({ courseIdForReview, setCourseIdForReview }) => {
     const closeRef = useRef();
     const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
     const [rating, setRating] = useState(0);
     const ratingMessage = ['Select Rating', 'Awful, not what I expected at all', 'Poor, pretty disappointed', 'Average, could be better', 'Good, what I expected', 'Amazing, above expectations!'];
 
@@ -124,7 +127,7 @@ const AddReviewModal = ({ courseIdForReview, setCourseIdForReview }) => {
             review: e.target.review.value,
         };
 
-        const res = await addReview(reviewData);
+        const res = await addReview(axiosSecure, reviewData);
 
         if (res.insertedId) {
             toastSuccess('Your review has been submitted.')

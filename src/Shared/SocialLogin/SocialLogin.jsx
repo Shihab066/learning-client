@@ -17,8 +17,7 @@ const SocialLogin = ({ from }) => {
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
                 setIsLoggedIn(true),
-
-                    axiosSecure.post('/user/add', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                axiosSecure.post('/user/add', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
                 navigate(from, { replace: true })
             })
     }

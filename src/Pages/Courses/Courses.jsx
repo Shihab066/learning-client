@@ -89,7 +89,13 @@ const Courses = () => {
     });
 
     const handleAddToWishlist = (courseId) => {
-        addCourseToWishList(axiosSecure, user.uid, courseId, refetchWishlist);
+        if (!user) {
+            toastWarning('Log in to add this course.')
+        } else if (isStudent) {
+            addCourseToWishList(axiosSecure, user.uid, courseId, refetchWishlist)
+        } else if (!isStudent) {
+            toastWarning('Log in by student account')
+        }
     };
 
     const handleRemoveFromWishlist = (courseId) => {
@@ -107,23 +113,12 @@ const Courses = () => {
 
     const handleAddToCart = ({ _id: courseId, _instructorId }) => {
         if (!user) {
-            Swal.fire({
-                text: "Please log in to add this course to your cart.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Login"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate('/login')
-                }
-            });
+            toastWarning('Log in to add this course.')
         } else if (isStudent) {
             addCourseToCart(axiosSecure, user.uid, courseId, _instructorId, refetchCartItems)
                 .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
         } else if (!isStudent) {
-            toastWarning('Login by student account')
+            toastWarning('Log in by student account')
         }
 
     };
@@ -328,40 +323,37 @@ const CourseCard = ({
                 </div>
             </Link>
 
-            {
-                isStudent &&
-                <div className="relative px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
-                    {
-                        isCourseInCart
+            <div className="relative px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
+                {
+                    isCourseInCart
+                        ?
+                        <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                            Go To Cart
+                        </button>
+                        :
+                        isCourseEnrolled
                             ?
-                            <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                                Go To Cart
+                            <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                Enrolled
                             </button>
                             :
-                            isCourseEnrolled
-                                ?
-                                <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                                    Enrolled
-                                </button>
-                                :
-                                <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                                    Add To Cart
-                                </button>
-                    }
-                    {/* wishlist button */}
-                    {
-                        isCourseInWishlist
-                            ?
-                            <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                            <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                Add To Cart
                             </button>
-                            :
-                            <button onClick={() => handleAddToWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                            </button>
-                    }
-                </div>
-            }
+                }
+                {/* wishlist button */}
+                {
+                    isCourseInWishlist
+                        ?
+                        <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                        </button>
+                        :
+                        <button onClick={() => handleAddToWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                        </button>
+                }
+            </div>
         </div>
     );
 };

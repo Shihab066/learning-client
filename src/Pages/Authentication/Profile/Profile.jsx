@@ -217,7 +217,7 @@ const Profile = () => {
                                     />
                                     <img
                                         className="w-16 h-16 bg-white rounded-full object-cover drop-shadow-lg"
-                                        src={img || user?.photoURL ? generateImageLink({ imageId: user.photoURL, height: 64, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
+                                        src={img ? img : user?.photoURL ? generateImageLink({ imageId: user.photoURL, height: 64, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
                                         alt="profile picture"
                                     />
                                     <button
@@ -340,7 +340,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     const [formData, setFormData] = useState(user);
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
     const { headline, bioData, experience, languages, expertise, socialLinks } = formData;
-    const {website, linkedIn, youtube, twitter, facebook } = socialLinks;
+    const { website, linkedIn, youtube, twitter, facebook } = socialLinks;
 
     // Set default options for language and expertise selection
     const selectedLanguageOptions = languages?.map(language => languageOptions.find(option => option.value === language)) || [];

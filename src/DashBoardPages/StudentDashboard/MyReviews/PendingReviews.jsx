@@ -16,7 +16,7 @@ const PendingReviews = () => {
     const [limit, setLimit] = useState(6);
 
     // Fetch pending reviews data using React Query
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, refetch: refetchPendingReviews } = useQuery({
         queryKey: ['pending-reviews', limit],
         enabled: !!user, // Ensure query runs only if the user is logged in
         queryFn: () => getPendingReviews(axiosSecure, user.uid, limit),
@@ -62,6 +62,7 @@ const PendingReviews = () => {
                 key={courseIdForReview}
                 courseIdForReview={courseIdForReview}
                 setCourseIdForReview={setCourseIdForReview}
+                refetchPendingReviews={refetchPendingReviews}
             />
         </div>
     );
@@ -109,7 +110,7 @@ const PendingReviewCard = ({ data, setCourseIdForReview }) => {
     );
 };
 
-const AddReviewModal = ({ courseIdForReview, setCourseIdForReview }) => {
+const AddReviewModal = ({ courseIdForReview, setCourseIdForReview, refetchPendingReviews }) => {
     const closeRef = useRef();
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
@@ -127,10 +128,11 @@ const AddReviewModal = ({ courseIdForReview, setCourseIdForReview }) => {
             review: e.target.review.value,
         };
 
-        const res = await addReview(axiosSecure, reviewData);
+        const res = await addReview(axiosSecure, user?.uid, reviewData);
 
         if (res.insertedId) {
             toastSuccess('Your review has been submitted.')
+            refetchPendingReviews()
             e.target.reset();
             closeRef.current.click();
         }

@@ -1,23 +1,37 @@
 
-import {  useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/baseAPI';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Loading from '../../components/Loading/Loading';
 import ErrorPage from '../ErrorPage/ErrorPage';
 import { useLottie } from 'lottie-react';
 import tickMarkAnimation from '../../assets/Animation/successAnimation.json';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAuth from '../../hooks/useAuth';
+import useUserRole from '../../hooks/useUserRole';
+import { useEffect } from 'react';
 
 const PaymentSuccess = () => {
     const { sessionId, token } = useParams();
+    const [axiosSecure] = useAxiosSecure();
+    const { user } = useAuth();
+    const [userRole] = useUserRole();
+    const queryClient = useQueryClient();
 
     const { data: paymentStatus, isLoading } = useQuery({
         queryKey: ['paymentStatus'],
         queryFn: async () => {
-            const res = await api.get(`payment/retrieve-checkout-session/${token}/${sessionId}/${token}`)
+            const res = await axiosSecure.get(`payment/retrieve-checkout-session/${token}/${sessionId}/${token}`);
             return res.data;
         },
         refetchOnWindowFocus: false
     });
+
+    useEffect(() => {
+        if (paymentStatus?.success) {
+            queryClient.refetchQueries(['cartCount', user, userRole]);
+        }
+    }, [paymentStatus])
 
     return (
         <section className='lg-container'>

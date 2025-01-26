@@ -88,7 +88,7 @@ const ProfileLayout = () => {
                 <aside className={`fixed duration-300 top-14 sm:top-16 lg:top-[4.5rem] left-0 ${isAsideOpen ? 'w-[17.5rem]' : 'w-0'} h-screen xl:static xl:w-[18rem] xl:h-fit text-gray-700 bg-[#F8FAFC] overflow-x-hidden overflow-y-auto pb-[4.1rem] lg:pb-0 pt-6 xl:rounded-xl z-10`}>
                     <article className="flex flex-col justify-center items-center gap-y-2 pb-6 relative min-w-[280px] xl:min-w-full">
                         <img
-                            className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover"
+                            className="w-28 h-28 sm:w-40 sm:h-40 rounded-full object-cover bg-white"
                             src={user?.photoURL ? generateImageLink({ imageId: user.photoURL, height: 160, aspectRatio: 1.0, cropMode: 'fill' }) : dummyProfile}
                             alt="profile image" />
                         <h2 className="text-gray-900 text-xl font-medium">

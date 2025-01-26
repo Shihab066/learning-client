@@ -1,22 +1,24 @@
 
-import axios from 'axios';
 import logo from '../../assets/icon/google.png'
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/baseAPI';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 const SocialLogin = ({ from }) => {
     const { googleSignIn, setJwtToken, setIsLoggedIn } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
     const handleSignIn = () => {
         googleSignIn()
             .then(async (result) => {
                 const user = result.user;
-                const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: user.accessToken });
+                const res = await api.post('/token/upload', { uniqueKey: user.accessToken });
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
                 setIsLoggedIn(true),
 
-                    axios.post('https://learning-info-bd.vercel.app/users', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                    axiosSecure.post('/user/add', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
                 navigate(from, { replace: true })
             })
     }

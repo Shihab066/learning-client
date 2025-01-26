@@ -13,7 +13,7 @@ const InstructorProfile = () => {
     const { data: instructorDetails = {}, isLoading, isError } = useQuery({
         queryKey: ['instructorDetails'],
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/instructor/details/${instructorId}`);
+            const res = await axiosSecure.get(`/instructor/details/${instructorId}`);
             return res.data;
         },
     });

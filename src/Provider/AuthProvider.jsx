@@ -1,8 +1,9 @@
 import { createContext, useEffect, useState } from "react";
-import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode, fetchSignInMethodsForEmail } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
 import axios from "axios";
 import { jwtDecode } from 'jwt-decode';
+import api from "../services/baseAPI";
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -48,6 +49,10 @@ const AuthProvider = ({ children }) => {
         return signInWithEmailAndPassword(auth, email, password)
     };
 
+    const getSignInMehtod = (email) => {
+        return fetchSignInMethodsForEmail(auth, email)
+    }
+
     const googleSignIn = () => {
         return signInWithPopup(auth, googleProvider)
     };
@@ -70,7 +75,7 @@ const AuthProvider = ({ children }) => {
 
     const verifyAccessToken = async (token) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/v1/token/verify', { token })
+            const res = await api.post('/token/verify', { token })
             return res.data.valid;
         } catch (error) {
             return false;
@@ -79,7 +84,7 @@ const AuthProvider = ({ children }) => {
 
     const refreshAccessToken = async (firebaseToken) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: firebaseToken })
+            const res = await api.post('/token/upload', { uniqueKey: firebaseToken })
             const token = await res.data.token;
             if (token) {
                 localStorage.setItem('access-token', token);  
@@ -138,6 +143,7 @@ const AuthProvider = ({ children }) => {
         passwordReset,
         verifyOobCode,
         signIn,
+        getSignInMehtod,
         googleSignIn,
         logOut
     };

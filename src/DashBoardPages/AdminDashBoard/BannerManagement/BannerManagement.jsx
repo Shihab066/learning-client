@@ -20,7 +20,7 @@ const BannerManagement = () => {
     const { data, isLoading, refetch: refetchBanners } = useQuery({
         queryKey: ['banner'],
         queryFn: async () => {
-            const res = await axiosSecure.get('http://localhost:5000/api/v1/banner/get');
+            const res = await axiosSecure.get('/banner/get');
             return res.data;
         },
     });
@@ -28,7 +28,7 @@ const BannerManagement = () => {
     // Handle banner deletion
     const handleDelete = async (bannerId) => {
         try {
-            const res = await axiosSecure.delete(`http://localhost:5000/api/v1/banner/delete/${bannerId}`);
+            const res = await axiosSecure.delete(`/banner/delete/${bannerId}`);
             if (res.data.deletedCount) {
                 toastSuccess('Banner removed');
                 refetchBanners();

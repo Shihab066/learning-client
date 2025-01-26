@@ -39,7 +39,7 @@ const Profile = () => {
         queryKey: ['user', user?.uid],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/user/get/${user?.uid}`);
+            const res = await axiosSecure.get(`/user/get/${user?.uid}`);
             return res.data;
         }
     });
@@ -79,7 +79,7 @@ const Profile = () => {
 
         try {
             await updateUser(name, image);
-            axiosSecure.patch(`http://localhost:5000/api/v1/user/update/${user?.uid}`, { name, image })
+            axiosSecure.patch(`/user/update/${user?.uid}`, { name, image })
                 .then(res => {
                     if (res.data.result.modifiedCount) {
                         Swal.fire({
@@ -409,7 +409,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
             expertise: expertiseSelection
         };
 
-        axiosSecure.patch(`http://localhost:5000/api/v1/user/updateInstructorProfile/${user?._id}`, payload)
+        axiosSecure.patch(`/user/updateInstructorProfile/${user?._id}`, payload)
             .then(res => {
                 if (res.data.result.modifiedCount) {
                     Swal.fire({

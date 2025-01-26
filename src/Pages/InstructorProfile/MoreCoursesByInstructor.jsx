@@ -1,19 +1,18 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
 import GenerateDynamicStar from "../../components/GenerateDynamicStar/GenerateDynamicStar";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import { Link } from "react-router-dom";
 import generateImageLink from "../../utils/generateImageLink";
+import api from "../../services/baseAPI";
 
 const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
     const { data: courses = [], isLoading } = useQuery({
         queryKey: ['moreCourseByInstructor'],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/course/moreCourse/${instructorId}`);
+            const res = await api.get(`/course/moreCourse/${instructorId}`);
             return res.data;
         }
     })    

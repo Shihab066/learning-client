@@ -1,16 +1,16 @@
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import GenerateStar from '../../components/GenerateStar/GenerateStar';
 import InstructorsLoadingSkeleton from './InstructorsLoadingSkeleton';
 import generateImageLink from '../../utils/generateImageLink';
+import api from '../../services/baseAPI';
 
 const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
         queryKey: ['instructor'],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:5000/api/v1/instructor/all')
+            const res = await api.get('/instructor/all')
             return res.data
         }
     })

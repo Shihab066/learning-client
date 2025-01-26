@@ -27,7 +27,7 @@ const ManageUser = () => {
         queryKey: ['fetch-users', limit, searchValue],
         enabled: !!user,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/user/all/${user.uid}?limit=${limit}&search=${searchValue}`);
+            const res = await axiosSecure.get(`/user/all/${user.uid}?limit=${limit}&search=${searchValue}`);
             return res.data;
         },
     });
@@ -209,7 +209,7 @@ const ChangeRoleModal = ({ userInfo }) => {
 
         if (confirmAction.isConfirmed) {
             try {
-                const res = await axiosSecure.patch(`http://localhost:5000/api/v1/user/role/${user.uid}`, { //the 'user.uid is the current admin id not the user id'
+                const res = await axiosSecure.patch(`/user/role/${user.uid}`, { //the 'user.uid is the current admin id not the user id'
                     role: newRole,
                     userId,
                 });

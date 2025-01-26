@@ -13,6 +13,9 @@ import generateImageLink from "../../utils/generateImageLink";
 import SuspendedMessageBar from "../../components/SuspendedMessageBar/SuspendedMessageBar";
 import useUserSuspensionStatus from "../../hooks/useUserSuspensionStatus";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import HeartIcon from "../../components/Icons/HeartIcon";
+import CartIcon from "../../components/Icons/CartIcon";
+import BellIcon from "../../components/Icons/BellIcon";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -131,7 +134,7 @@ const Navbar = () => {
   const { data: cartItemCount } = useQuery({
     queryKey: ['cartCount', user, userRole],
     enabled: user !== null && isStudent,
-    queryFn: async () => {            
+    queryFn: async () => {
       const cartItems = await fetchCartItems(axiosSecure, user?.uid);
       return cartItems.filter(item => item.savedForLater === false).length;
     }
@@ -218,27 +221,32 @@ const Navbar = () => {
                 {
                   user &&
                   <div className="flex items-center gap-x-6">
-                    {/* wishlist */}
-                    <Link to='/wishlist' className="hidden lg:block">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                    </Link>
+                    {
+                      isStudent &&
+                      <>
+                        {/* wishlist */}
+                        <Link to='/wishlist' className="hidden lg:block hover:text-blue-700">
+                          <HeartIcon />
+                        </Link>
 
-                    {/* cart */}
-                    <Link to='/cart'>
-                      <div className="w-fit h-fit relative mr-1 lg:mr-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M17 18a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.75 1.03H8.1l-.9 1.63l-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1zm6 16a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l2.36 5z"></path></svg>
-                        {
-                          cartItemCount > 0 &&
-                          <div className={`w-[1.4rem] h-5 flex justify-center items-center rounded-full bg-pink-500 text-white ${cartItemCount > 99 ? 'text-xs' : 'text-xs'} font-medium absolute -top-2.5 -right-2.5`}>
-                            {cartItemCount > 99 ? '99+' : cartItemCount}
+                        {/* cart */}
+                        <Link to='/cart'>
+                          <div className="w-fit h-fit relative mr-1 lg:mr-0 hover:text-blue-700">
+                            <CartIcon />
+                            {
+                              cartItemCount > 0 &&
+                              <div className={`w-[1.4rem] h-5 flex justify-center items-center rounded-full bg-pink-500 text-white ${cartItemCount > 99 ? 'text-xs' : 'text-xs'} font-medium absolute -top-2.5 -right-2.5`}>
+                                {cartItemCount > 99 ? '99+' : cartItemCount}
+                              </div>
+                            }
                           </div>
-                        }
-                      </div>
-                    </Link>
+                        </Link>
+                      </>
+                    }
 
                     {/* notification */}
-                    <Link to='notification' className="hidden lg:block">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 hover:text-blue-700" viewBox="0 0 24 24"><path fill="currentColor" d="M10 21h4c0 1.1-.9 2-2 2s-2-.9-2-2m11-2v1H3v-1l2-2v-6c0-3.1 2-5.8 5-6.7V4c0-1.1.9-2 2-2s2 .9 2 2v.3c3 .9 5 3.6 5 6.7v6zm-4-8c0-2.8-2.2-5-5-5s-5 2.2-5 5v7h10z"></path></svg>
+                    <Link to='notification' className="hidden lg:block hover:text-blue-700">
+                      <BellIcon />
                     </Link>
                   </div>
                 }

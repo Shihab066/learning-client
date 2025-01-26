@@ -6,7 +6,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import useAuth from "../../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
-import axios from "axios";
+import api from "../../../services/baseAPI";
 
 const Login = () => {
     const location = useLocation();
@@ -20,7 +20,7 @@ const Login = () => {
         signIn(email, password)
             .then(async (result) => {
                 const user = result.user;
-                const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: user.accessToken });
+                const res = await api.post('/token/upload', { uniqueKey: user.accessToken });
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);

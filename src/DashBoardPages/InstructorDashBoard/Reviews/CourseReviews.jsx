@@ -18,7 +18,7 @@ const CourseReviews = () => {
         queryKey: ['reviews', user?.uid, searchValue, limit],
         enabled: !loading,
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/review/instructor/${user?.uid}?search=${searchValue}&limit=${limit}`);
+            const res = await axiosSecure.get(`/review/instructor/${user?.uid}?search=${searchValue}&limit=${limit}`);
             return res.data;
         }
     })

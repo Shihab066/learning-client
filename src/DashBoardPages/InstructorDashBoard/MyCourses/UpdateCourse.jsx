@@ -15,7 +15,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     const { data: course, refetch, isLoading } = useQuery({
         queryKey: ['course', courseId],
         queryFn: async () => {
-            const res = await axiosSecure.get(`http://localhost:5000/api/v1/course/instructorCourse?${courseId}`);
+            const res = await axiosSecure.get(`/course/instructorCourse?${courseId}`);
             return res.data;
         }
     });
@@ -162,7 +162,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             totalVideos
         };
 
-        axiosSecure.patch(`http://localhost:5000/api/v1/course/update?${courseId}`, updatedCourse).then(res => {
+        axiosSecure.patch(`/course/update?${courseId}`, updatedCourse).then(res => {
             if (res.data.result.modifiedCount) {
                 resetForm();
                 showSuccessMessage();

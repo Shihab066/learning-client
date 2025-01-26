@@ -8,7 +8,7 @@ const useVideoUpload = () => {
         if (video) {
             console.log(video);           
             // Request upload signature from your backend
-            const { data } = await axiosSecure.get(`http://localhost:5000/api/v1/upload/video/get-signature`);
+            const { data } = await axiosSecure.get(`/upload/video/get-signature`);
             const { cloud_name, cloud_api, timestamp, signature, upload_preset } = data                           
 
             const formData = new FormData();                
@@ -25,7 +25,7 @@ const useVideoUpload = () => {
                 formData
             );            
 
-            const savePlaylist = await axios.post(`http://localhost:5000/api/v1/upload/video/add/${response.data.public_id}`)
+            const savePlaylist = await axiosSecure.post(`/upload/video/add/${response.data.public_id}`)
             if (savePlaylist.data.insertedId) {                
                 console.log('video upload successfully');    
                 return response.data.public_id

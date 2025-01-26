@@ -1,17 +1,17 @@
 import PopularCoursesSkeleton from "./PopularCoursesSkeleton/PopularCoursesSkeleton";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import GenerateDynamicStar from "../../../components/GenerateDynamicStar/GenerateDynamicStar";
 import formatNumberWithCommas from "../../../utils/formateNumberWithCommas";
 import generateImageLink from "../../../utils/generateImageLink";
+import api from "../../../services/baseAPI";
 
 const PopularCourses = ({isMobileView}) => {
     // Fetch popular courses
     const { data: courses = [], isLoading } = useQuery({
         queryKey: ['popularCourses'],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:5000/api/v1/course/top');
+            const res = await api.get('/course/top');
             return res.data;
         },
     });

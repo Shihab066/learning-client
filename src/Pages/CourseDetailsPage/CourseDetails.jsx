@@ -17,6 +17,7 @@ import generateImageLink from "../../utils/generateImageLink";
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
 import formatTimeWithHours from "../../utils/formatTimeWithHours";
 import formateCourseDuration from "../../utils/formateCourseDuration";
+import api from "../../services/baseAPI";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
@@ -24,7 +25,7 @@ const CourseDetails = () => {
     const { data = {}, isLoading } = useQuery({
         queryKey: ['courseDetails'],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/course/details/${courseId}`);
+            const res = await api.get(`/course/details/${courseId}`);
             return res.data;
         },
     });
@@ -389,7 +390,7 @@ const Reviews = ({ courseId, rating = 'not rated yet', totalReviews = 0 }) => {
     const { data, isLoading } = useQuery({
         queryKey: ['courseReviews', limit],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/review/get/${courseId}?limit=${limit}`);
+            const res = await api.get(`/review/get/${courseId}?limit=${limit}`);
             return res.data;
         }
     })
@@ -450,7 +451,7 @@ const StarRating = ({ courseId }) => {
     const { data: ratingPercentages = {} } = useQuery({
         queryKey: ['ratingPercentages'],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/review/ratings/${courseId}`);
+            const res = await api.get(`/review/ratings/${courseId}`);
             return res.data;
         }
     })

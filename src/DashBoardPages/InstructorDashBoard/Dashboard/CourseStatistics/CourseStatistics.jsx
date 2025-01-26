@@ -14,7 +14,7 @@ const CourseStatistics = () => {
         queryKey: ['instructor-courses-statistics'],
         enabled: Boolean(user),
         queryFn: async () => {
-            const response = await axiosSecure(`/dashboard/instructor/getCoursesStatistics/${user.uid}`);
+            const response = await axiosSecure.get(`/dashboard/instructor/getCoursesStatistics/${user.uid}`);
             return response.data;
         }
     });

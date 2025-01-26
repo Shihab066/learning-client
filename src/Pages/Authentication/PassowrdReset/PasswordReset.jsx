@@ -1,9 +1,8 @@
 import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
-import axios from "axios";
 
 const PasswordReset = () => {
-    const { sendAccountRecoveryEmail } = useAuth();
+    const { sendAccountRecoveryEmail, getSignInMehtod } = useAuth();
 
     // Handle password reset email submission
     const handlePasswordResetEmail = (event) => {
@@ -11,10 +10,9 @@ const PasswordReset = () => {
         const email = event.target.email.value;
 
         if (email) {
-            axios.get(`https://learning-info-bd.vercel.app/getSignupMethod/${email}`)
-                .then(res => {
-                    const { signupMethod } = res.data;
-                    if (signupMethod === 'password') {
+            getSignInMehtod(email)
+                .then((signInMethods) => {                    
+                    if (signInMethods.includes('password')) {
                         sendAccountRecoveryEmail(email)
                             .then(() => {
                                 Swal.fire({

@@ -1,29 +1,26 @@
-
-
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import { FaCheck, FaExclamationCircle } from 'react-icons/fa';
 import useAuth from "../../../hooks/useAuth";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
-const img_hosting_secret_key = import.meta.env.VITE_IMAGE_UPLOAD_TOKEN;
+import api from "../../../services/baseAPI";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const SignUp = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const [confirmPassword, setConfirmPassword] = useState(null);
-    const { createUser, updateUser, setJwtToken, setIsLoggedIn } = useAuth();
-    const img_hosting_url = `https://api.imgbb.com/1/upload?key=${img_hosting_secret_key}`;
-    const [image, setImage] = useState('');
+    const { createUser, updateUser, setJwtToken, setIsLoggedIn } = useAuth();    
     const navigate = useNavigate();
+    const [axiosSecure] = useAxiosSecure();
 
     const onSubmit = async (data) => {
         const { name, email, password } = data;
         await createUser(email, password)
             .then(async (result) => {
-                const res = await axios.post('http://localhost:5000/api/v1/token/upload', { uniqueKey: result.user.accessToken });
+                const res = await api.post('/token/upload', { uniqueKey: result.user.accessToken });
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
@@ -34,7 +31,7 @@ const SignUp = () => {
                     email,                                       
                     signupMethod: 'password'
                 }
-                axios.post('http://localhost:5000/api/v1/user/add', userData)
+                axiosSecure.post('/user/add', userData)
                     .then(res => {
                         if (res.data.result.insertedId) {
                             reset()

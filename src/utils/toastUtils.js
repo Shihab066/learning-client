@@ -5,6 +5,10 @@ export const toastSuccess = (successMessage) => {
     toast.success(successMessage);
 };
 
+export const toastWarning = (successMessage) => {
+    toast(successMessage, { icon: '⚠️' });
+};
+
 export const toastError = (errorMessage) => {
     toast.error(errorMessage);
 };

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import useAuth from '../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
@@ -17,6 +16,8 @@ import generateImageLink from '../../utils/generateImageLink';
 import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg';
 import formateCourseDuration from '../../utils/formateCourseDuration';
 import useUserRole from '../../hooks/useUserRole';
+import { toastWarning } from '../../utils/toastUtils';
+import api from '../../services/baseAPI';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -33,6 +34,7 @@ const Courses = () => {
     const query = usePathQuery();
     const queryClient = useQueryClient();
     const [reFetchCourse, setRefetchCourse] = useState(false);
+    const isStudent = userRole === 'student';
 
     // Get query parameters
     const limit = parseInt(query.get('limit')) || '';
@@ -72,7 +74,7 @@ const Courses = () => {
     const { data, isLoading: isCoursesLoading = true } = useQuery({
         queryKey: ['courses', reFetchCourse],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
+            const res = await api.get(`/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
     });
@@ -81,8 +83,8 @@ const Courses = () => {
 
     // Fetch wishlist items
     const { data: wishlist = [], refetch: refetchWishlist } = useQuery({
-        queryKey: ['wishlist', user],
-        enabled: user !== null,
+        queryKey: ['wishlist', user, isStudent],
+        enabled: !!user && isStudent,
         queryFn: () => fetchWishlist(axiosSecure, user?.uid)
     });
 
@@ -98,8 +100,8 @@ const Courses = () => {
 
     // Fetch cart items
     const { data: cartItems = [], refetch: refetchCartItems } = useQuery({
-        queryKey: ['cart', user, userRole],
-        enabled: user !== null && userRole === 'student',
+        queryKey: ['cart', user, isStudent],
+        enabled: !!user && isStudent,
         queryFn: () => fetchCartItems(axiosSecure, user?.uid)
     });
 
@@ -117,9 +119,11 @@ const Courses = () => {
                     navigate('/login')
                 }
             });
-        } else {
+        } else if (isStudent) {
             addCourseToCart(axiosSecure, user.uid, courseId, _instructorId, refetchCartItems)
                 .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
+        } else if (!isStudent) {
+            toastWarning('Login by student account')
         }
 
     };
@@ -128,8 +132,8 @@ const Courses = () => {
 
     // Fetch enrolled items
     const { data: enrolledCourses = [] } = useQuery({
-        queryKey: ['enrolled-courses'],
-        enabled: user !== null,
+        queryKey: ['enrolled-courses', user, isStudent],
+        enabled: !!user && isStudent,
         queryFn: () => getEnrollmentCoursesId(axiosSecure, user?.uid)
     });
 
@@ -199,6 +203,7 @@ const Courses = () => {
                             cartItems={cartItems}
                             handleAddToCart={handleAddToCart}
                             enrolledCourses={enrolledCourses}
+                            isStudent={isStudent}
                         />
                     ))}
             </div>
@@ -260,7 +265,8 @@ const CourseCard = ({
     handleRemoveFromWishlist,
     cartItems,
     handleAddToCart,
-    enrolledCourses
+    enrolledCourses,
+    isStudent
 }) => {
     const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount, courseDuration } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
@@ -322,37 +328,40 @@ const CourseCard = ({
                 </div>
             </Link>
 
-            <div className="relative px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
-                {
-                    isCourseInCart
-                        ?
-                        <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                            Go To Cart
-                        </button>
-                        :
-                        isCourseEnrolled
+            {
+                isStudent &&
+                <div className="relative px-3 pb-3 lg:px-4 lg:pb-4 space-y-2">
+                    {
+                        isCourseInCart
                             ?
-                            <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                                Enrolled
+                            <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                Go To Cart
                             </button>
                             :
-                            <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
-                                Add To Cart
+                            isCourseEnrolled
+                                ?
+                                <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                    Enrolled
+                                </button>
+                                :
+                                <button onClick={() => handleAddToCart({ _id, _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                    Add To Cart
+                                </button>
+                    }
+                    {/* wishlist button */}
+                    {
+                        isCourseInWishlist
+                            ?
+                            <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
                             </button>
-                }
-                {/* wishlist button */}
-                {
-                    isCourseInWishlist
-                        ?
-                        <button onClick={() => handleRemoveFromWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-red-500" viewBox="0 0 24 24"><path fill="#ef4444" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                        </button>
-                        :
-                        <button onClick={() => handleAddToWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
-                        </button>
-                }
-            </div>
+                            :
+                            <button onClick={() => handleAddToWishlist(_id)} className="absolute bottom-[calc(100%+7.3rem)] right-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 text-black" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.75 3.5C5.127 3.5 3 5.76 3 8.547C3 14.125 12 20.5 12 20.5s9-6.375 9-11.953C21 5.094 18.873 3.5 16.25 3.5c-1.86 0-3.47 1.136-4.25 2.79c-.78-1.654-2.39-2.79-4.25-2.79"></path></svg>
+                            </button>
+                    }
+                </div>
+            }
         </div>
     );
 };

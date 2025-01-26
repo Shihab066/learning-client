@@ -1,4 +1,3 @@
-import axios from "axios";
 import PopularInstructorSkeleton from "./PopularInstructorsSkeleton.jsx/PopularInstructorSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import GenerateStar from "../../../components/GenerateStar/GenerateStar";
@@ -6,6 +5,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import PopularInstructorMobileSkeleton from "./PopularInstructorsSkeleton.jsx/PopularInstructorMobileSkeleton";
 import generateImageLink from "../../../utils/generateImageLink";
+import api from "../../../services/baseAPI";
 
 const PopularInstructor = ({ isMobileView }) => {
 
@@ -13,7 +13,7 @@ const PopularInstructor = ({ isMobileView }) => {
     const { data: instructors = [], isLoading } = useQuery({
         queryKey: ['popularInstructor'],
         queryFn: async () => {
-            const res = await axios.get(`http://localhost:5000/api/v1/instructor/popular`);
+            const res = await api.get(`/instructor/popular`);
             return res.data;
         },
     });

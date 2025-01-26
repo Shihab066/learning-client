@@ -17,7 +17,7 @@ const ReviewsStatistics = () => {
         queryKey: ['instructor-reviews-statistics'],
         enabled: !!user,
         queryFn: async () => {
-            const res = await axiosSecure(`/dashboard/instructor/getReviewsStatistics/${user.uid}`);
+            const res = await axiosSecure.get(`/dashboard/instructor/getReviewsStatistics/${user.uid}`);
             return res.data;
         }
     });

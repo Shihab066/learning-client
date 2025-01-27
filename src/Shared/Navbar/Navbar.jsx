@@ -16,6 +16,8 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import HeartIcon from "../../components/Icons/HeartIcon";
 import CartIcon from "../../components/Icons/CartIcon";
 import BellIcon from "../../components/Icons/BellIcon";
+import getFirstTwoInitials from "../../utils/getFirstTwoInitials";
+import ArrowIcon from "../../components/Icons/ArrowIcon";
 // import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
@@ -304,10 +306,41 @@ const Navbar = () => {
               {/* Dropdown menu */}
               <ul
                 onClick={handleDropdownItemClick}
-                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-stone-50 shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
+                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
               >
                 <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
-                  {navbarMobileItem}
+                  {
+                    user &&
+                    <div className="relative px-4 py-2 bg-slate-50 flex items-center gap-x-3">
+                      {
+                        user?.photoURL
+                          ?
+                          <img
+                            className="min-w-[3.5rem] h-14 rounded-full bg-white"
+                            src={user?.photoURL || dummyImg}
+                            alt="user image"
+                          />
+                          :
+                          <div className="min-w-[3.5rem] h-14 rounded-full text-white bg-black text-lg font-medium flex items-center justify-center">
+                            {getFirstTwoInitials(user?.displayName)}
+                          </div>
+                      }
+
+                      {/* user name */}
+                      <div className="font-bold flex flex-col">
+                        Hi, {user?.displayName}
+                        <span className="font-normal text-gray-500">Welcome back</span>
+                      </div>
+
+                      {/* arrow icon */}
+                      <div className="ml-auto">
+                        <ArrowIcon />
+                      </div>
+                    </div>
+                  }
+                  <div className="px-2">
+                    {navbarMobileItem}
+                  </div>
                 </div>
               </ul>
               {/* Dark background overlay for dropdown */}

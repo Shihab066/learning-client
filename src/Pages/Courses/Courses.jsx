@@ -116,7 +116,7 @@ const Courses = () => {
             toastWarning('Log in to add this course.')
         } else if (isStudent) {
             addCourseToCart(axiosSecure, user.uid, courseId, _instructorId, refetchCartItems)
-                .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
+                .then(() => queryClient.invalidateQueries(['cartCount']))
         } else if (!isStudent) {
             toastWarning('Log in by student account')
         }

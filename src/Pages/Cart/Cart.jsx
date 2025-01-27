@@ -37,12 +37,12 @@ const Cart = () => {
 
     const handleCartItemStatus = (courseId, savedForLater) => {
         updateCartItemStatus(axiosSecure, user.uid, courseId, savedForLater, refetchCartItems)
-            .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
+            .then(() => queryClient.invalidateQueries(['cartCount']))
     };
 
     const handleRemoveFromCart = (courseId) => {
         removeCourseFromCart(axiosSecure, user.uid, courseId, refetchCartItems)
-            .then(() => queryClient.refetchQueries(['cartCount', user, userRole]))
+            .then(() => queryClient.invalidateQueries(['cartCount']))
     };
 
     // calculate course price 

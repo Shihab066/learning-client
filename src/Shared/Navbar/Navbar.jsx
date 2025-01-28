@@ -29,6 +29,8 @@ const Navbar = () => {
   const { user, logOut, loading } = useAuth();
   const [axiosSecure] = useAxiosSecure();
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+  const [isDropDownItemOpen, setIsDropDownItemOpen] = useState(false);
+  const [currentDropdownMenuItem, setCurrentDropDownMenuItem] = useState([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -47,19 +49,99 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const profileMenuItems = {
+    student: [
+      {
+        category: 'Alert',
+        items: [
+          {
+            title: "Wishlist",
+            path: "/wishlist",
+          },
+          {
+            title: "Notification",
+            path: "/notification",
+          },        
+        ]
+      },
+      {
+        category: 'Account',
+        items: [
+          {
+            title: "Profile",
+            path: "/user/profile",
+          },
+          {
+            title: "My Reviews",
+            path: "/user/my-reviews",
+          },
+          {
+            title: "Purchase History",
+            path: "/user/purchase-history",
+          },
+          {
+            title: "Feedback",
+            path: "user/feedback",
+          },
+        ]
+      }
+    ],
+    // instructor: [
+    //   {
+    //     title: "Dashboard",
+    //     path: "/instructor/dashboard",
+    //   },
+    //   {
+    //     title: "My Classes",
+    //     path: "/instructor/classes",
+    //   },
+    //   {
+    //     title: "Create Course",
+    //     path: "/instructor/create-course",
+    //   },
+    //   {
+    //     title: "Earnings",
+    //     path: "/instructor/earnings",
+    //   },
+    //   {
+    //     title: "Support",
+    //     path: "/support",
+    //   },
+    // ],
+    // admin: [
+    //   {
+    //     title: "Admin Dashboard",
+    //     path: "/admin/dashboard",
+    //   },
+    //   {
+    //     title: "Manage Users",
+    //     path: "/admin/manage-users",
+    //   },
+    //   {
+    //     title: "Manage Courses",
+    //     path: "/admin/manage-courses",
+    //   },
+    //   {
+    //     title: "Reports",
+    //     path: "/admin/reports",
+    //   },
+    //   {
+    //     title: "Settings",
+    //     path: "/admin/settings",
+    //   },
+    // ],
+  };
+
+  useEffect(() => {
+    if (userRole) {
+      setCurrentDropDownMenuItem(profileMenuItems[userRole]);
+    }
+  }, [userRole])
+
   const navbarMobileItem = (
     <>
       <li><NavLink to="/courses">Courses</NavLink></li>
-      <li><NavLink to="/instructors">Instructors</NavLink></li>
-      {
-        user &&
-        <>
-          <hr className="mb-2" />
-          <li><NavLink to="/wishlist">Wishlist</NavLink></li>
-          <li><NavLink to="/notification">Notifications</NavLink></li>
-          <li><NavLink to="/user/profile">Manage Account</NavLink></li>
-        </>
-      }
+      <li><NavLink to="/instructors">Instructors</NavLink></li>      
       <hr className="mb-3" />
       {user
         ?
@@ -123,6 +205,7 @@ const Navbar = () => {
   // Disable scroll when hamburger menu is open
   useEffect(() => {
     document.body.style.overflow = isHamburgerOpen ? "hidden" : "";
+    // document.body.classList.add( isHamburgerOpen ? "overflow-y-hidden lg:overflow-y-auto " : "")
   }, [isHamburgerOpen]);
 
   // Close hamburger menu on dropdown item click
@@ -141,7 +224,7 @@ const Navbar = () => {
       return cartItems.filter(item => item.savedForLater === false).length;
     }
   });
-
+  console.log(currentDropdownMenuItem)
   return (
     <>
       <Helmet>
@@ -306,40 +389,80 @@ const Navbar = () => {
               {/* Dropdown menu */}
               <ul
                 onClick={handleDropdownItemClick}
-                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)] -translate-x-full ${isHamburgerOpen ? "translate-x-0" : ""}`}
+                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 ${isDropDownItemOpen ? '' : 'pb-20'} transition-all ease-[cubic-bezier(0,0,0.38,0.9)] ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}`}
               >
-                <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
-                  {
-                    user &&
-                    <div className="relative px-4 py-2 bg-slate-50 flex items-center gap-x-3">
-                      {
-                        user?.photoURL
-                          ?
-                          <img
-                            className="min-w-[3.5rem] h-14 rounded-full bg-white"
-                            src={user?.photoURL || dummyImg}
-                            alt="user image"
-                          />
-                          :
-                          <div className="min-w-[3.5rem] h-14 rounded-full text-white bg-black text-lg font-medium flex items-center justify-center">
-                            {getFirstTwoInitials(user?.displayName)}
-                          </div>
-                      }
+                <div className="relative w-full h-full">
+                  <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
+                    {
+                      user &&
+                      <div onClick={() => setIsDropDownItemOpen(true)} className="relative px-4 py-2 bg-slate-50 flex items-center gap-x-3">
+                        {
+                          user?.photoURL
+                            ?
+                            <img
+                              className="min-w-[3.5rem] w-14 h-14 rounded-full bg-white"
+                              src={user?.photoURL || dummyImg}
+                              alt="user image"
+                            />
+                            :
+                            <div className="min-w-[3.5rem] h-14 rounded-full text-white bg-black text-lg font-medium flex items-center justify-center">
+                              {getFirstTwoInitials(user?.displayName)}
+                            </div>
+                        }
 
-                      {/* user name */}
-                      <div className="font-bold flex flex-col">
-                        Hi, {user?.displayName}
-                        <span className="font-normal text-gray-500">Welcome back</span>
+                        {/* user name */}
+                        <div className="font-bold flex flex-col">
+                          Hi, {user?.displayName}
+                          <span className="font-normal text-gray-500">Welcome back</span>
+                        </div>
+
+                        {/* arrow icon */}
+                        <div className="ml-auto">
+                          <ArrowIcon />
+                        </div>
                       </div>
+                    }
+                    <div className="px-2">
+                      {navbarMobileItem}
+                    </div>
+                  </div>
 
-                      {/* arrow icon */}
-                      <div className="ml-auto">
+                  {/* dropdown item menu */}
+                  <div
+                    className={`flex-nowrap absolute top-0 left-0 h-full bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)]  ${isDropDownItemOpen ? "-translate-x-0" : "translate-x-full"}`}
+                  >
+                    {/* back to menu button */}
+                    <div onClick={() => setIsDropDownItemOpen(false)} className="font-medium px-4 py-3 bg-slate-50 flex items-center gap-x-2">
+                      <div className="w-fit rotate-180">
                         <ArrowIcon />
                       </div>
+                      Menu
                     </div>
-                  }
-                  <div className="px-2">
-                    {navbarMobileItem}
+
+                    <div className="menu px-0 text-base">
+                      {
+                        currentDropdownMenuItem.map((item, index) => {
+                          return (
+                            <div key={index} className={`${index !== currentDropdownMenuItem.length - 1 ? 'border-b': ''} py-2`}>
+                              <h2 className="px-4 text-sm font-bold text-slate-500">
+                                {item.category}
+                              </h2>
+                              <ul>
+                                {
+                                  item.items.map(item => (
+                                    <li key={item.path}>
+                                      <Link to={item.path}>
+                                        {item.title}
+                                      </Link>
+                                    </li>
+                                  ))
+                                }
+                              </ul>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
                   </div>
                 </div>
               </ul>

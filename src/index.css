@@ -7,19 +7,6 @@ html {
     scroll-behavior: auto;
 }
 
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    background: #3b5fe2;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
 .lg-container {
     max-width: 85rem;
     /* margin: 0 auto; */
@@ -169,12 +156,6 @@ html {
 }
 
 
-@media screen and (max-width:1040px) {
-    .menu a {
-        margin-right: 0;
-    }
-}
-
 @media screen and (max-width:575px) {
     .change-shape {
         clip-path: polygon(0 0%, 100% 0, 100% 100%, 0% 100%, 0 0);
@@ -182,6 +163,27 @@ html {
 
     .hamburger-react div {
         height: 3px !important;
+    }
+}
+
+@media screen and (min-width:1024px) {
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background: #3b5fe2;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+}
+
+@media screen and (max-width:1040px) {
+    .menu a {
+        margin-right: 0;
     }
 }
 
@@ -284,15 +286,14 @@ html {
     animation: skeleton 1.8s ease-in-out infinite;
 
     /* Define background gradient */
-    background-image: linear-gradient(
-        90deg,
-        transparent 0%,
-        transparent 40%,
-        /* Ensure the theme function is properly scoped */
-        var(--tw-color-base-100, #ffffff) 50%, /* Fallback color for theme */
-        transparent 60%,
-        transparent 100%
-    );
+    background-image: linear-gradient(90deg,
+            transparent 0%,
+            transparent 40%,
+            /* Ensure the theme function is properly scoped */
+            var(--tw-color-base-100, #ffffff) 50%,
+            /* Fallback color for theme */
+            transparent 60%,
+            transparent 100%);
 
     /* Background animation settings */
     background-size: 200% auto;

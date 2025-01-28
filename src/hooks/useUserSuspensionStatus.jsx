@@ -7,7 +7,7 @@ const useUserSuspensionStatus = () => {
     const [axiosSecure] = useAxiosSecure();
 
     const { data: isUserSuspended = '', isLoading: isSuspendedStatusLoading } = useQuery({
-        queryKey: ['userSuspendedStatus', user?.uid],
+        queryKey: ['userSuspendedStatus', user],
         enabled: user !== null,
         queryFn: async () => {
             const res = await axiosSecure.get(`/user/suspendedStatus/${user?.uid}`);

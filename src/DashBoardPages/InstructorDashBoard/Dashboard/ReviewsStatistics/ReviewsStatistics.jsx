@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
-import formatNumber from "../../../../utils/FormateNumber";
+import formatNumber from "../../../../utils/formateNumber";
 import ReviewsStatisticsSkeleton from "./ReviewsStatisticsSkeleton";
 
 

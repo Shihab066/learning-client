@@ -2,7 +2,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import GraphIncrease from "../../../../components/Icons/GraphIncrease";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
-import formatNumber from "../../../../utils/FormateNumber";
+import formatNumber from "../../../../utils/formateNumber";
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../../hooks/useAuth";
 import SalesStatisticsSkeleton from "./SalesStatisticsSkeleton";

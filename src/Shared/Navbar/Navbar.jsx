@@ -412,7 +412,7 @@ const Navbar = () => {
 
                 {
                   user &&
-                  <div className="flex items-center gap-x-6">
+                  <div className="hidden lg:flex items-center gap-x-6">
                     {
                       isStudent &&
                       <>
@@ -507,7 +507,7 @@ const Navbar = () => {
                           user?.photoURL
                             ?
                             <img
-                              className="min-w-[3.5rem] w-14 h-14 rounded-full bg-white"
+                              className="min-w-[3.5rem] w-14 h-14 rounded-full object-cover bg-white"
                               src={generateImageLink({imageId: user.photoURL, width: 128})}
                               alt="user image"
                             />

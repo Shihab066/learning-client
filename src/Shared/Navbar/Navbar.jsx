@@ -30,6 +30,7 @@ const Navbar = () => {
   const [axiosSecure] = useAxiosSecure();
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isDropDownItemOpen, setIsDropDownItemOpen] = useState(false);
+  const [currentMobileNavItems, setCurrentMobileNavItems] = useState([]);
   const [currentDropdownMenuItem, setCurrentDropDownMenuItem] = useState([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ const Navbar = () => {
           {
             title: "Notification",
             path: "/notification",
-          },        
+          },
         ]
       },
       {
@@ -86,75 +87,167 @@ const Navbar = () => {
         ]
       }
     ],
-    // instructor: [
-    //   {
-    //     title: "Dashboard",
-    //     path: "/instructor/dashboard",
-    //   },
-    //   {
-    //     title: "My Classes",
-    //     path: "/instructor/classes",
-    //   },
-    //   {
-    //     title: "Create Course",
-    //     path: "/instructor/create-course",
-    //   },
-    //   {
-    //     title: "Earnings",
-    //     path: "/instructor/earnings",
-    //   },
-    //   {
-    //     title: "Support",
-    //     path: "/support",
-    //   },
-    // ],
-    // admin: [
-    //   {
-    //     title: "Admin Dashboard",
-    //     path: "/admin/dashboard",
-    //   },
-    //   {
-    //     title: "Manage Users",
-    //     path: "/admin/manage-users",
-    //   },
-    //   {
-    //     title: "Manage Courses",
-    //     path: "/admin/manage-courses",
-    //   },
-    //   {
-    //     title: "Reports",
-    //     path: "/admin/reports",
-    //   },
-    //   {
-    //     title: "Settings",
-    //     path: "/admin/settings",
-    //   },
-    // ],
+    instructor: [
+      {
+        category: 'Alert',
+        items: [
+          {
+            title: "Notification",
+            path: "/notification",
+          },
+          {
+            title: "Reviews",
+            path: "/user/my-reviews",
+          }
+        ]
+      },
+      {
+        category: 'Account',
+        items: [
+          {
+            title: "Profile",
+            path: "/user/profile",
+          }
+        ]
+      }
+    ],
+    admin: [
+      {
+        category: null,
+        items: [
+          {
+            title: "Account Setting",
+            path: "/user/profile",
+          }
+        ]
+      }
+    ]
+  };
+
+  const dropdownNavItems = {
+    student: [
+      {
+        category: 'Learn',
+        items: [
+          {
+            title: "My learning",
+            path: "/my-classes",
+          }
+        ]
+      },
+      {
+        category: null,
+        items: [
+          {
+            title: "Courses",
+            path: "/courses",
+          },
+          {
+            title: "Instructors",
+            path: "/instructors",
+          }
+        ]
+      }
+    ],
+    instructor: [
+      {
+        category: null,
+        items: [
+          {
+            title: "Dashboard",
+            path: "/user/instructor_dashboard",
+          },
+          {
+            title: "Courses",
+            path: "/user/myCourses",
+          },
+          {
+            title: "Create Course",
+            path: "/user/addCourse",
+          },
+
+        ]
+      }
+    ],
+    admin: [
+      {
+        category: null,
+        items: [
+          {
+            title: "Dashboard",
+            path: "/user/dashboard",
+          },
+          {
+            title: "Manage course",
+            path: "/user/manage-course",
+          },
+          {
+            title: "Manager user",
+            path: "/user/manage-user",
+          },
+          {
+            title: "Banner management",
+            path: "/user/banner-management",
+          },
+          {
+            title: "Suspension control",
+            path: "/user/manage-suspension",
+          }
+        ]
+      }
+    ],
   };
 
   useEffect(() => {
     if (userRole) {
+      setCurrentMobileNavItems(dropdownNavItems[userRole]);
       setCurrentDropDownMenuItem(profileMenuItems[userRole]);
     }
   }, [userRole])
 
   const navbarMobileItem = (
     <>
-      <li><NavLink to="/courses">Courses</NavLink></li>
-      <li><NavLink to="/instructors">Instructors</NavLink></li>      
-      <hr className="mb-3" />
       {user
         ?
-        <li>
-          <div onClick={signOut} className="flex items-center gap-x-1 bg-black text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.232 3.25H9.768c-.813 0-1.469 0-2 .043c-.546.045-1.026.14-1.47.366a3.75 3.75 0 0 0-1.64 1.639c-.226.444-.32.924-.365 1.47c-.043.531-.043 1.187-.043 2v6.464c0 .813 0 1.469.043 2c.045.546.14 1.026.366 1.47a3.75 3.75 0 0 0 1.639 1.64c.444.226.924.32 1.47.365c.531.043 1.187.043 2 .043h2.464c.813 0 1.469 0 2-.043c.546-.045 1.026-.14 1.47-.366a3.75 3.75 0 0 0 1.64-1.639c.226-.444.32-.924.365-1.47c.043-.531.043-1.187.043-2V15a.75.75 0 0 0-1.5 0v.2c0 .852 0 1.447-.038 1.91c-.038.453-.107.714-.207.912c-.216.423-.56.767-.983.983c-.198.1-.459.17-.913.207c-.462.037-1.056.038-1.909.038H9.8c-.852 0-1.447 0-1.91-.038c-.453-.038-.714-.107-.911-.207a2.25 2.25 0 0 1-.984-.983c-.1-.198-.17-.459-.207-.913c-.037-.462-.038-1.057-.038-1.909V8.8c0-.852 0-1.447.038-1.91c.037-.453.107-.714.207-.911a2.25 2.25 0 0 1 .984-.984c.197-.1.458-.17.912-.207c.462-.037 1.057-.038 1.909-.038h2.4c.853 0 1.447 0 1.91.038c.453.037.714.107.912.207c.423.216.767.56.983.984c.1.197.17.458.207.912c.037.462.038 1.057.038 1.909V9a.75.75 0 0 0 1.5 0v-.232c0-.813 0-1.469-.043-2c-.045-.546-.14-1.026-.366-1.47a3.75 3.75 0 0 0-1.639-1.64c-.444-.226-.924-.32-1.47-.365c-.531-.043-1.187-.043-2-.043"></path><path fill="currentColor" d="M12.47 8.47a.75.75 0 1 1 1.06 1.06l-1.72 1.72H20a.75.75 0 0 1 0 1.5h-8.19l1.72 1.72a.75.75 0 1 1-1.06 1.06l-3-3a.75.75 0 0 1 0-1.06z"></path></svg>
-            <span>
-              Logout
-            </span>
-          </div>
-        </li>
-        :
         <>
+          <div className="menu px-0 text-base">
+            {
+              currentMobileNavItems.map((item, index) => {
+                return (
+                  <div key={index} className={`border-b ${currentMobileNavItems.length > 1 ? 'py-1.5' : ''} `}>
+                    {
+                      item.category &&
+                      <h2 className="px-2 text-sm font-bold text-slate-500">
+                        {item.category}
+                      </h2>
+                    }
+                    <ul>
+                      {
+                        item.items.map(item => (
+                          <li key={item.path}>
+                            <Link to={item.path} className="px-2">
+                              {item.title}
+                            </Link>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                )
+              })
+            }
+          </div>
+          <li>
+            <div onClick={signOut} className="flex items-center gap-x-1 bg-black text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.232 3.25H9.768c-.813 0-1.469 0-2 .043c-.546.045-1.026.14-1.47.366a3.75 3.75 0 0 0-1.64 1.639c-.226.444-.32.924-.365 1.47c-.043.531-.043 1.187-.043 2v6.464c0 .813 0 1.469.043 2c.045.546.14 1.026.366 1.47a3.75 3.75 0 0 0 1.639 1.64c.444.226.924.32 1.47.365c.531.043 1.187.043 2 .043h2.464c.813 0 1.469 0 2-.043c.546-.045 1.026-.14 1.47-.366a3.75 3.75 0 0 0 1.64-1.639c.226-.444.32-.924.365-1.47c.043-.531.043-1.187.043-2V15a.75.75 0 0 0-1.5 0v.2c0 .852 0 1.447-.038 1.91c-.038.453-.107.714-.207.912c-.216.423-.56.767-.983.983c-.198.1-.459.17-.913.207c-.462.037-1.056.038-1.909.038H9.8c-.852 0-1.447 0-1.91-.038c-.453-.038-.714-.107-.911-.207a2.25 2.25 0 0 1-.984-.983c-.1-.198-.17-.459-.207-.913c-.037-.462-.038-1.057-.038-1.909V8.8c0-.852 0-1.447.038-1.91c.037-.453.107-.714.207-.911a2.25 2.25 0 0 1 .984-.984c.197-.1.458-.17.912-.207c.462-.037 1.057-.038 1.909-.038h2.4c.853 0 1.447 0 1.91.038c.453.037.714.107.912.207c.423.216.767.56.983.984c.1.197.17.458.207.912c.037.462.038 1.057.038 1.909V9a.75.75 0 0 0 1.5 0v-.232c0-.813 0-1.469-.043-2c-.045-.546-.14-1.026-.366-1.47a3.75 3.75 0 0 0-1.639-1.64c-.444-.226-.924-.32-1.47-.365c-.531-.043-1.187-.043-2-.043"></path><path fill="currentColor" d="M12.47 8.47a.75.75 0 1 1 1.06 1.06l-1.72 1.72H20a.75.75 0 0 1 0 1.5h-8.19l1.72 1.72a.75.75 0 1 1-1.06 1.06l-3-3a.75.75 0 0 1 0-1.06z"></path></svg>
+              <span>
+                Logout
+              </span>
+            </div>
+          </li>
+        </>
+        :
+        <div className="py-4">
           <li className="bg-black text-white">
             <Link to="/login">
               Login
@@ -166,7 +259,21 @@ const Navbar = () => {
               Sign up
             </Link>
           </li>
-        </>
+
+          <div className="border-t mt-4 text-base">
+            <li>
+              <Link to="/courses" className="px-2">
+                Courses
+              </Link>
+            </li>
+
+            <li>
+              <Link to="/instructors" className="px-2">
+                Instructors
+              </Link>
+            </li>
+          </div>
+        </div>
       }
     </>
   )
@@ -401,7 +508,7 @@ const Navbar = () => {
                             ?
                             <img
                               className="min-w-[3.5rem] w-14 h-14 rounded-full bg-white"
-                              src={user?.photoURL || dummyImg}
+                              src={generateImageLink({imageId: user.photoURL, width: 128})}
                               alt="user image"
                             />
                             :
@@ -422,7 +529,7 @@ const Navbar = () => {
                         </div>
                       </div>
                     }
-                    <div className="px-2">
+                    <div className="px-2 pb-20">
                       {navbarMobileItem}
                     </div>
                   </div>
@@ -443,10 +550,13 @@ const Navbar = () => {
                       {
                         currentDropdownMenuItem.map((item, index) => {
                           return (
-                            <div key={index} className={`${index !== currentDropdownMenuItem.length - 1 ? 'border-b': ''} py-2`}>
-                              <h2 className="px-4 text-sm font-bold text-slate-500">
-                                {item.category}
-                              </h2>
+                            <div key={index} className={`${index !== currentDropdownMenuItem.length - 1 ? 'border-b' : ''} ${currentDropdownMenuItem.length > 1 ? 'py-2' : ''} `}>
+                              {
+                                item.category &&
+                                <h2 className="px-4 text-sm font-bold text-slate-500">
+                                  {item.category}
+                                </h2>
+                              }
                               <ul>
                                 {
                                   item.items.map(item => (

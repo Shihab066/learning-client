@@ -1,6 +1,6 @@
 import { useLottie } from 'lottie-react';
 import animation1 from '../../../assets/Animation/animation3.json'
-import { RiShieldCheckLine } from "react-icons/ri";
+import ShieldCheck from '../../../components/Icons/ShieldCheck';
 const ExtraSection = ({ isSmallDevice }) => {
     return (
         <div className='lg-container '>
@@ -9,19 +9,19 @@ const ExtraSection = ({ isSmallDevice }) => {
                     <div className='text-left lg:w-[500px]'>
                         <h2 className='text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-5'>Why Choose Us!</h2>
                         <div>
-                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 mb-3'><RiShieldCheckLine className='text-xl'></RiShieldCheckLine> Expert Instructors</h4>
+                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 mb-3'><ShieldCheck/> Expert Instructors</h4>
                             <p className='text-sm lg:text-base'>
                                 Our courses are led by a team of highly qualified and experienced instructors who are passionate about their respective fields. They offer expert guidance, personalized instruction, and valuable insights to help learners enhance their skills and unlock their full potential.
                             </p>
                         </div>
                         <div>
-                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 my-3'><RiShieldCheckLine className='text-xl'></RiShieldCheckLine> Supportive Environment</h4>
+                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 my-3'><ShieldCheck/> Supportive Environment</h4>
                             <p className='text-sm lg:text-base'>
                                 We uphold a safe and monitored environment, adhering to the highest standards. Our committed team ensures that learners feel supported, motivated, and encouraged throughout their learning journey with us.
                             </p>
                         </div>
                         <div>
-                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 my-3'><RiShieldCheckLine className='text-xl'></RiShieldCheckLine> Diverse Tech Programs</h4>
+                            <h4 className='flex justify-start items-center font-semibold md:text-base lg:text-lg gap-2 my-3'><ShieldCheck/> Diverse Tech Programs</h4>
                             <p className='text-sm lg:text-base'>
                                 We provide an extensive array of tech programs designed to meet diverse interests and skill levels. Whether you&apos;re a coding enthusiast, an aspiring data scientist, or a budding UX/UI designer, we offer courses tailored to your specific needs. Our programs are crafted to empower you with the skills and knowledge.
                             </p>

@@ -2,11 +2,12 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
 import useAuth from "../../../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
 import api from "../../../services/baseAPI";
+import EyeIcon from "../../../components/Icons/EyeIcon";
+import EyeSlash from "../../../components/Icons/EyeSlash";
 
 const Login = () => {
     const location = useLocation();
@@ -65,7 +66,7 @@ const Login = () => {
                             {...register("password", { required: true })}
                         />
                         {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
-                        <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <BsEyeSlash /> : <BsEye />}</span>
+                        <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <EyeSlash /> : <EyeIcon />}</span>
                     </div>
                 </div>
 

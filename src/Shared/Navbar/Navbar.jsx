@@ -331,7 +331,7 @@ const Navbar = () => {
       return cartItems.filter(item => item.savedForLater === false).length;
     }
   });
-  console.log(currentDropdownMenuItem)
+
   return (
     <>
       <Helmet>

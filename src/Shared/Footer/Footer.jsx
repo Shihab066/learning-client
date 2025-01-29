@@ -1,5 +1,6 @@
-import { BiMailSend, BiPhone } from "react-icons/bi";
-import { IoLocationSharp } from "react-icons/io5";
+import MailIcon from "../../components/Icons/MailIcon";
+import PhoneIcon from "../../components/Icons/PhoneIcon";
+import LocationIcon from "../../components/Icons/LocationIcon";
 
 const Footer = () => {
     return (
@@ -50,13 +51,13 @@ const Footer = () => {
                 <div>
                     <span className="footer-title text-white opacity-90">Contact us</span>
                     <a className="link link-hover flex items-center gap-1">
-                        <BiMailSend className="text-xl" /> info@learningpoint.com
+                        <MailIcon /> info@learningpoint.com
                     </a>
                     <a className="link link-hover flex items-center gap-1">
-                        <BiPhone className="text-xl" /> +1 (587) 853-4367
+                        <PhoneIcon /> +1 (587) 853-4367
                     </a>
                     <a className="link link-hover flex items-center gap-1">
-                        <BiPhone className="text-xl" /> (465) 867-5309
+                        <PhoneIcon /> (465) 867-5309
                     </a>
                 </div>
 
@@ -81,11 +82,11 @@ const Footer = () => {
                 {/* Address Section */}
                 <div>
                     <span className="footer-title text-white opacity-90">Address</span>
-                    <a className="link link-hover flex mb-2">
-                        <IoLocationSharp className="text-xl" /> San Francisco,CA 94107
+                    <a className="link link-hover flex items-start mb-2">
+                        <LocationIcon /> San Francisco,CA 94107
                     </a>
-                    <a className="link link-hover flex">
-                        <IoLocationSharp className="text-xl" /> Pine Avenue, Brooklyn, <br /> NY 10001, United States
+                    <a className="link link-hover flex items-start">
+                        <LocationIcon /> Pine Avenue, Brooklyn, <br /> NY 10001, United States
                     </a>
                 </div>
             </div>

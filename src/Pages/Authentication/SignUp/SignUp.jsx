@@ -2,17 +2,18 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
-import { FaCheck, FaExclamationCircle } from 'react-icons/fa';
 import useAuth from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import api from "../../../services/baseAPI";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import TickMark from "../../../components/Icons/TickMark";
+import WarningCircle from "../../../components/Icons/WarningCircle";
 
 const SignUp = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const [confirmPassword, setConfirmPassword] = useState(null);
-    const { createUser, updateUser, setJwtToken, setIsLoggedIn } = useAuth();    
+    const { createUser, updateUser, setJwtToken, setIsLoggedIn } = useAuth();
     const navigate = useNavigate();
     const [axiosSecure] = useAxiosSecure();
 
@@ -28,7 +29,7 @@ const SignUp = () => {
                 const userData = {
                     _id: result?.user?.uid,
                     name: name || "anonymous",
-                    email,                                       
+                    email,
                     signupMethod: 'password'
                 }
                 axiosSecure.post('/user/add', userData)
@@ -103,7 +104,7 @@ const SignUp = () => {
                         {errors.password?.type === 'required' && <span className="text-red-600">Field is required</span>}
                         {errors.password?.type === 'minLength' && <span className="text-red-600">Password must be atleast 6 characters</span>}
                         {errors.password?.type === 'pattern' && <span className="text-red-600">Password must have one Uppercase and one special character</span>}
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <FaCheck className="text-green-500"></FaCheck>} {confirmPassword == 2 && <FaExclamationCircle className="text-red-600"></FaExclamationCircle>}</span>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
                     </div>
                 </div>
 
@@ -117,7 +118,7 @@ const SignUp = () => {
                             {...register("confirmPassword", { required: true })}
                         />
                         {errors.confirmPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <FaCheck className="text-green-500"></FaCheck>} {confirmPassword == 2 && <FaExclamationCircle className="text-red-600"></FaExclamationCircle>}</span>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
                     </div>
                 </div>
 

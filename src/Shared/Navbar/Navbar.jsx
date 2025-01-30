@@ -344,7 +344,7 @@ const Navbar = () => {
           isUserSuspended &&
           <SuspendedMessageBar />
         }
-        <div className={`bg-white z-50 sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"} relative h-fit`}>
+        <div className={`bg-white z-50 lg:sticky top-0 w-full drop-shadow ${stickyNav ? "fade-in" : "fade-out"} relative h-fit`}>
           <div className="lg-container flex items-center justify-between gap-x-4 pr-3  lg:pl-4 sm:pr-3 md:pr-4 py-1 sm:py-1 lg:py-2.5">
             <div className="flex items-center z-20">
               {/* Hamburger icon */}
@@ -455,12 +455,20 @@ const Navbar = () => {
                       ?
                       <ul className="group relative">
                         <li className="hidden lg:block">
-                          <img
-                            src={user.photoURL ? generateImageLink({ imageId: user.photoURL, height: 40, aspectRatio: 1.0, cropMode: 'fill' }) : dummyImg}
-                            className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
-                            referrerPolicy="no-referrer"
-                            alt="User Profile"
-                          />
+                          {
+                            user?.photoURL
+                              ?
+                              <img
+                                src={generateImageLink({ imageId: user.photoURL, height: 40, aspectRatio: 1.0, cropMode: 'fill' })}
+                                className="w-9 sm:w-10 h-9 sm:h-10 rounded-full object-cover cursor-pointer shadow-lg shadow-gray-500"
+                                referrerPolicy="no-referrer"
+                                alt="User Profile"
+                              />
+                              :
+                              <div className="w-9 sm:w-10 h-9 sm:h-10 rounded-full text-white bg-black text-base font-medium flex items-center justify-center">
+                                {getFirstTwoInitials(user?.displayName)}
+                              </div>
+                          }
                         </li>
 
                         {/* Child div that shows on hover and is interactive */}
@@ -569,103 +577,105 @@ const Navbar = () => {
               </div>
             </nav>
           </div>
-          {
-            window.innerWidth < 1024 &&
-            <>
-              {/* Dropdown menu */}
-              <ul
-                onClick={handleDropdownItemClick}
-                className={`menu flex-nowrap absolute top-full left-0 h-screen bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 ${isDropDownItemOpen ? '' : 'pb-20'} transition-all ease-[cubic-bezier(0,0,0.38,0.9)] ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}`}
-              >
-                <div className="relative w-full h-full">
-                  <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
-                    {
-                      user &&
-                      <div onClick={() => setIsDropDownItemOpen(true)} className="relative px-4 py-2 bg-slate-50 flex items-center gap-x-3">
-                        {
-                          user?.photoURL
-                            ?
-                            <img
-                              className="min-w-[3.5rem] w-14 h-14 rounded-full object-cover bg-white"
-                              src={generateImageLink({ imageId: user.photoURL, width: 128 })}
-                              alt="user image"
-                            />
-                            :
-                            <div className="min-w-[3.5rem] h-14 rounded-full text-white bg-black text-lg font-medium flex items-center justify-center">
-                              {getFirstTwoInitials(user?.displayName)}
-                            </div>
-                        }
 
-                        {/* user name */}
-                        <div className="font-bold flex flex-col">
-                          Hi, {user?.displayName}
-                          <span className="font-normal text-gray-500">Welcome back</span>
-                        </div>
+        </div>
+        {/* Mobile DropDown Menu */}
+        {
+          window.innerWidth < 1024 &&
+          <>
+            {/* Dropdown menu */}
+            <ul
+              onClick={handleDropdownItemClick}
+              className={`menu flex-nowrap fixed top-14 left-0 h-[calc(100vh-3.5rem)] bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto lg:hidden duration-[250ms] ease-in-out  w-[17.5rem] px-0 pt-0 ${isDropDownItemOpen ? '' : 'pb-20'} transition-all   ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}`}
+            >
+              <div className="relative w-full h-full">
+                <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
+                  {
+                    user &&
+                    <div onClick={() => setIsDropDownItemOpen(true)} className="relative px-4 py-2 bg-slate-50 flex items-center gap-x-3">
+                      {
+                        user?.photoURL
+                          ?
+                          <img
+                            className="min-w-[3.5rem] w-14 h-14 rounded-full object-cover bg-white"
+                            src={generateImageLink({ imageId: user.photoURL, width: 128 })}
+                            alt="user image"
+                          />
+                          :
+                          <div className="min-w-[3.5rem] h-14 rounded-full text-white bg-black text-lg font-medium flex items-center justify-center">
+                            {getFirstTwoInitials(user?.displayName)}
+                          </div>
+                      }
 
-                        {/* arrow icon */}
-                        <div className="ml-auto">
-                          <ArrowIcon />
-                        </div>
+                      {/* user name */}
+                      <div className="font-bold flex flex-col">
+                        Hi, {user?.displayName}
+                        <span className="font-normal text-gray-500">Welcome back</span>
                       </div>
-                    }
-                    <div className="px-2 pb-20">
-                      {navbarMobileItem}
-                    </div>
-                  </div>
 
-                  {/* dropdown item menu */}
-                  <div
-                    className={`flex-nowrap absolute top-0 left-0 h-full bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)]  ${isDropDownItemOpen ? "-translate-x-0" : "translate-x-full"}`}
-                  >
-                    {/* back to menu button */}
-                    <div onClick={() => setIsDropDownItemOpen(false)} className="font-medium px-4 py-3 bg-slate-50 flex items-center gap-x-2">
-                      <div className="w-fit rotate-180">
+                      {/* arrow icon */}
+                      <div className="ml-auto">
                         <ArrowIcon />
                       </div>
-                      Menu
                     </div>
-
-                    <div className="menu px-0 text-base">
-                      {
-                        currentDropdownMenuItem.map((item, index) => {
-                          return (
-                            <div key={index} className={`${index !== currentDropdownMenuItem.length - 1 ? 'border-b' : ''} ${currentDropdownMenuItem.length > 1 ? 'py-2' : ''} `}>
-                              {
-                                item.category &&
-                                <h2 className="px-4 text-sm font-bold text-slate-500">
-                                  {item.category}
-                                </h2>
-                              }
-                              <ul>
-                                {
-                                  item.items.map(item => (
-                                    <li key={item.path}>
-                                      <Link to={item.path}>
-                                        {item.title}
-                                      </Link>
-                                    </li>
-                                  ))
-                                }
-                              </ul>
-                            </div>
-                          )
-                        })
-                      }
-                    </div>
+                  }
+                  <div className="px-2 pb-20">
+                    {navbarMobileItem}
                   </div>
                 </div>
-              </ul>
-              {/* Dark background overlay for dropdown */}
-              {
-                isHamburgerOpen &&
+
+                {/* dropdown item menu */}
                 <div
-                  onClick={() => setIsHamburgerOpen(false)}
-                  className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-full left-0 z-50 xl:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
-                ></div>
-              }
-            </>
-          }
-        </div>
+                  className={`flex-nowrap absolute top-0 left-0 h-full bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto xl:hidden duration-[250ms]  w-[17.5rem] px-0 pt-0 pb-20 transition-all ease-[cubic-bezier(0,0,0.38,0.9)]  ${isDropDownItemOpen ? "-translate-x-0" : "translate-x-full"}`}
+                >
+                  {/* back to menu button */}
+                  <div onClick={() => setIsDropDownItemOpen(false)} className="font-medium px-4 py-3 bg-slate-50 flex items-center gap-x-2">
+                    <div className="w-fit rotate-180">
+                      <ArrowIcon />
+                    </div>
+                    Menu
+                  </div>
+
+                  <div className="menu px-0 text-base">
+                    {
+                      currentDropdownMenuItem.map((item, index) => {
+                        return (
+                          <div key={index} className={`${index !== currentDropdownMenuItem.length - 1 ? 'border-b' : ''} ${currentDropdownMenuItem.length > 1 ? 'py-2' : ''} `}>
+                            {
+                              item.category &&
+                              <h2 className="px-4 text-sm font-bold text-slate-500">
+                                {item.category}
+                              </h2>
+                            }
+                            <ul>
+                              {
+                                item.items.map(item => (
+                                  <li key={item.path}>
+                                    <Link to={item.path}>
+                                      {item.title}
+                                    </Link>
+                                  </li>
+                                ))
+                              }
+                            </ul>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                </div>
+              </div>
+            </ul>
+            {/* Dark background overlay for dropdown */}
+            {
+              isHamburgerOpen &&
+              <div
+                onClick={() => setIsHamburgerOpen(false)}
+                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-14 left-0 z-50 lg:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
+              ></div>
+            }
+          </>
+        }
       </>
     </>
   );

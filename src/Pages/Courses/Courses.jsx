@@ -1,5 +1,4 @@
 import useAuth from '../../hooks/useAuth';
-import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -26,11 +25,9 @@ function usePathQuery() {
 
 const Courses = () => {
     const { user } = useAuth();
-    const email = user?.email;
     const [axiosSecure] = useAxiosSecure();
     const [userRole] = useUserRole();
     const navigate = useNavigate();
-    const location = useLocation();
     const query = usePathQuery();
     const queryClient = useQueryClient();
     const [reFetchCourse, setRefetchCourse] = useState(false);
@@ -189,8 +186,7 @@ const Courses = () => {
                     data?.courses.map(courseData => (
                         <CourseCard
                             key={courseData._id}
-                            navigate={navigate}
-                            isLoggedIn={user !== null}
+                            navigate={navigate}                            
                             item={courseData}
                             wishlist={wishlist}
                             handleAddToWishlist={handleAddToWishlist}
@@ -252,7 +248,6 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
 
 // Courses Card Component
 const CourseCard = ({
-    isLoggedIn,
     navigate,
     item,
     wishlist,
@@ -261,7 +256,6 @@ const CourseCard = ({
     cartItems,
     handleAddToCart,
     enrolledCourses,
-    isStudent
 }) => {
     const { _id, _instructorId, instructorName, courseName, courseThumbnail, level, rating, totalReviews, totalModules, price, discount, courseDuration } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;

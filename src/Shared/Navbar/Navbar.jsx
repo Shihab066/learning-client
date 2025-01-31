@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Turn as Hamburger } from "hamburger-react";
 import logo from "/logo.png";
 import searchIcon from "../../assets/icon/search_icon.svg";
-import dummyImg from "../../assets/icon/user_icon.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCartItems } from "../../services/cartService";
 import useUserRole from "../../hooks/useUserRole";
@@ -18,7 +17,6 @@ import CartIcon from "../../components/Icons/CartIcon";
 import BellIcon from "../../components/Icons/BellIcon";
 import getFirstTwoInitials from "../../utils/getFirstTwoInitials";
 import ArrowIcon from "../../components/Icons/ArrowIcon";
-// import Hamburger from "./Hamburger/Hamburger";
 
 // Custom hook to extract query parameters from URL
 function usePathQuery() {
@@ -37,9 +35,7 @@ const Navbar = () => {
 
   // Retrieve user role
   const [userRole] = useUserRole();
-  const isAdmin = userRole === "admin";
   const isStudent = userRole === "student";
-  const isInstructor = userRole === "instructor";
 
   // Retrieve user suspension status
   const { isUserSuspended } = useUserSuspensionStatus();

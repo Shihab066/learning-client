@@ -49,16 +49,14 @@ const Courses = () => {
     const [searchValue, setSearchValue] = useState('');
 
     const activePage = currentPage || 1;
-    const searchingValue = location?.state?.search || '';
 
     // Update state based on query parameters
     useEffect(() => {
         setItemPerPage(limit);
         setCurrentPage(page);
         setSortValue(sort.toLowerCase() === 'price.asc' ? 1 : sort.toLowerCase() === 'price.desc' ? -1 : 0);
-        setSearchValue(search || searchingValue);
-        setRefetchCourse(!reFetchCourse);
-    }, [limit, page, sort, search, searchingValue]);
+        setSearchValue(search);
+    }, [limit, page, sort, search]);
 
     // Update URL based on state changes
     useEffect(() => {
@@ -68,15 +66,17 @@ const Courses = () => {
         if (sortValue) params.set('sort', sortValue === 1 ? 'price.ASC' : sortValue === -1 ? 'price.DESC' : '');
         if (searchValue) params.set('search', searchValue);
         navigate(`/courses?${params.toString()}`, { replace: true });
+        setRefetchCourse(!reFetchCourse);
     }, [itemPerPage, currentPage, sortValue, searchValue]);
 
     // Fetch courses data
-    const { data, isLoading: isCoursesLoading = true } = useQuery({
-        queryKey: ['courses', reFetchCourse],
+    const { data, isLoading: isCoursesLoading } = useQuery({
+        queryKey: ['courses', reFetchCourse, searchValue, sortValue, activePage],
         queryFn: async () => {
             const res = await api.get(`/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
+        refetchOnWindowFocus: false
     });
 
     // -------Handle wishlist--------

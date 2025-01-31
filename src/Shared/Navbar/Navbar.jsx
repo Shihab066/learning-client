@@ -295,18 +295,18 @@ const Navbar = () => {
 
   // Search functionality
   const [searchValue, setSearchValue] = useState("");
+
   const handleSearch = (event) => {
     event.preventDefault();
-    const searchKey = event.target.search.value || "";
-    setSearchValue(searchKey);
-    navigate("/courses", { state: { search: searchKey } });
+    const searchKey = event.target.search.value || "";    
+    navigate(`/courses?search=${searchKey}`);
     if (isSearchOpen) {
       setIsSearchOpen(false);
     }
   };
 
   // Get search query from URL
-  const search = usePathQuery().get("search") || "";
+  const search = usePathQuery().get("search") || ""; 
   useEffect(() => {
     setSearchValue(search);
   }, [search]);

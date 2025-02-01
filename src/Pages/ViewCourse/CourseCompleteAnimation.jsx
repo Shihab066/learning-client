@@ -17,40 +17,21 @@ const CourseCompleteAnimation = ({ setAutoPlay }) => {
         setAutoPlay(true);
     };
 
-    const [audio, setAudio] = useState(null);
-
     useEffect(() => {
-        const soundTracks = ["track1", "track2"];
+        const soundTracks = ['track1', 'track2'];
         const currentSoundTrack = soundTracks[Math.floor(Math.random() * 2)];
-        const audioUrl = `/audio/course_success_${currentSoundTrack}.mp3`;
-
-        fetch(audioUrl)
-            .then((response) => response.blob())
-            .then((blob) => {
-                const objectURL = URL.createObjectURL(blob);
-                const welcomeAudio = new Audio(objectURL);                
-                setAudio(welcomeAudio);               
-            })
-            .catch((error) => console.error("Error loading audio:", error));
-    }, [showAnimation]);
-
-    useEffect(() => {
-        if (audio) {
-            audio.volume = 0.5;
-            if (showAnimation) {
-                audio.play()
-            }
-        }
+        const welcomeAudio = new Audio(`/src/assets/audio/course_success_${currentSoundTrack}.mp3`); // Path to the audio file
+        welcomeAudio.volume = 0.5
+        
+        if (showAnimation) {
+            welcomeAudio.play();
+        }        
 
         return () => {
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-                URL.revokeObjectURL(audio.src);
-            }
+            welcomeAudio.pause();
+            welcomeAudio.currentTime = 0;
         };
-
-    }, [audio, showAnimation])
+    }, [showAnimation]);
 
     return (
         <>

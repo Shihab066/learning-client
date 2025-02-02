@@ -1,24 +1,31 @@
-import { Navigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import useUserRole from "../hooks/useUserRole";
+import BannerManagement from "../DashBoardPages/AdminDashBoard/BannerManagement/BannerManagement";
+import Dashboard from "../DashBoardPages/AdminDashBoard/Dashboard/Dashboard";
+import ManageCourse from "../DashBoardPages/AdminDashBoard/ManageCourse/ManageCourse";
+import ManageSuspention from "../DashBoardPages/AdminDashBoard/ManageSuspention/ManageSuspention";
+import ManageUser from "../DashBoardPages/AdminDashBoard/ManageUser/ManageUser";
+import PrivateRoutes from "./PrivateRoutes";
 
-const AdminRoutes = ({ children }) => {
-    const { user, loading } = useAuth();
-    const [userRole, isUserRoleLoading] = useUserRole();
-    const isAdmin = userRole === 'admin';
-    if (loading || isUserRoleLoading) {
-        return <div className='flex justify-center items-center h-[700px] '>
-            <span className="loading loading-spinner text-info loading-lg"></span>
-        </div>
+const adminRoutes = [
+    {
+        path: 'dashboard',
+        element: <PrivateRoutes userType='admin'><Dashboard /></PrivateRoutes>
+    },
+    {
+        path: 'manage-course',
+        element: <PrivateRoutes userType='admin'><ManageCourse /></PrivateRoutes>
+    },
+    {
+        path: 'manage-user',
+        element: <PrivateRoutes userType='admin'><ManageUser /></PrivateRoutes>
+    },
+    {
+        path: 'banner-management',
+        element: <PrivateRoutes userType='admin'><BannerManagement /></PrivateRoutes>
+    },
+    {
+        path: 'manage-suspension',
+        element: <PrivateRoutes userType='admin'><ManageSuspention /></PrivateRoutes>
     }
+];
 
-    if (user && isAdmin) {
-        return children
-    }
-
-    return <Navigate to='/error404'></Navigate>
-    
-};
-
-
-export default AdminRoutes;
+export default adminRoutes;

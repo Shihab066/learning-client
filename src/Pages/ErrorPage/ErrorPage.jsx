@@ -1,5 +1,6 @@
 import { useLottie } from 'lottie-react';
 import errorAnimation from '../../assets/errorAnimation/error404.json'
+import { Link } from 'react-router-dom';
 const ErrorPage = ({text = 'Page Not Found', showButton = true}) => {
     const defaultOptions = {
         loop: true,
@@ -12,15 +13,12 @@ const ErrorPage = ({text = 'Page Not Found', showButton = true}) => {
     };
     const { View } = useLottie(defaultOptions);
 
-    const hanldeBack = () => {
-        history.back(-1);
-    }
     return (
         <div className=' flex justify-center'>
             <div className='text-center'>
                 {View}
                 <p className='text-3xl font-bold mb-7'>{ text }</p>
-                {showButton && <button onClick={hanldeBack} className='btn bg-blue-500 hover:bg-blue-600 text-white'>Go Back</button>}
+                {showButton && <Link to='/' className='btn bg-blue-500 hover:bg-blue-600 text-white'>Back To Home</Link>}
             </div>
         </div>
     );

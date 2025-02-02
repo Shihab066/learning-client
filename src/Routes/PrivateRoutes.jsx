@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import useUserRole from '../hooks/useUserRole';
 import Loading from '../components/Loading/Loading';
 
-const PrivateRoutes = ({ type, children }) => {
+const PrivateRoutes = ({ userType, children }) => {
     const location = useLocation();
     const { user, loading } = useAuth();
     const [userRole, isUserRoleLoading] = useUserRole();
@@ -13,10 +13,13 @@ const PrivateRoutes = ({ type, children }) => {
         return <Loading />
     }
 
-    if (user && type === userRole) {
+    if (user && userType === 'any') {
         return children
     }
-    else if (user && type !== userRole) {
+    else if (user && userType === userRole) {
+        return children
+    }
+    else if (user && userType !== userRole) {
         return <Navigate to='/error404' />
     }
 

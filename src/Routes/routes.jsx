@@ -151,7 +151,7 @@ export const router = createBrowserRouter([
       // },
       {
         path: 'user',
-        element: <ProfileLayout />,
+        element: <PrivateRoutes userType='any'><ProfileLayout /></PrivateRoutes>,
         children: [
           {
             path: '/user',
@@ -159,7 +159,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'profile',
-            element: <Profile />
+            element: <PrivateRoutes userType='any'><Profile /></PrivateRoutes>
           },
           // Admin Routes
           {

@@ -3,8 +3,8 @@ import useAuth from "./useAuth";
 import api from "../services/baseAPI";
 
 const useUserRole = () => {
-    const { user } = useAuth();    
-    const { data: userRole, isLoading: isUserRoleLoading } = useQuery({
+    const { user } = useAuth();
+    const { data: userRole, isLoading: isUserRoleLoading = false } = useQuery({
         queryKey: ['userRole', user?.uid],
         enabled: user !== null,
         queryFn: async () => {

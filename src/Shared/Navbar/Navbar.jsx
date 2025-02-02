@@ -93,7 +93,7 @@ const Navbar = () => {
           },
           {
             title: "Reviews",
-            path: "/user/my-reviews",
+            path: "/user/courseReviews",
           }
         ]
       },

@@ -8,7 +8,7 @@ const PrivateRoutes = ({ userType, children }) => {
     const location = useLocation();
     const { user, loading } = useAuth();
     const [userRole, isUserRoleLoading] = useUserRole();
-
+    console.log(user, userRole, userType)
     if (loading || isUserRoleLoading) {
         return <Loading />
     }

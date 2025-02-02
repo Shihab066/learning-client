@@ -13,20 +13,20 @@ const CourseReviews = () => {
     const [searchValue, setSearchValue] = useState('');
     const [limit, setLimit] = useState(4);
 
-    // fetch all courses
+    // fetch all courses reviews
     const { data, isLoading } = useQuery({
         queryKey: ['reviews', user?.uid, searchValue, limit],
         enabled: !loading,
         queryFn: async () => {
             const res = await axiosSecure.get(`/review/instructor/${user?.uid}?search=${searchValue}&limit=${limit}`);
             return res.data;
-        }
-    })
+        },
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setSearchValue(e.target.search.value);
-    }
+    };
 
     return (
         <div>

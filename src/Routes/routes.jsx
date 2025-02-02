@@ -164,57 +164,57 @@ export const router = createBrowserRouter([
           // Admin Routes
           {
             path: 'dashboard',
-            element: <Dashboard />
+            element: <PrivateRoutes userType='admin'><Dashboard /></PrivateRoutes>
           },
           {
             path: 'manage-course',
-            element: <ManageCourse />
+            element: <PrivateRoutes userType='admin'><ManageCourse /></PrivateRoutes>
           },
           {
             path: 'manage-user',
-            element: <ManageUser />
+            element: <PrivateRoutes userType='admin'><ManageUser /></PrivateRoutes>
           },
           {
             path: 'banner-management',
-            element: <BannerManagement />
-          },         
+            element: <PrivateRoutes userType='admin'><BannerManagement /></PrivateRoutes>
+          },
           {
             path: 'manage-suspension',
-            element: <ManageSuspention />
-          },         
+            element: <PrivateRoutes userType='admin'><ManageSuspention /></PrivateRoutes>
+          },
           // INSTRUCTOR ROUTES
           {
             path: 'instructor_dashboard',
-            element: <InstructorDasboard/>
+            element: <PrivateRoutes userType='instructor'><InstructorDasboard /></PrivateRoutes>
           },
           {
             path: 'myCourses',
-            element: <MyCourses />
+            element: <PrivateRoutes userType='instructor'><MyCourses /></PrivateRoutes>
           },
           {
             path: 'addCourse',
-            element: <AddCourse />
+            element: <PrivateRoutes userType='instructor'><AddCourse /></PrivateRoutes>
           },
           {
             path: 'updateCourse',
-            element: <UpdateCourse />
+            element: <PrivateRoutes userType='instructor'><UpdateCourse /></PrivateRoutes>
           },
           {
             path: 'courseReviews',
-            element: <CourseReviews />
+            element: <PrivateRoutes userType='instructor'><CourseReviews /></PrivateRoutes>
           },
           // STUDENT ROUTES       
           {
             path: 'purchase-history',
-            element: <PurchaseHistory />
+            element: <PrivateRoutes userType='student'><PurchaseHistory /></PrivateRoutes>
           },
           {
             path: 'feedback',
-            element: <Feedback />
+            element: <PrivateRoutes userType='student'><Feedback /></PrivateRoutes>
           },
           {
             path: 'my-reviews',
-            element: <MyReviews />,
+            element: <PrivateRoutes userType='student'><MyReviews /></PrivateRoutes>,
             children: [
               {
                 path: '/user/my-reviews',
@@ -222,11 +222,11 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'pending-reviews',
-                element: <PendingReviews />
+                element: <PrivateRoutes userType='student'><PendingReviews /></PrivateRoutes>
               },
               {
                 path: 'reviews-history',
-                element: <MyReviewsHistory />
+                element: <PrivateRoutes userType='student'><MyReviewsHistory /></PrivateRoutes>
               }
             ]
           }

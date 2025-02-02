@@ -20,6 +20,7 @@ const Login = () => {
         const { email, password } = data;
         signIn(email, password)
             .then(async (result) => {
+                setloading(true)
                 const user = result.user;
                 const res = await api.post('/token/upload', { uniqueKey: user.accessToken });
                 const token = await res.data.token;

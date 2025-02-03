@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -7,10 +7,11 @@ import AddMilestone from "./AddMilestone/AddMilestone";
 import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 import useUploadImage from "../../hooks/useUploadImage";
+import generateMongoId from "../../utils/genarateID";
 
 const AddCourse = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
-    const { user } = useAuth();
+    const { user, getCourseId, setCourseId } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const { uploadImage } = useUploadImage();
     const [thumbnail, setThumbnail] = useState(null);
@@ -96,6 +97,27 @@ const AddCourse = () => {
         return totalDuration + moduleDuration;
     }, 0) ?? 0;
 
+    // GenerateCourse ID
+    // Set CourseId to the context API. 
+    // Note: This CourseId is used during video upload. 
+    // When a user fetches the video URL, it can be used to verify if the user is enrolled in the course.
+    const courseIdRef = useRef(true);
+    
+    useEffect(() => {
+        if (courseIdRef.current) {
+            const courseId = generateMongoId();
+            setCourseId(courseId)
+            courseIdRef.current = false
+        }
+
+        return () => {
+            courseIdRef.current = true;
+            if (courseIdRef.current) {
+                setCourseId(null)
+            }
+        }
+    }, [])
+
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseName, courseThumbnail, summary, description, level, category, seats, price } = data;
@@ -107,6 +129,7 @@ const AddCourse = () => {
         const uploadedThumbnail = await uploadImage(courseThumbnail[0]);
 
         const newClass = {
+            _id: getCourseId,
             _instructorId: uid,
             instructorName: displayName,
             courseName,

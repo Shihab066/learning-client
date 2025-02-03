@@ -16,7 +16,7 @@ import { toastSuccess } from '../../../utils/toastUtils';
 const MyCourses = () => {
     const [axiosSecure] = useAxiosSecure();
     const { user, loading } = useAuth();
-    const [courseId, setCourseId] = useState('');
+    const [courseId, setCourseId] = useState('');    
     const [isUpdateCourseOpen, setIsUpdateCourseOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [currentFeedback, setCurrentFeedback] = useState(null);
@@ -266,7 +266,7 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                         <button
                             onClick={() => {
                                 setIsUpdateCourseOpen(true)
-                                setCourseId(`id=${_instructorId}&courseId=${_id}`)
+                                setCourseId(_id)
                             }}
                             className='w-fit border rounded-md px-2 py-1.5 bg-yellow-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='edit'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-6'><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}>

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import MilestoneSection from "../AddMilestone/MilestoneSection";
@@ -9,13 +9,15 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../components/Loading/Loading";
 import useUploadImage from "../../../hooks/useUploadImage";
 import generateImageLink from "../../../utils/generateImageLink";
+import useAuth from "../../../hooks/useAuth";
 
 const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCourses }) => {
 
+    const { user } = useAuth();
     const { data: course, refetch, isLoading } = useQuery({
-        queryKey: ['course', courseId],
+        queryKey: ['course', courseId, user],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/course/instructorCourse?${courseId}`);
+            const res = await axiosSecure.get(`/course/instructorCourse?id=${user?.uid}&courseId=${courseId}`);
             return res.data;
         }
     });
@@ -30,6 +32,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
     const { courseName, courseThumbnail, summary, description, courseContents, level, category, seats, price, discount } = formData || {};
     const [milestonesData, setMilestonesData] = useState(courseContents);
+    const { setCourseId: setCurrentCourseId } = useAuth();
 
     // Handle input change for general form fields
     const handleInputChange = (e) => {
@@ -122,7 +125,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     ];
 
     // Calculate Total Modules
-    const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);    
+    const totalModules = milestonesData?.map(({ milestoneModules }) => milestoneModules.length).reduce((acc, curr) => acc + curr, 0);
 
     // Calculate Total Videoes
     const totalVideos = milestonesData?.reduce((totalItems, { milestoneModules }) => {
@@ -132,7 +135,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
         }, 0);
         return totalItems + moduleItemsCount;
     }, 0) ?? 0;
-      
+
     // Calculate Course Duration
     const totalCourseDuration = milestonesData?.reduce((totalDuration, { milestoneModules }) => {
         const moduleDuration = milestoneModules.reduce((moduleTotal, { moduleItems }) => {
@@ -141,7 +144,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
         }, 0);
         return totalDuration + moduleDuration;
     }, 0) ?? 0;
-    
+
     // Handle form submission
     const onSubmit = async (data) => {
         const { courseThumbnail, seats, price, discount } = data;
@@ -187,6 +190,27 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             timer: 2000
         });
     };
+
+    // Set CourseId to the context API.
+    // Note: This CourseId is used during video upload.
+    // When a user fetches the video URL, it can be used to verify if the user is enrolled in the course.
+    const courseIdRef = useRef(true);
+    useEffect(() => {
+        if (courseIdRef.current) {
+            setCurrentCourseId(courseId);
+            courseIdRef.current = false;
+        }
+
+        return () => {
+            courseIdRef.current = true;
+            if (courseIdRef.current) {
+                setCurrentCourseId(null)
+            }
+        }
+    }, [])
+
+    console.log();
+
 
     return (
         <>

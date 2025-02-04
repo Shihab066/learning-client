@@ -7,7 +7,7 @@ const useVideoUpload = () => {
     const { getCourseId: courseId } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     
-    const uploadVideo = async (video) => {
+    const uploadVideo = async (video, duration) => {
         if (video) {
             console.log(video);
             // Request upload signature from your backend
@@ -28,7 +28,7 @@ const useVideoUpload = () => {
                 formData
             );
 
-            const savePlaylist = await axiosSecure.post(`/upload/video/add/${response.data.public_id}/${courseId}`)
+            const savePlaylist = await axiosSecure.post(`/upload/video/add/${response.data.public_id}/${courseId}`,{duration})
             if (savePlaylist.data.insertedId) {
                 console.log('video upload successfully');
                 return response.data.public_id

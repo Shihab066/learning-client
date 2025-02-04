@@ -165,7 +165,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             totalVideos
         };
 
-        axiosSecure.patch(`/course/update?${courseId}`, updatedCourse).then(res => {
+        axiosSecure.patch(`/course/update?id=${user.uid}&courseId=${courseId}`, updatedCourse).then(res => {
             if (res.data.result.modifiedCount) {
                 resetForm();
                 showSuccessMessage();

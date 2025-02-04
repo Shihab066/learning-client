@@ -14,7 +14,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
     const [duration, setDuration] = useState(null);
     const { uploadVideo } = useVideoUpload();
     console.log(duration);
-    
+
 
     // Handle validation of the module item name
     const handleNameError = () => {
@@ -47,7 +47,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
             videoElement.src = videoURL;
 
             videoElement.onloadedmetadata = () => {
-                setDuration(videoElement.duration);
+                setDuration(parseFloat(videoElement.duration.toFixed(2)));
                 URL.revokeObjectURL(videoURL); // Clean up the object URL
             };
         }
@@ -59,7 +59,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
     // Handle upload video
     const handleVideoUpload = async (video) => {
         setIsVideoUploading(true);
-        const result = await uploadVideo(video);
+        const result = await uploadVideo(video, duration);
         setIsVideoUploading(false)
         return result;
     };
@@ -80,7 +80,7 @@ const AddModuleItem = ({ milestoneId, moduleId, milestonesData, setMilestonesDat
             itemName: name,
             itemDescription: description,
             itemData: await handleVideoUpload(videoFile),
-            duration: parseFloat(duration.toFixed(2))
+            duration: duration
         };
 
         const updatedMilestoneData = milestonesData.map(milestone =>

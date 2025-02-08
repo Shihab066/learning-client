@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import useAuth from '../../hooks/useAuth';
 
 const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
+    const { jwtToken } = useAuth();
     const cloudinaryRef = useRef();
     const playerRef = useRef();
     const prevVideoId = useRef();
-
+    console.log(jwtToken)
     useEffect(() => {
         if (!cloudinaryRef.current) {
             cloudinaryRef.current = window.cloudinary;
@@ -32,14 +34,14 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
             return () => {
                 videoElement.removeEventListener('contextmenu', handleContextMenu);
             };
-        }       
+        }
 
     }, []);
 
     useEffect(() => {
         if (playerRef.current && videoId) {
             if (prevVideoId.current !== videoId) {
-                playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}`);
+                playerRef.current.source(`http://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}/${jwtToken}`)
             }
             prevVideoId.current = videoId
             playerRef.current.on('ended', () => {
@@ -192,12 +194,12 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
         handleResize();
 
         window.addEventListener('resize', handleResize);
-        
+
         return () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-   
+
     return (
         <div className='w-full aspect-video' id='video-element-container'>
             <video
@@ -206,7 +208,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
                 autoPlay={autoPlay}
             />
         </div>
-    );    
+    );
 };
 
 export default VideoPlayer;

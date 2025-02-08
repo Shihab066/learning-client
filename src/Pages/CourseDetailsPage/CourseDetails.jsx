@@ -32,10 +32,11 @@ const CourseDetails = () => {
         staleTime: 0
     });
 
-    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience, courseDuration } = data;
+    const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, students: totalEnrolledStudnets, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents: totalInstructorStudents, totalCoursesCount, totalModules, experience, courseDuration } = data;
     const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
-    const totalStudentsWithCommas = formatNumberWithCommas(totalStudents);
+    const totalInstructorStudentsWithCommas = formatNumberWithCommas(totalInstructorStudents);
     const totalCourseDuration = formateCourseDuration(courseDuration || 0);
+    const totalEnrolledStudentsWithCommas = formatNumberWithCommas(totalEnrolledStudnets)
 
     // Store the star ratings in state
     const [starTypes, setStarTypes] = useState([]);
@@ -113,10 +114,15 @@ const CourseDetails = () => {
                         </div>
                         <span>({totalReviews} reviews)</span>
                         <p>|</p>
-                        <p className="capitalize">{totalCourseDuration}. {totalModules} Modules.</p>
+                        <span className="font-normal">{totalEnrolledStudentsWithCommas} student</span>
+
+                    </div>
+                    <div className="text-gray-700 font-medium flex flex-wrap justify-start items-center gap-2">
                         <div className="w-fit rounded-full px-3 py-[.2rem] text-xs bg-yellow-400 text-gray-700 font-medium">
                             {level}
                         </div>
+                        <p className="capitalize">{totalCourseDuration}.</p>
+                        <p className="capitalize">{totalModules} Modules.</p>
                     </div>
 
                     {/* Instructor Info */}
@@ -152,7 +158,7 @@ const CourseDetails = () => {
                                 />
                                 <img
                                     className="w-full object-top lg:object-center object-cover rounded-xl"
-                                    src={generateImageLink({ imageId: courseThumbnail, width: 500 })}
+                                    src={generateImageLink({ imageId: courseThumbnail, width: '500', height: '280', cropMode: 'fill', aspactRatio: '16:9' })}
                                     alt="Course Thumbnail"
                                     onLoad={handleImageLoad}
                                 />
@@ -259,7 +265,7 @@ const CourseDetails = () => {
                                 </li>
                                 <li className="flex items-center gap-1">
                                     <img className="w-5 h-5" src={grauationLogo} alt="Graduation logo" />
-                                    <p>{totalStudentsWithCommas} Students</p>
+                                    <p>{totalInstructorStudentsWithCommas} Students</p>
                                 </li>
                                 <li className="flex items-center gap-1">
                                     <img className="w-5 h-5" src={playLogo} alt="Play logo" />

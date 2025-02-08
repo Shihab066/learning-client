@@ -164,9 +164,9 @@ const Reviews = () => {
     return (
         <div className="flex flex-col md:flex-row justify-between items-start gap-y-6">
             <div className="space-y-4">
-                <p className="flex items-center gap-x-3">
+                <div className="flex items-center gadiv-x-3">
                     <div className="w-[10rem] h-3 skeleton rounded" />                    
-                </p>
+                </div>
                 <div className="w-[100%] h-2 skeleton rounded" />
                 <div className="w-[100%] h-2 skeleton rounded" />
                 <div className="w-[100%] h-2 skeleton rounded" />

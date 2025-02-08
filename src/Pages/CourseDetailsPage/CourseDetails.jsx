@@ -9,7 +9,6 @@ import awardLogo from '../../assets/icon/award.svg';
 import grauationLogo from '../../assets/icon/graduation.svg';
 import playLogo from '../../assets/icon/play.svg';
 import Testimonial from "../../components/Testimonial/Testimonial";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
 import GenerateStar from "../../components/GenerateStar/GenerateStar";
@@ -18,16 +17,19 @@ import dummyCourseThumbnail from '../../assets/images/dummyCourseThumbnail2.jpg'
 import formatTimeWithHours from "../../utils/formatTimeWithHours";
 import formateCourseDuration from "../../utils/formateCourseDuration";
 import api from "../../services/baseAPI";
+import CourseDetailsSkeleton from "./CourseDetailsSkeleton";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
     // Fetch popular courses
-    const { data = {}, isLoading } = useQuery({
+    const { data = {}, isLoading: isCourseDetailsLoading } = useQuery({
         queryKey: ['courseDetails'],
         queryFn: async () => {
             const res = await api.get(`/course/details/${courseId}`);
             return res.data;
         },
+        cacheTime: 0,
+        staleTime: 0
     });
 
     const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents, totalCoursesCount, totalModules, experience, courseDuration } = data;
@@ -75,6 +77,10 @@ const CourseDetails = () => {
     const handleImageLoad = () => {
         setIsLoaded(true); // Mark the image as loaded
     };
+
+    if (isCourseDetailsLoading) {
+        return <CourseDetailsSkeleton />
+    }
 
     return (
         <>

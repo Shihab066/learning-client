@@ -53,11 +53,11 @@ const PopularCourseCard = ({ item }) => {
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 50) + '...' : courseName;
     const formatedTotalReviews = formatNumberWithCommas(totalReviews);
     return (
-        <div className="w-full h-fit bg-white rounded-2xl border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-md duration-300">
+        <div className="w-full h-fit bg-white rounded-2xl border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0 xl:hover:shadow-md duration-300 overflow-hidden">
             <Link to={`/course/${_id}`}>
                 <img
                     className="w-full h-48 object-cover object-top rounded-t-lg"
-                    src={generateImageLink({imageId: courseThumbnail})}
+                    src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
                     alt="course thumbnail"
                 />
                 <div className='p-3 lg:p-4 space-y-2'>

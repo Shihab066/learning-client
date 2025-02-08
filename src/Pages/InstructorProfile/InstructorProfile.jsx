@@ -3,6 +3,7 @@ import MoreCoursesByInstructor from "./MoreCoursesByInstructor";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import generateImageLink from "../../utils/generateImageLink";
+import InstructorProfileSkeleton from "./InstructorProfileSkeleton";
 
 
 const InstructorProfile = () => {
@@ -16,10 +17,15 @@ const InstructorProfile = () => {
             const res = await axiosSecure.get(`/instructor/details/${instructorId}`);
             return res.data;
         },
+        cacheTime: 0,
+        staleTime: 0
     });
 
     const { name, image, headline, bioData, expertise, experience, socialLinks, totalCoursesCount, totalReviewsCount, totalStudents } = instructorDetails;
 
+    if (!isLoading) {
+        return <InstructorProfileSkeleton />
+    }
     return (
         <>
             <section className="lg-container px-4 lg:px-6 md:flex justify-between items-start gap-x-20 lg:gap-x-44 xl:gap-x-60 pt-10">

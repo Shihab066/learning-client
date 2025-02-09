@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import facebookLogo from '../../assets/icon/facebook.png';
 import googleLogo from '../../assets/icon/google.png';
 import xLogo from '../../assets/icon/x_logo.png';
@@ -9,7 +9,7 @@ import awardLogo from '../../assets/icon/award.svg';
 import grauationLogo from '../../assets/icon/graduation.svg';
 import playLogo from '../../assets/icon/play.svg';
 import Testimonial from "../../components/Testimonial/Testimonial";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import formatNumberWithCommas from "../../utils/formateNumberWithCommas";
 import GenerateStar from "../../components/GenerateStar/GenerateStar";
 import generateImageLink from "../../utils/generateImageLink";
@@ -18,10 +18,24 @@ import formatTimeWithHours from "../../utils/formatTimeWithHours";
 import formateCourseDuration from "../../utils/formateCourseDuration";
 import api from "../../services/baseAPI";
 import CourseDetailsSkeleton from "./CourseDetailsSkeleton";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
+import { toastWarning } from "../../utils/toastUtils";
+import { addCourseToCart } from "../../services/cartService";
+import { addCourseToWishList, removeCourseFromWishList } from "../../services/wishlistService";
+import useUserRole from "../../hooks/useUserRole";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
-    // Fetch popular courses
+    const { user } = useAuth();
+    const [axiosSecure] = useAxiosSecure();
+    const queryClient = useQueryClient();
+    const [userRole] = useUserRole();
+    const isStudent = userRole === 'student';
+    const userId = user?.uid;
+    const navigate = useNavigate();
+
+    // Fetch course details
     const { data = {}, isLoading: isCourseDetailsLoading } = useQuery({
         queryKey: ['courseDetails'],
         queryFn: async () => {
@@ -31,6 +45,67 @@ const CourseDetails = () => {
         cacheTime: 0,
         staleTime: 0
     });
+
+    // Fetch course enroll status
+    const { data: { isEnrolled } = {} } = useQuery({
+        queryKey: ['enroll-status', user, isStudent],
+        enabled: !!user && isStudent,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/course/enrollStatus/${userId}/${courseId}`);
+            return res.data;
+        },
+        cacheTime: 0,
+        staleTime: 0
+    });
+
+    // manage cart
+    const { data: { inCart } = {}, refetch: refetchCart } = useQuery({
+        queryKey: ['cart_status', user],
+        enabled: !!user && isStudent,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/cart/get/${userId}/${courseId}`);
+            return res.data;
+        },
+        cacheTime: 0,
+        staleTime: 0
+    });
+
+    const handleAddToCart = ({ _instructorId }) => {
+        if (!user) {
+            toastWarning('Log in to add this course.')
+        } else if (isStudent) {
+            addCourseToCart(axiosSecure, userId, courseId, _instructorId, refetchCart)
+                .then(() => queryClient.invalidateQueries(['cartCount']))
+        } else if (!isStudent) {
+            toastWarning('Log in by student account')
+        }
+    };
+
+    // manage wishlist
+    const { data: { inWishList } = {}, refetch: refetchWishList } = useQuery({
+        queryKey: ['wishlist_status', user, isStudent],
+        enabled: !!user && isStudent,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/wishlist/get/${userId}/${courseId}`);
+            return res.data;
+        },
+        cacheTime: 0,
+        staleTime: 0
+    });
+
+    const handleAddToWishlist = () => {
+        if (!user) {
+            toastWarning('Log in to add this course.')
+        } else if (isStudent) {
+            addCourseToWishList(axiosSecure, userId, courseId, refetchWishList)
+        } else if (!isStudent) {
+            toastWarning('Log in by student account')
+        }
+    };
+
+    const handleRemoveFromWishlist = () => {
+        removeCourseFromWishList(axiosSecure, userId, courseId, refetchWishList);
+    };
 
     const { courseThumbnail, courseName, summary, description, level, rating, totalReviews, students: totalEnrolledStudnets, price, discount, courseContents, _instructorId, name: instructorName, image: instructorImage, headline, totalReviewsCount, totalStudents: totalInstructorStudents, totalCoursesCount, totalModules, experience, courseDuration } = data;
     const totalInstructorReviewsWithCommas = formatNumberWithCommas(totalReviewsCount);
@@ -184,12 +259,37 @@ const CourseDetails = () => {
                                 }
 
                                 <div className="mt-6 space-y-4">
-                                    <button className="btn bg-black hover:bg-black text-white w-full capitalize rounded-lg hover:shadow-lg duration-300">
-                                        Add To Cart
-                                    </button>
-                                    <button className="btn bg-white hover:bg-white text-black outline outline-1 w-full capitalize rounded-lg hover:shadow-lg duration-300">
-                                        Buy Now
-                                    </button>
+                                    {
+                                        isEnrolled
+                                            ?
+                                            <button className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                                Enrolled
+                                            </button>
+
+                                            :
+                                            inCart
+                                                ?
+                                                <button onClick={() => navigate('/cart')} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                                    Go To Cart
+                                                </button>
+                                                :
+                                                <button onClick={() => handleAddToCart({ _instructorId: _instructorId })} className="btn bg-black hover:bg-black hover:bg-opacity-80 text-white w-full capitalize rounded-lg duration-300">
+                                                    Add To Cart
+                                                </button>
+                                    }
+
+                                    {/* wishlist button */}
+                                    {
+                                        inWishList
+                                            ?
+                                            <button onClick={() => handleRemoveFromWishlist()} className="btn bg-white hover:bg-white text-black outline outline-1 w-full capitalize rounded-lg hover:shadow-lg duration-300">
+                                                Remove From Wishlist
+                                            </button>
+                                            :
+                                            <button onClick={() => handleAddToWishlist()} className="btn bg-white hover:bg-white text-black outline outline-1 w-full capitalize rounded-lg hover:shadow-lg duration-300">
+                                                Add To Wishlist
+                                            </button>
+                                    }
                                 </div>
                             </div>
                         </div>

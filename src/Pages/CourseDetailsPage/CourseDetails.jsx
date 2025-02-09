@@ -24,6 +24,7 @@ import { toastWarning } from "../../utils/toastUtils";
 import { addCourseToCart } from "../../services/cartService";
 import { addCourseToWishList, removeCourseFromWishList } from "../../services/wishlistService";
 import useUserRole from "../../hooks/useUserRole";
+import formatDate from "../../utils/formatDate";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
@@ -626,6 +627,7 @@ const ReviewCard = ({ review: reviewData }) => {
     const [isReviewOverflow, setIsReviewOverflow] = useState(false);
     const [modifiedReview, setModifiedReview] = useState('');
     const [seeMoreEnabled, setSeeMoreEnabled] = useState(false);
+    const formattedDate = formatDate(date);
 
 
     const handleReviewTextLength = () => {
@@ -690,7 +692,7 @@ const ReviewCard = ({ review: reviewData }) => {
                         {rating}
                     </span>
                     <span className="text-sm">
-                        Reviewed on {date}
+                        Reviewed on {formattedDate}
                     </span>
                 </div>
                 <div className="h-24 lg:h-28 overflow-y-auto thin-scrollbar pr-1 lg:pr-4 text-sm sm:text-[0.938rem] lg:leading-6">

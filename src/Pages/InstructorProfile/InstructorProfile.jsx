@@ -23,7 +23,7 @@ const InstructorProfile = () => {
 
     const { name, image, headline, bioData, expertise, experience, socialLinks, totalCoursesCount, totalReviewsCount, totalStudents } = instructorDetails;
 
-    if (!isLoading) {
+    if (isLoading) {
         return <InstructorProfileSkeleton />
     }
     return (

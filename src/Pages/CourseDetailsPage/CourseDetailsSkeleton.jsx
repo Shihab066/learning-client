@@ -32,11 +32,11 @@ const CourseDetailsSkeleton = () => {
                     {/* Instructor Info */}
                     <div className="flex justify-start items-center gap-x-2">
                         <div className="w-14 h-14 skeleton rounded-full" />
-                        <div className="w-[16rem] h-4 skeleton rounded" />
+                        <div className="w-[10rem] sm:w-[16rem] h-4 skeleton rounded" />
                     </div>
 
                     {/* Language Info */}
-                    <div className="w-[20rem] h-4 skeleton rounded" />
+                    <div className="w-[15rem] sm:w-[20rem] h-4 skeleton rounded" />
 
                     {/* Course Purchase Card */}
                     <div className="lg:w-[30%] xl:w-[25rem] bg-white border border-[#E2E8F0] shadow-[0px_0px_8px_0px] shadow-[#3b82f61f] mt-[50px!important] lg:mt-[0px!important] rounded-2xl lg:absolute right-4 top-0 lg:top-4">
@@ -90,7 +90,7 @@ const CourseDetailsSkeleton = () => {
                     <section id="description" className="space-y-6 pt-6">
                         <hr />
                         <div>
-                            <div className="w-[20rem] h-4 skeleton rounded" />
+                            <div className="sm:w-[20rem] h-4 skeleton rounded" />
                             <div className="flex flex-col gap-y-2 mt-3">
                                 <div className="w-[90%] h-2 skeleton rounded" />
                                 <div className="w-[84%] h-2 skeleton rounded" />
@@ -102,7 +102,7 @@ const CourseDetailsSkeleton = () => {
                         </div>
 
                         <div>
-                            <div className="w-[20rem] h-4 skeleton rounded" />
+                            <div className="sm:w-[20rem] h-4 skeleton rounded" />
                             <div className="flex flex-col gap-y-2 mt-3">
                                 <div className="w-[90%] h-2 skeleton rounded" />
                                 <div className="w-[84%] h-2 skeleton rounded" />

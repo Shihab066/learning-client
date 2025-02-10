@@ -7,6 +7,7 @@ import Loading from "../../components/Loading/Loading";
 import { Link } from "react-router-dom";
 import generateImageLink from "../../utils/generateImageLink";
 import api from "../../services/baseAPI";
+import formateCourseDuration from "../../utils/formateCourseDuration";
 
 const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
     const { data: courses = [], isLoading } = useQuery({
@@ -24,7 +25,7 @@ const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
         autoplaySpeed: 4000,
         pauseOnHover: true,
         slidesToShow: 4,
-        slidesToScroll: 2,
+        // slidesToScroll: 2,
         centerMode: true,
         centerPadding: '10px',
         responsive: [
@@ -44,8 +45,7 @@ const MoreCoursesByInstructor = ({ instructorId, instructorName }) => {
                 breakpoint: 575,
                 settings: {
                     slidesToShow: 1,
-                    centerMode: false,
-                    dots: true
+                    centerMode: false                    
                 }
             }
 
@@ -141,6 +141,7 @@ const NextButton = ({ handleNextBtn }) => (
 const CourseCard = ({ item, instructorName }) => {
     const { _id, courseName, courseThumbnail, level, rating, totalReviews, courseDuration, totalModules, price, discount } = item;
     const modifiedCourseName = courseName?.length > 50 ? courseName.slice(0, 45) + '...' : courseName;
+    const totalCourseDuration = formateCourseDuration(courseDuration || 0);
     return (
         <Link to={`/course/${_id}`}>
             <div className="sm:w-[95%] h-fit bg-white rounded-2xl p-3 lg:p-4 space-y-2 border border-[#E2E8F0] text-gray-700 mx-1 sm:mx-0">
@@ -164,7 +165,7 @@ const CourseCard = ({ item, instructorName }) => {
                         ({totalReviews} Ratings)
                     </span>
                 </div>
-                <p>{22} Total Hours. {totalModules} Modules.</p>
+                <p>{totalCourseDuration}. {totalModules} Modules.</p>
                 <div>
                     {discount > 0
                         ? (

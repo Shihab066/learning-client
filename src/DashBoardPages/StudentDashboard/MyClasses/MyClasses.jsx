@@ -91,7 +91,7 @@ const MyClassCard = ({ courseData }) => {
                     By {instructorName}
                 </p>
                 <div className="w-full h-2.5 border rounded-full overflow-hidden">
-                    <div className={`h-full ${courseCompletePercent ? `w-[${courseCompletePercent}%]` : 'w-0'} rounded-full bg-blue-500`}></div>
+                    <div style={{ width: `${courseCompletePercent ? `${courseCompletePercent}%` : '0'}` }} className={`h-full rounded-full bg-blue-500`}></div>
                 </div>
                 {
                     courseCompletePercent > 0

@@ -30,7 +30,7 @@ const CourseReviews = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-top mb-6">
+            <div className="flex flex-col gap-y-2 sm:flex-row justify-between items-top mb-6">
                 <h2 className="text-lg font-medium">Reviews</h2>
                 <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
                     <input

@@ -175,8 +175,8 @@ const AddCourse = () => {
     };
 
     return (
-        <div onKeyDown={handleEnterButton} id="addCourse" className="md:px-4 lg:px-8 pb-10 w-full xl:border rounded-lg">
-            <h3 className="py-5 font-bold text-xl">Add Course</h3>
+        <div onKeyDown={handleEnterButton} id="addCourse" className="lg:px-2 xl:px-6 pb-10 xl:pt-6 w-full xl:border rounded-lg">
+            <h3 className="pb-5 font-bold text-xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                 {/* Class Name */}
                 <div className="form-control">

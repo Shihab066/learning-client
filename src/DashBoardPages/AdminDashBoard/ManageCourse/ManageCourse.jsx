@@ -70,7 +70,7 @@ const ManageCourse = () => {
     };
 
     return (
-        <div className="mt-6 xl:mt-0">
+        <div>
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row justify-between gap-y-2 border-b pb-2">
                 <h2 className="text-lg font-bold">Manage Courses</h2>

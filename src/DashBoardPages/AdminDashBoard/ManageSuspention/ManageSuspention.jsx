@@ -60,7 +60,7 @@ const ManageSuspention = () => {
 
     return (
         <>
-            <div className="mt-6 xl:mt-0">
+            <div>
                 {/* Header Section */}
                 <div className="border-b pb-2 flex flex-col sm:flex-row justify-between gap-y-2">
                     <h2 className="text-lg font-bold">Manage Suspended Users</h2>

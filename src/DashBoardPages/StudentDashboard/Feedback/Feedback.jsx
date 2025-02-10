@@ -24,7 +24,7 @@ const Feedback = () => {
         <section className="lg:px-2 xl:px-0">
             {/* Header Section */}
             <header>
-                <h2 className="mb-2 text-xl font-medium mt-6 xl:mt-0">Feedback</h2>
+                <h2 className="mb-2 text-xl font-medium">Feedback</h2>
                 <hr />
             </header>
 

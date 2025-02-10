@@ -41,7 +41,7 @@ const BannerManagement = () => {
     return (
         <div>
             {/* Header Section */}
-            <div className="mt-6 xl:mt-0 pb-2 border-b flex items-start justify-between">
+            <div className="pb-2 border-b flex items-start justify-between">
                 <h2 className="text-lg font-bold">Banner Management</h2>
                 {!isAddBannerEnable && !isBannerUpdateEnable && (
                     <button

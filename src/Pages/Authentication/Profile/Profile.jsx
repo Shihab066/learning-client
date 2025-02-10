@@ -174,7 +174,7 @@ const Profile = () => {
                     ?
                     <Loading />
                     :
-                    <div className="lg-container xl:border px-0 lg:px-3 xl:px-10 mt-6 xl:mt-0 xl:py-10 rounded-2xl space-y-10">
+                    <div className="lg-container xl:border px-0 lg:px-3 xl:px-10 xl:py-10 rounded-2xl space-y-10">
                         {/* Profile general section */}
                         <div>
                             <h3 className="text-xl font-medium mb-3">My Profile</h3>

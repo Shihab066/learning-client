@@ -94,7 +94,7 @@ const MyCourses = () => {
 
     return (
         <>
-            <div className='relative pt-14 xl:pt-0'>
+            <div className='relative'>
                 <div className="space-y-3">
                     <h2 className="text-lg font-medium">Courses</h2>
                     <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">
@@ -275,7 +275,7 @@ const MyCourseCard = ({ course, setIsUpdateCourseOpen, setCourseId, handlePublis
                         </button>
 
                         {/* watch */}
-                        <Link to={'/courseDetails'} className='w-fit border rounded-md px-2 py-1.5 bg-blue-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='watch'>
+                        <Link to={`/course/${_id}`} className='w-fit border rounded-md px-2 py-1.5 bg-blue-600 hover:shadow-lg hover:scale-95 duration-300 cursor-pointer' title='watch'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='w-6'>
                                 <path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"></path>
                             </svg>

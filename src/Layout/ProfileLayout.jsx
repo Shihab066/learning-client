@@ -109,7 +109,7 @@ const ProfileLayout = () => {
                 </aside>
             </div>
 
-            <main className="w-full h-fit overflow-hidden">
+            <main className="w-full h-fit overflow-hidden pt-6 xl:pt-0">
                 <Outlet />
             </main>
         </div>

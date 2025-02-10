@@ -71,7 +71,7 @@ const PurchaseHistory = () => {
     return (
         <div className='lg:px-2 xl:px-0'>
             <div>
-                <h2 className='text-xl font-medium mb-4 mt-6 xl:mt-0'>Purchase History</h2>
+                <h2 className='text-xl font-medium mb-4'>Purchase History</h2>
             </div>
             {
                 isPurchaseDataLoading

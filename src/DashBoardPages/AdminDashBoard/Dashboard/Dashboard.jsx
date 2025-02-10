@@ -106,7 +106,7 @@ const Dashboard = () => {
             {isLoading ? (
                 <Loading />
             ) : (
-                <div className="mt-6 xl:mt-0 select-none">
+                <div className="select-none">
                     <h2 className="text-lg font-bold border-b pb-2">Dashboard</h2>
                     <div className="flex flex-col lg:flex-row items-start gap-6 mt-6 md:mt-8 h-full">
                         {/* Card Section */}

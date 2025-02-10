@@ -95,7 +95,7 @@ const MyReviewsHistoryCard = ({ data, setSelectedReview }) => {
                 {/* Course Name (Clickable Link) */}
                 <Link
                     to={`/course/${_courseId}`}
-                    className="max-w-[85%] font-medium text-gray-700 leading-5 truncate"
+                    className="max-w-[75%] font-medium text-gray-700 leading-5 truncate"
                 >
                     {courseName}
                 </Link>

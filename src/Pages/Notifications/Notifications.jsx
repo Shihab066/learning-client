@@ -1,8 +1,9 @@
+import EmptyPage from "../../components/EmptyPage/EmptyPage";
 
 const Notifications = () => {
     return (
         <div>
-            notifications
+            <EmptyPage text='Comming Soon!!!' />
         </div>
     );
 };

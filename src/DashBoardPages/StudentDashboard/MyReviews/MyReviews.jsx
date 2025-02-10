@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 const MyReviews = () => {
     return (
         <>
-            <section className="w-full overflow-hidden">
+            <section className="w-full overflow-hidden mt-6 xl:mt-0 lg:px-2 xl:px-0">
                 <div>
                     <h2 className="text-xl font-medium">
                         My Reviews

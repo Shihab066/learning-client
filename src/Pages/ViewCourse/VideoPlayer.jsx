@@ -41,7 +41,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
     useEffect(() => {
         if (playerRef.current && videoId) {
             if (prevVideoId.current !== videoId) {
-                playerRef.current.source(`http://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}/${jwtToken}`)
+                playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}/${jwtToken}`)
             }
             prevVideoId.current = videoId
             playerRef.current.on('ended', () => {

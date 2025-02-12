@@ -279,7 +279,7 @@ const CourseCard = ({
                 />
                 <img
                     className={`w-full object-cover ${isLoaded ? 'block' : 'hidden'}`}
-                    src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspactRatio: '16:9' })}
+                    src={generateImageLink({ imageId: courseThumbnail, width: '400', height: '225', cropMode: 'fill', aspectRatio: '16:9' })}
                     alt="course thumbnail"
                     onLoad={handleImageLoad}
                 />

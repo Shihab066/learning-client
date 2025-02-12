@@ -1,5 +1,5 @@
-import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
+import { toastError, toastSuccess } from "../../../utils/toastUtils";
 
 const PasswordReset = () => {
     const { sendAccountRecoveryEmail, getSignInMehtod } = useAuth();
@@ -11,41 +11,23 @@ const PasswordReset = () => {
 
         if (email) {
             getSignInMehtod(email)
-                .then((signInMethods) => {                    
+                .then((signInMethods) => {
                     if (signInMethods.includes('password')) {
                         sendAccountRecoveryEmail(email)
                             .then(() => {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'success',
-                                    title: 'An Email has been sent to your account!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
+                                toastSuccess('An Email has been sent to your account!');
                                 event.target.reset();
                             })
                             .catch((error) => {
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'error',
-                                    title: 'Something went wrong!',
-                                    showConfirmButton: false,
-                                    showCloseButton: true
-                                });
+                                toastError('Something went wrong!');
                                 console.error('Something went wrong while sending password reset email', error);
                             });
                     }
                     else {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: 'No account found with this email. Please check the email address.',
-                            showConfirmButton: false,
-                            showCloseButton: true
-                        });
+                        toastError('No account found with this email')
                     }
                 })
-                .catch(error => {                   
+                .catch(error => {
                     console.error('Something went wrong while geting userSignupMethod', error);
                 });
         }

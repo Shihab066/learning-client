@@ -6,7 +6,7 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
     const cloudinaryRef = useRef();
     const playerRef = useRef();
     const prevVideoId = useRef();
-    console.log(jwtToken)
+
     useEffect(() => {
         if (!cloudinaryRef.current) {
             cloudinaryRef.current = window.cloudinary;

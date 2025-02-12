@@ -23,13 +23,13 @@ const SocialLogin = ({ from }) => {
     }
     return (
         <>
-            <div className="divider">OR</div>
-            <div onClick={handleSignIn} className='btn btn-ghost flex items-center justify-center gap-4 rounded-lg px-4 py-2 mt-3 border-t-base-200 shadow-md hover:bg-base-200 ease-linear duration-100'>
+            <div className="divider">Sign in with</div>
+            <div onClick={handleSignIn} className='flex items-center justify-center gap-4 rounded-lg px-4 py-2 mt-3 border cursor-pointer select-none hover:shadow duration-150 font-medium'>
                 <img
                     className='w-6'
                     src={logo}
                     alt="" />
-                <span>Continue with google</span>
+                <span>Google</span>
             </div>
         </>
     );

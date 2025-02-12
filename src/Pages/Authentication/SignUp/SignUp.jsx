@@ -70,69 +70,71 @@ const SignUp = () => {
     }
 
     return (
-        <div className="mt-20 px-8 pb-10 w-[95%] sm:w-[500px] md:w-[530px] mx-auto shadow-2xl rounded-lg">
+        <section>
             <Helmet>
-                <title>Learning Point_signUp</title>
+                <title>SignUp | Learning Point</title>
             </Helmet>
-            <h3 className="text-center py-8 font-bold text-4xl">SignUp</h3>
-            <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+            <div className="mx-auto mt-10 sm:mt-20 w-full max-w-sm lg:max-w-lg px-4 sm:px-0">
+                <h3 className="text-center py-4 sm:py-8 font-medium text-xl sm:text-3xl">Create Your Account</h3>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
-                {/* E-mail field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">E-mail</span>
-                    </label>
-                    <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        {...register('email', { required: true })}
-                    />
-                    {errors.email?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                </div>
-
-                {/* Password Field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Password</span>
-                    </label>
-                    <div className="relative">
-                        <input type='text' placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
-                            {...register("password", {
-                                required: true,
-                                minLength: 6,
-                                pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
-                            })}
+                    {/* E-mail field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">E-mail</span>
+                        </label>
+                        <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            {...register('email', { required: true })}
                         />
-                        {errors.password?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                        {errors.password?.type === 'minLength' && <span className="text-red-600">Password must be atleast 6 characters</span>}
-                        {errors.password?.type === 'pattern' && <span className="text-red-600">Password must have one Uppercase and one special character</span>}
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
+                        {errors.email?.type === 'required' && <span className="text-red-600">Field is required</span>}
                     </div>
-                </div>
 
-                {/*Confirm Password Field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Confirm Password</span>
-                    </label>
-                    <div className="relative">
-                        <input onChange={watch(handlePassword)} type='password' placeholder="Confirm Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
-                            {...register("confirmPassword", { required: true })}
-                        />
-                        {errors.confirmPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
+                    {/* Password Field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Password</span>
+                        </label>
+                        <div className="relative">
+                            <input type='text' placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
+                                {...register("password", {
+                                    required: true,
+                                    minLength: 6,
+                                    pattern: /(?=.*[A-Z])(?=.*[!@#$&*.])/
+                                })}
+                            />
+                            {errors.password?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                            {errors.password?.type === 'minLength' && <span className="text-red-600">Password must be atleast 6 characters</span>}
+                            {errors.password?.type === 'pattern' && <span className="text-red-600">Password must have one Uppercase and one special character</span>}
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
+                        </div>
                     </div>
-                </div>
+
+                    {/*Confirm Password Field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Confirm Password</span>
+                        </label>
+                        <div className="relative">
+                            <input onChange={watch(handlePassword)} type='password' placeholder="Confirm Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
+                                {...register("confirmPassword", { required: true })}
+                            />
+                            {errors.confirmPassword?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 ">{confirmPassword == 1 && <span className="text-green-500"><TickMark /></span>} {confirmPassword == 2 && <span className="text-red-600"><WarningCircle /></span>}</div>
+                        </div>
+                    </div>
 
 
 
 
-                {/* Login Button */}
-                <input type="submit" value="SignUp" className="mt-5 w-full btn bg-[#3b5fe2] text-white hover:bg-[#2a4ed1] normal-case" />
-            </form>
-            <p className="mt-5 pl-1">Have an Account? <Link to={'/login'} className="text-blue-500 link">Login</Link></p>
+                    {/* Login Button */}
+                    <input type="submit" value="Create Account" className="mt-5 w-full btn bg-black text-white hover:bg-black hover:bg-opacity-80 normal-case" />
+                </form>
+                <p className="mt-5 pl-1">Have an Account? <Link to={'/login'} className="text-blue-500 link">Sign in</Link></p>
 
-            <SocialLogin></SocialLogin>
+                <SocialLogin></SocialLogin>
 
-        </div>
+            </div>
+        </section>
     );
 };
 

@@ -11,7 +11,7 @@ import EyeSlash from "../../../components/Icons/EyeSlash";
 
 const Login = () => {
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/";    
+    const from = location.state?.from?.pathname || "/";
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,7 @@ const Login = () => {
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
                 setIsLoggedIn(true),
-                reset();
+                    reset();
                 navigate(from, { replace: true });
             })
             .catch(() => {
@@ -40,51 +40,53 @@ const Login = () => {
             })
     }
     return (
-        <div className="mt-20 px-8 pb-10 w-[95%] sm:w-[500px] md:w-[530px] mx-auto shadow-2xl rounded-lg">
+        <section>
             <Helmet>
-                <title>Learning Point_login</title>
+                <title>Login | Learning Point</title>
             </Helmet>
-            <h3 className="text-center py-8 font-bold text-4xl">Login</h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* E-mail field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">E-mail</span>
-                    </label>
-                    <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                        {...register('email', { required: true })}
-                    />
-                    {errors.email?.type === 'required' && <span className="text-red-600">This field is required</span>}
-                </div>
-
-                {/* Password Field */}
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Password</span>
-                    </label>
-                    <div className="relative">
-                        <input type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
-                            {...register("password", { required: true })}
+            <div className="mx-auto mt-10 sm:mt-20 w-full max-w-sm lg:max-w-lg px-4 sm:px-0">
+                <h3 className="text-center py-4 sm:py-8 font-medium text-xl sm:text-3xl">Sign in to your account</h3>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    {/* E-mail field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">E-mail</span>
+                        </label>
+                        <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            {...register('email', { required: true })}
                         />
-                        {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
-                        <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <EyeSlash /> : <EyeIcon />}</span>
+                        {errors.email?.type === 'required' && <span className="text-red-600">This field is required</span>}
                     </div>
-                </div>
 
-                {/* account recovery */}
-                <Link
-                    to='/account_recovery'
-                    className="flex mt-2 ml-1 text-blue-500 link">
-                    Forget password?
-                </Link>
+                    {/* Password Field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Password</span>
+                        </label>
+                        <div className="relative">
+                            <input type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
+                                {...register("password", { required: true })}
+                            />
+                            {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
+                            <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <EyeSlash /> : <EyeIcon />}</span>
+                        </div>
+                    </div>
 
-                {/* Login Button */}
-                <input type="submit" value="Login" className="mt-5 w-full btn bg-[#3b5fe2] text-white hover:bg-[#2a4ed1] normal-case" />
-            </form>
-            <p className="mt-5 pl-1">New to Learning Point? <Link to={'/signup'} className="text-blue-500 link">SignUp</Link></p>
+                    {/* account recovery */}
+                    <Link
+                        to='/account_recovery'
+                        className="flex mt-2 ml-1 text-blue-500 link">
+                        Forget password?
+                    </Link>
 
-            <SocialLogin from={from}></SocialLogin>
-        </div>
+                    {/* Login Button */}
+                    <input type="submit" value="Sign in" className="mt-5 w-full btn bg-black text-white hover:bg-black hover:bg-opacity-80 normal-case" />
+                </form>
+                <p className="mt-5 pl-1">New to Learning Point? <Link to={'/signup'} className="text-blue-500 link">SignUp</Link></p>
+
+                <SocialLogin from={from}></SocialLogin>
+            </div>
+        </section>
     );
 };
 

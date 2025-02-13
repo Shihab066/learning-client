@@ -8,6 +8,7 @@ import { getEnrollmentCourseContents, updateLearingProgress } from "../../servic
 import useAuth from "../../hooks/useAuth";
 import CourseCompleteAnimation from "./CourseCompleteAnimation";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { Helmet } from "react-helmet-async";
 
 const ViewCourse = () => {
     const { courseId } = useParams();
@@ -139,6 +140,10 @@ const ViewCourse = () => {
 
     return (
         <>
+            <Helmet>
+                <link href="https://unpkg.com/cloudinary-video-player@latest/dist/cld-video-player.min.css" rel="stylesheet" />
+                <script src="https://unpkg.com/cloudinary-video-player@latest/dist/cld-video-player.min.js" type="text/javascript" />
+            </Helmet>
             <section className="lg-container px-4 pt-8">
                 <div className="border-b pb-4 flex items-center gap-x-10">
                     {/* Back Button and Video Title */}

@@ -2,7 +2,6 @@ import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
@@ -166,10 +165,7 @@ const Courses = () => {
 
     return (
         <section className='lg-container'>
-            <ScrollToTop limit={itemPerPage} page={currentPage} />
-            <Helmet>
-                <title>Learning Point | Courses</title>
-            </Helmet>
+            <ScrollToTop limit={itemPerPage} page={currentPage} />           
             <Header
                 handlePageOptions={handleItemPerPageOptions}
                 handleSortOptions={handleSortOptions}
@@ -186,7 +182,7 @@ const Courses = () => {
                     data?.courses.map(courseData => (
                         <CourseCard
                             key={courseData._id}
-                            navigate={navigate}                            
+                            navigate={navigate}
                             item={courseData}
                             wishlist={wishlist}
                             handleAddToWishlist={handleAddToWishlist}

@@ -582,7 +582,7 @@ const Navbar = () => {
             {/* Dropdown menu */}
             <ul
               onClick={handleDropdownItemClick}
-              className={`menu flex-nowrap fixed top-14 left-0 h-[calc(100vh-3.5rem)] bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto lg:hidden duration-[250ms] ease-in-out  w-[17.5rem] px-0 pt-0 ${isDropDownItemOpen ? '' : 'pb-20'} transition-all   ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}`}
+              className={`menu flex-nowrap fixed ${isUserSuspended ? 'sm:top-18' : 'top-14'} left-0 h-[calc(100vh-3.5rem)] bg-white shadow-md z-[60] border-t overflow-hidden overflow-y-auto lg:hidden duration-[250ms] ease-in-out  w-[17.5rem] px-0 pt-0 ${isDropDownItemOpen ? '' : 'pb-20'} transition-all   ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
               <div className="relative w-full h-full">
                 <div className={`opacity-0 ease-linear duration-[250ms] delay-[250ms] ${isHamburgerOpen ? 'opacity-100' : ''} `}>
@@ -667,7 +667,7 @@ const Navbar = () => {
               isHamburgerOpen &&
               <div
                 onClick={() => setIsHamburgerOpen(false)}
-                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed top-14 left-0 z-50 lg:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
+                className={`w-screen h-screen bg-[rgba(0,0,0,0.5)] fixed ${isUserSuspended ? 'sm:top-18' : 'top-14'} left-0 z-50 lg:hidden ${isHamburgerOpen ? 'overlay-fade-in' : ''}`}
               ></div>
             }
           </>

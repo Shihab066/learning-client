@@ -141,8 +141,7 @@ const ViewCourse = () => {
     return (
         <>
             <Helmet>
-                <link href="https://unpkg.com/cloudinary-video-player@latest/dist/cld-video-player.min.css" rel="stylesheet" />
-                <script src="https://unpkg.com/cloudinary-video-player@latest/dist/cld-video-player.min.js" type="text/javascript" />
+               <title></title>
             </Helmet>
             <section className="lg-container px-4 pt-8">
                 <div className="border-b pb-4 flex items-center gap-x-10">

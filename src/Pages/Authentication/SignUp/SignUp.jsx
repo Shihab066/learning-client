@@ -9,18 +9,20 @@ import api from "../../../services/baseAPI";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import TickMark from "../../../components/Icons/TickMark";
 import WarningCircle from "../../../components/Icons/WarningCircle";
+import { toastError, toastSuccess } from "../../../utils/toastUtils";
 
 const SignUp = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const [confirmPassword, setConfirmPassword] = useState(null);
-    const { createUser, updateUser, setJwtToken, setIsLoggedIn } = useAuth();
+    const { createUser, updateUser, setJwtToken, setIsLoggedIn, setloading } = useAuth();
     const navigate = useNavigate();
     const [axiosSecure] = useAxiosSecure();
 
     const onSubmit = async (data) => {
         const { name, email, password } = data;
         await createUser(email, password)
-            .then(async (result) => {
+            .then(async (result) => {                
+                updateUser(name)
                 const res = await api.post('/token/upload', { uniqueKey: result.user.accessToken });
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
@@ -28,24 +30,25 @@ const SignUp = () => {
                 setIsLoggedIn(true);
                 const userData = {
                     _id: result?.user?.uid,
-                    name: name || "anonymous",
+                    name: name,
                     email,
                     signupMethod: 'password'
                 }
-                axiosSecure.post('/user/add', userData)
+                await axiosSecure.post('/user/add', userData)
                     .then(res => {
                         if (res.data.result.insertedId) {
-                            reset()
-                            Swal.fire({
-                                position: 'center',
-                                icon: 'success',
-                                title: 'Registration Successful',
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                            navigate('/')
+                            reset();
+                            toastSuccess('Registration Successful');
+                            navigate('/');
                         }
-                    })
+                    })                
+            })
+            .catch((error) => {
+                if (error.code === 'auth/email-already-in-use') {
+                    toastError('Email already exist!')
+                    setloading(false);
+                }
+
             })
     }
 
@@ -77,6 +80,17 @@ const SignUp = () => {
             <div className="mx-auto mt-10 sm:mt-20 w-full max-w-sm lg:max-w-lg px-4 sm:px-0">
                 <h3 className="text-center py-4 sm:py-8 font-medium text-xl sm:text-3xl">Create Your Account</h3>
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+
+                    {/* Name field */}
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">Name</span>
+                        </label>
+                        <input type="text" placeholder="Name" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            {...register('name', { required: true })}
+                        />
+                        {errors.name?.type === 'required' && <span className="text-red-600">Field is required</span>}
+                    </div>
 
                     {/* E-mail field */}
                     <div className="form-control">

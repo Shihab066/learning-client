@@ -16,9 +16,12 @@ const Login = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const { signIn, setloading, setJwtToken, setIsLoggedIn } = useAuth();
-    const onSubmit = data => {
-        const { email, password } = data;
-        signIn(email, password)
+    const [userEmail, setUserEmail] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+
+    const onSubmit = (data) => {
+        // const { email, password } = data;
+        signIn(userEmail, userPassword)
             .then(async (result) => {
                 setloading(true)
                 const user = result.user;
@@ -39,6 +42,32 @@ const Login = () => {
                 })
             })
     }
+
+    // manage easy login   
+    const handleEmailInput = (e) => {
+        setUserEmail(e.target.value)
+    }
+
+    const handlePasswordInput = (e) => {
+        setUserPassword(e.target.value)
+    }
+
+    const handleStudentLogin = () => {
+        setUserEmail('student.learning.point@gmail.com')
+        setUserPassword('Abcd5678..')
+    };
+
+    const handleInstructorLogin = () => {
+        setUserEmail('alex.codemaster@gmail.com')
+        setUserPassword('Abcd1234..')
+    };
+    
+    const handleAdminLogin = () => {
+        setUserEmail('admin.learning.point@gmail.com')
+        setUserPassword('Abcd5678..')
+    };
+
+
     return (
         <section>
             <Helmet>
@@ -52,8 +81,8 @@ const Login = () => {
                         <label className="label">
                             <span className="label-text">E-mail</span>
                         </label>
-                        <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            {...register('email', { required: true })}
+                        <input value={userEmail} type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            {...register('email', { required: true, onChange: (e) => { handleEmailInput(e) } })}
                         />
                         {errors.email?.type === 'required' && <span className="text-red-600">This field is required</span>}
                     </div>
@@ -64,8 +93,8 @@ const Login = () => {
                             <span className="label-text">Password</span>
                         </label>
                         <div className="relative">
-                            <input type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
-                                {...register("password", { required: true })}
+                            <input value={userPassword} type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
+                                {...register("password", { required: true, onChange: (e) => { handlePasswordInput(e) } })}
                             />
                             {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
                             <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <EyeSlash /> : <EyeIcon />}</span>
@@ -85,6 +114,14 @@ const Login = () => {
                 <p className="mt-5 pl-1">New to Learning Point? <Link to={'/signup'} className="text-blue-500 link">SignUp</Link></p>
 
                 <SocialLogin from={from}></SocialLogin>
+
+                {/* easy login */}
+                <div className="divider mt-10">Easy Login</div>
+                <div className="flex justify-center mt-10 cursor-pointer">
+                    <div onClick={handleStudentLogin} className="border border-r-0 border-black px-3 py-1 rounded-l-md hover:bg-gray-100 duration-150">Student</div>
+                    <div onClick={handleInstructorLogin} className="border border-black px-3 py-1 hover:bg-gray-100 duration-150">Instructor</div>
+                    <div onClick={handleAdminLogin} className="border border-l-0 border-black px-3 py-1 rounded-r-md hover:bg-gray-100 duration-150">Admin</div>
+                </div>
             </div>
         </section>
     );

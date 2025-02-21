@@ -13,15 +13,13 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const { signIn, setloading, setJwtToken, setIsLoggedIn } = useAuth();
-    const [userEmail, setUserEmail] = useState('');
-    const [userPassword, setUserPassword] = useState('');
 
     const onSubmit = (data) => {
-        // const { email, password } = data;
-        signIn(userEmail, userPassword)
+        const { email, password } = data;
+        signIn(email, password)
             .then(async (result) => {
                 setloading(true)
                 const user = result.user;
@@ -29,8 +27,8 @@ const Login = () => {
                 const token = await res.data.token;
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
-                setIsLoggedIn(true),
-                    reset();
+                setIsLoggedIn(true);
+                reset();
                 navigate(from, { replace: true });
             })
             .catch(() => {
@@ -44,27 +42,19 @@ const Login = () => {
     }
 
     // manage easy login   
-    const handleEmailInput = (e) => {
-        setUserEmail(e.target.value)
-    }
-
-    const handlePasswordInput = (e) => {
-        setUserPassword(e.target.value)
-    }
-
     const handleStudentLogin = () => {
-        setUserEmail('student.learning.point@gmail.com')
-        setUserPassword('Abcd5678..')
+        setValue("email", 'student.learning.point@gmail.com')
+        setValue("password", 'Abcd5678..')
     };
 
     const handleInstructorLogin = () => {
-        setUserEmail('alex.codemaster@gmail.com')
-        setUserPassword('Abcd1234..')
+        setValue("email", 'alex.codemaster@gmail.com')
+        setValue("password", 'Abcd1234..')
     };
-    
+
     const handleAdminLogin = () => {
-        setUserEmail('admin.learning.point@gmail.com')
-        setUserPassword('Abcd5678..')
+        setValue("email", 'admin.learning.point@gmail.com')
+        setValue("password", 'Abcd5678..')
     };
 
 
@@ -81,8 +71,8 @@ const Login = () => {
                         <label className="label">
                             <span className="label-text">E-mail</span>
                         </label>
-                        <input value={userEmail} type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            {...register('email', { required: true, onChange: (e) => { handleEmailInput(e) } })}
+                        <input type="email" placeholder="E-mail" className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
+                            {...register('email', { required: true })}
                         />
                         {errors.email?.type === 'required' && <span className="text-red-600">This field is required</span>}
                     </div>
@@ -93,12 +83,12 @@ const Login = () => {
                             <span className="label-text">Password</span>
                         </label>
                         <div className="relative">
-                            <input value={userPassword} type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
-                                {...register("password", { required: true, onChange: (e) => { handlePasswordInput(e) } })}
+                            <input type={showPassword ? 'text' : 'password'} placeholder="Password" className="input w-full border-base-300 focus:border-blue-500 active:border-transparent focus:outline-0"
+                                {...register("password", { required: true })}
                             />
-                            {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
                             <span onClick={() => setShowPassword(!showPassword)} title={showPassword ? 'hide' : 'show'} className="absolute right-3 top-1/2 -translate-y-1/2 text-2xl hover:text-blue-700">{showPassword ? <EyeSlash /> : <EyeIcon />}</span>
                         </div>
+                        {errors.password?.type === 'required' && <span className="text-red-600">This field is required</span>}
                     </div>
 
                     {/* account recovery */}

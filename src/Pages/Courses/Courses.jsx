@@ -129,7 +129,7 @@ const Courses = () => {
     });
 
     const totalItems = data?.coursesCount;
-    const totalPages = Math.ceil(totalItems / (itemPerPage || 6));
+    const totalPages = Math.ceil(totalItems / (itemPerPage || 8));
     const [visiblePages, setVisiblePages] = useState([]);
 
     // Update visible pages for pagination

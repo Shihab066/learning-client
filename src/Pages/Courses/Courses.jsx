@@ -69,7 +69,7 @@ const Courses = () => {
     const { data, isLoading: isCoursesLoading } = useQuery({
         queryKey: ['courses', reFetchCourse, searchValue, sortValue, activePage],
         queryFn: async () => {
-            const res = await api.get(`/course/all?limit=${itemPerPage || 6}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
+            const res = await api.get(`/course/all?limit=${itemPerPage || 8}&page=${activePage}&sort=${sortValue}&search=${searchValue}`);
             return res.data;
         },
         refetchOnWindowFocus: false
@@ -223,9 +223,9 @@ const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, 
             <div className='flex items-center gap-2'>
                 <p className='font-medium'>Show:</p>
                 <select value={itemPerPage} className='text-base border rounded bg-base-200 ps-1 focus:outline-none' onChange={handlePageOptions}>
-                    <option value={6}>6</option>
-                    <option value={9}>9</option>
-                    <option value={18}>18</option>
+                    <option value={8}>8</option>
+                    <option value={12}>12</option>
+                    <option value={20}>20</option>
                 </select>
             </div>
 

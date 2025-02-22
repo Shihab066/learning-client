@@ -339,7 +339,7 @@ const AdditionalInfo = ({ axiosSecure, user }) => {
     // Local state management
     const [formData, setFormData] = useState(user);
     const [isUpdateBtnDisabled, setIsUpdateBtnDisabled] = useState(true);
-    const { headline, bioData, experience, languages, expertise, socialLinks } = formData;
+    const { headline, bioData, experience, languages = [], expertise = [], socialLinks = {} } = formData;
     const { website, linkedIn, youtube, twitter, facebook } = socialLinks;
 
     // Set default options for language and expertise selection

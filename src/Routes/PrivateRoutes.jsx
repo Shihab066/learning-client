@@ -12,7 +12,7 @@ const PrivateRoutes = ({ userType, children }) => {
     const [userRole, isUserRoleLoading] = useUserRole();
     const { isUserSuspended, isSuspendedStatusLoading } = useUserSuspensionStatus();
 
-    if (loading || isUserRoleLoading, isSuspendedStatusLoading) {
+    if (loading || isUserRoleLoading || isSuspendedStatusLoading) {
         return <Loading />
     }
 

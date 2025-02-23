@@ -16,7 +16,7 @@ const UpdateModuleItem = ({
     // State for form fields
     const [formData, setFormData] = useState(moduleItem);
     const { itemName, itemData, itemDescription } = formData || {};
-    const [videoTitleError, setVideoTitleError] = useState(false);    
+    const [videoTitleError, setVideoTitleError] = useState(false);
     const [isVideoUploadDisable, setIsVideoUploadDisable] = useState(true);
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [isVideoUploading, setIsVideoUploading] = useState(false);
@@ -32,7 +32,7 @@ const UpdateModuleItem = ({
     const handleVideoError = (e) => {
         const videoFile = e.target.files[0];
         // console.log(videoFile);
-        
+
         const maxSize = 100 * 1024 * 1024;
         if (videoFile && !videoFile.type.startsWith('video/')) {
             alert('Please select a valid video file.');
@@ -64,10 +64,12 @@ const UpdateModuleItem = ({
         handleInputChange(e);
     }
 
-    const handleVideoUpload = async (e) => {
+    const handleVideoUpload = async () => {
         // handleVideoError(e);
+        
         setIsVideoUploading(true);
-        const videoId = await uploadVideo(e.target.files[0]);
+        const videoFile = videoRef.current.files[0];
+        const videoId = await uploadVideo(videoFile);
         if (videoId) {
             setFormData(prevData => ({ ...prevData, ['itemData']: videoId }));
             setIsVideoUploading(false);
@@ -112,7 +114,7 @@ const UpdateModuleItem = ({
      * Resets the form fields and error states to their initial values.
      */
     const resetForm = () => {
-        setFormData(moduleItem)        
+        setFormData(moduleItem)
         setIsVideoUploadDisable(true);
         videoRef.current.value = '';
     };
@@ -169,7 +171,7 @@ const UpdateModuleItem = ({
                                 type="text"
                                 value={itemData}
                                 className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"
-                            />                            
+                            />
                         </div>
 
                         {/*Module Video Input */}
@@ -193,7 +195,7 @@ const UpdateModuleItem = ({
                                 className={`w-fit font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4 px-4 py-2 rounded-md ${isVideoUploadDisable
                                     ? "opacity-50 cursor-not-allowed"
                                     : "cursor-pointer"
-                                    } ${isVideoUploading ? 'opacity-50 pointer-events-none' : ''}` }
+                                    } ${isVideoUploading ? 'opacity-50 pointer-events-none' : ''}`}
                             >
                                 {isVideoUploading ? 'Uploading...' : 'Upload'}
                             </button>

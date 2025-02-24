@@ -10,6 +10,9 @@ import { checkout, expireSession } from "../../services/paymentService";
 import { useEffect } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useUserRole from "../../hooks/useUserRole";
+import { toastSuccess } from "../../utils/toastUtils";
+import CardIcon from "../../components/Icons/CardIcon";
+import CopyIcon from "../../components/Icons/CopyIcon";
 
 const Cart = () => {
     const { user } = useAuth();
@@ -92,6 +95,13 @@ const Cart = () => {
             window.history.replaceState({}, document.title, newUrl);
         }
     }, []);
+
+
+    // Handle Test card number copy functionality
+    const handleTestCardNumberCopy = () => {
+        navigator.clipboard.writeText('4242 4242 4242 4242')
+        toastSuccess('Copied to Clipboard')
+    }
 
 
     return (
@@ -179,6 +189,24 @@ const Cart = () => {
                                                 <button onClick={handleCheckout} className="w-full text-white font-medium bg-black py-3 md:mt-4">
                                                     Checkout
                                                 </button>
+                                            </div>
+
+                                            <div className="mt-6 text-gray-500">
+                                                <div className="font-medium">Test Card</div>
+                                                <div className="flex gap-x-4 mt-2">
+                                                    <CardIcon />
+                                                    <div>4242 4242 4242 ....</div>
+                                                    <div onClick={handleTestCardNumberCopy} className="cursor-pointer" title="Copy to Clipboard"><CopyIcon /></div>
+                                                </div>
+
+                                                <div className="flex gap-x-6 mt-4">
+                                                    <div>
+                                                        <span className="font-medium">Date: </span> 12/25
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-medium">CVC: </span> 123
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     }

@@ -152,6 +152,7 @@ const UpdateModuleItem = ({
                                 // ref={videoTitle}
                                 onChange={(e) => handleVideoTitleInput(e)}
                                 value={itemName}
+                                name="itemName"
                                 type="text"
                                 placeholder="Enter title"
                                 className="input input-info border-base-300 focus:border-blue-500 active:border-0 focus:outline-0"

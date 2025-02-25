@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import useAuth from '../../hooks/useAuth';
 
-const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
+const VideoPlayer = ({ courseId, videoId, handlePrevButton, handleNextButton, handleExpandView, autoPlay }) => {
     const { jwtToken } = useAuth();
     const cloudinaryRef = useRef();
     const playerRef = useRef();
@@ -41,7 +41,8 @@ const VideoPlayer = ({ videoId, handlePrevButton, handleNextButton, handleExpand
     useEffect(() => {
         if (playerRef.current && videoId) {
             if (prevVideoId.current !== videoId) {
-                playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${videoId}/${jwtToken}`)
+                playerRef.current.source(`https://learning-info-bd.vercel.app/api/v1/upload/video/get/${courseId}/${videoId}/${jwtToken}`)
+                // playerRef.current.source(`https://www.youtube.com/watch?v=-Vm7TdJWFOQ`)
             }
             prevVideoId.current = videoId
             playerRef.current.on('ended', () => {

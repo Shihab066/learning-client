@@ -227,6 +227,7 @@ const ViewCourse = () => {
                         {
                             videoId &&
                             <VideoPlayer
+                                courseId={courseId}
                                 videoId={videoId}
                                 handleNextButton={handleNextButton}
                                 handlePrevButton={handlePrevButton}

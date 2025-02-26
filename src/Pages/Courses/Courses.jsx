@@ -2,7 +2,7 @@ import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import notFoundIcon from '../../assets/icon/error1.png';
 import GenerateDynamicStar from '../../components/GenerateDynamicStar/GenerateDynamicStar';
@@ -128,19 +128,34 @@ const Courses = () => {
         queryFn: () => getEnrollmentCoursesId(axiosSecure, user?.uid)
     });
 
-    const totalItems = data?.coursesCount;
-    const totalPages = Math.ceil(totalItems / (itemPerPage || 8));
+    // handle pagination
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+
+    useEffect(() => {
+        setTotalItems(data?.coursesCount)
+    }, [data?.coursesCount]);
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(totalItems / (itemPerPage || 8)));
+    }, [totalItems, itemPerPage]);
+
     const [visiblePages, setVisiblePages] = useState([]);
 
     // Update visible pages for pagination
     useEffect(() => {
         const totalPagesArr = Array.from({ length: totalPages }, (_, i) => i + 1);
+
         if (activePage < 7) {
             setVisiblePages(totalPagesArr.slice(0, 7));
-        } else if (activePage === visiblePages[visiblePages.length - 1] || activePage === visiblePages[0]) {
+        }
+        else if (activePage === visiblePages[visiblePages.length - 1] || activePage === visiblePages[0]) {
             if (!visiblePages.includes(totalPagesArr[totalPagesArr.length - 1]) || activePage === visiblePages[0]) {
                 setVisiblePages(totalPagesArr.slice(activePage - 4, activePage + 3));
             }
+        }
+        else if (visiblePages.length === 0) {
+            setVisiblePages(totalPagesArr.slice(activePage - 4, activePage + 3));
         }
     }, [totalPages, activePage]);
 
@@ -165,7 +180,7 @@ const Courses = () => {
 
     return (
         <section className='lg-container'>
-            <ScrollToTop limit={itemPerPage} page={currentPage} />           
+            <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Header
                 handlePageOptions={handleItemPerPageOptions}
                 handleSortOptions={handleSortOptions}

@@ -191,7 +191,7 @@ const Courses = () => {
                 visiblePages={visiblePages}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-2 xl:px-4 gap-x-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 place-items-center px-4 gap-x-4">
                 {isCoursesLoading
                     ?
                     <CoursesLoadingSkeleton />
@@ -233,7 +233,7 @@ const Courses = () => {
 
 // Header component with options for items per page and sorting
 const Header = ({ handlePageOptions, handleSortOptions, itemPerPage, sortValue, visiblePages }) => (
-    <div className='flex flex-col sm:flex-row justify-between px-2 sm:px-4 md:px-5 py-6 gap-y-4'>
+    <div className='flex flex-col sm:flex-row justify-between px-4 md:px-5 py-6 gap-y-4'>
         <h2 className="text-lg font-medium">Courses</h2>
         <div className={`flex items-center gap-4 text-sm ${!visiblePages.length && 'hidden'}`}>
             {/* Select item per page */}
@@ -376,7 +376,7 @@ const ItemNotFound = ({ notFoundIcon }) => (
 
 // Pagination component
 const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, data }) => (
-    <div className={`flex justify-center items-center gap-2 mt-20 ${!data?.courses?.length && 'hidden'}`}>
+    <div className={`flex flex-wrap justify-left sm:justify-center items-center gap-2 mt-20 ${!data?.courses?.length && 'hidden'} px-4`}>
         {/* Previous button */}
         <Link
             to={`/courses/?page=${currentPage - 1}`}
@@ -390,7 +390,7 @@ const Pagination = ({ currentPage, setCurrentPage, activePage, visiblePages, dat
             <Link
                 to={`/courses/?page=${pageNo}`}
                 key={pageNo}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${activePage === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
+                className={`px-2 sm:px-4 sm:py-2 rounded sm:rounded-lg font-medium transition-colors duration-300 ${activePage === pageNo ? 'bg-blue-600 text-white pointer-events-none' : 'bg-gray-200 hover:bg-blue-700 text-gray-700 hover:text-white hover:underline'}`}
                 onClick={() => setCurrentPage(pageNo)}
             >
                 {pageNo}

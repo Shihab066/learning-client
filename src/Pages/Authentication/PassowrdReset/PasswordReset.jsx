@@ -1,3 +1,4 @@
+import Title from "../../../components/Title/Title";
 import useAuth from "../../../hooks/useAuth";
 import { toastError, toastSuccess } from "../../../utils/toastUtils";
 
@@ -36,7 +37,8 @@ const PasswordReset = () => {
 
     return (
         <div className="pt-32">
-            <div className="w-full max-w-[600px] mx-auto py-10 px-10 shadow-2xl rounded-lg">
+            <Title title={'Account Recovery'} />
+            <div className="w-full max-w-[600px] mx-auto px-4 md:py-10 sm:px-10 md:shadow-xl md:rounded-lg">
                 <h3 className="text-2xl font-medium text-center">Password Reset</h3>
                 <form
                     onSubmit={handlePasswordResetEmail}
@@ -56,7 +58,7 @@ const PasswordReset = () => {
 
                     <input
                         type="submit"
-                        className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[200px] justify-self-center"
+                        className="btn btn-md capitalize text-white bg-black hover:bg-black hover:bg-opacity-80 w-[200px] justify-self-center"
                         value="Get Password Reset Email"
                     />
                 </form>

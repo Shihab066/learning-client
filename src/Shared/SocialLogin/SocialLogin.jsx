@@ -4,7 +4,7 @@ import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/baseAPI';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
-const SocialLogin = ({ from }) => {
+const SocialLogin = ({ from = '/' }) => {
     const { googleSignIn, setJwtToken, setIsLoggedIn } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ const SocialLogin = ({ from }) => {
                 localStorage.setItem('access-token', token);
                 setJwtToken(token);
                 setIsLoggedIn(true),
-                axiosSecure.post('/user/add', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: user.photoURL, role: 'student', signupMethod: 'google' })
+                axiosSecure.post('/user/add', { _id: user.uid, name: user.displayName || "anonymous", email: user.email, image: "", role: 'student', signupMethod: 'google' })
                 navigate(from, { replace: true })
             })
     }

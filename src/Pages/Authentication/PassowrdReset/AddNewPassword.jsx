@@ -4,6 +4,7 @@ import useAuth from "../../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ErrorPage from "../../ErrorPage/ErrorPage";
+import Title from "../../../components/Title/Title";
 
 const AddNewPassword = () => {
     const { passwordReset, verifyOobCode } = useAuth();
@@ -61,7 +62,7 @@ const AddNewPassword = () => {
 
     useEffect(() => {
         if (!oobCode) {
-            navigate('/error404', {replace: true});
+            navigate('/error404', { replace: true });
         }
         else if (oobCode) {
             verifyOobCode(oobCode)
@@ -78,6 +79,7 @@ const AddNewPassword = () => {
 
     return (
         <div className="pt-20">
+            <Title title={'Add New Password'} />
             {
                 loading ?
                     <div className='flex justify-center items-center h-[650px]'>
@@ -87,7 +89,7 @@ const AddNewPassword = () => {
                     isLinkExpired ?
                         <ErrorPage text="Link Expired!" showButton={false} />
                         :
-                        <div className="w-full max-w-[600px] mx-auto py-10 px-10 shadow-2xl rounded-lg space-y-10">
+                        <div className="w-full max-w-[600px] mx-auto px-4 sm:py-10 sm:px-10 md:shadow-xl md:rounded-lg space-y-10">
                             <h3 className="text-2xl font-medium text-center">Add New Password</h3>
                             <form
                                 onSubmit={handleSubmit(resetPassword)} // Attach resetPassword function to form submission
@@ -133,7 +135,7 @@ const AddNewPassword = () => {
 
                                 <input
                                     type="submit"
-                                    className="btn btn-md capitalize text-white bg-blue-600 hover:bg-blue-700 w-[150px] justify-self-end"
+                                    className="btn btn-md capitalize text-white bg-black hover:bg-black hover:bg-opacity-80 w-[150px] justify-self-end"
                                     value="Save Password"
                                 />
                             </form>

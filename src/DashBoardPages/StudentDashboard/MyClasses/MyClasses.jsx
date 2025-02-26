@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import calculatePercentage from "../../../utils/calculatePercentage";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Title from "../../../components/Title/Title";
 
 const MyClasses = () => {
     const { user } = useAuth();
@@ -24,6 +25,7 @@ const MyClasses = () => {
 
     return (
         <section className="lg-container min-h-[25rem] my-10 px-3 md:px-4 xl:px-6">
+            <Title title={'My Classes'}/>
             <div>
                 <h2 className="text-2xl font-medium mb-3">My Classes</h2>
                 <hr />

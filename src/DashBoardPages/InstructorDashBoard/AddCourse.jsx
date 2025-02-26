@@ -8,6 +8,7 @@ import MilestoneSection from "./AddMilestone/MilestoneSection";
 import dummyThumbnail from '../../assets/images/dummyCourseThumbnail.png';
 import useUploadImage from "../../hooks/useUploadImage";
 import generateMongoId from "../../utils/genarateID";
+import Title from "../../components/Title/Title";
 
 const AddCourse = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -176,6 +177,7 @@ const AddCourse = () => {
 
     return (
         <div onKeyDown={handleEnterButton} id="addCourse" className="lg:px-2 xl:px-6 pb-10 xl:pt-6 w-full xl:border rounded-lg">
+            <Title title={'Add Courses'}/>
             <h3 className="pb-5 font-bold text-xl">Add Course</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                 {/* Class Name */}

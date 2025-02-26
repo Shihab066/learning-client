@@ -23,7 +23,7 @@ const PendingReviews = () => {
     });
 
     return (
-        <div className="space-y-4 w-full">
+        <div className="space-y-4 w-full">            
             {
                 isLoading ?
                     <Loading className=" h-[20rem] sm:h-[32rem]" />

@@ -13,6 +13,7 @@ import useUserRole from "../../hooks/useUserRole";
 import { toastSuccess } from "../../utils/toastUtils";
 import CardIcon from "../../components/Icons/CardIcon";
 import CopyIcon from "../../components/Icons/CopyIcon";
+import Title from "../../components/Title/Title";
 
 const Cart = () => {
     const { user } = useAuth();
@@ -106,6 +107,7 @@ const Cart = () => {
 
     return (
         <section className="lg-container min-h-[25rem] px-3 sm:px-4 xl:px-6">
+            <Title title={'Cart'}/>
             <h1 className="text-2xl font-medium mt-4 md:mt-6 lg:mt-8 xl:mt-10 mb-4 lg:mb-6">Cart</h1>
             {
                 isCartCourseLoading

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import GenerateStar from '../../components/GenerateStar/GenerateStar';
 import InstructorsLoadingSkeleton from './InstructorsLoadingSkeleton';
 import generateImageLink from '../../utils/generateImageLink';
 import api from '../../services/baseAPI';
+import Title from '../../components/Title/Title';
 
 const Instructors = () => {
     const { data: instructors = [], isLoading } = useQuery({
@@ -16,9 +16,7 @@ const Instructors = () => {
     })
     return (
         <div>
-            <Helmet>
-                <title>Learning Point_instructors</title>
-            </Helmet>
+            <Title title={'Instructors'}/>
             {
                 <div className='lg-container'>
                     <h2 className="text-left text-lg font-semibold px-4 py-6 ">Instructors</h2>

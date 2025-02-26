@@ -9,6 +9,7 @@ import { useState } from "react";
 import AddBanner from "./AddBanner";
 import UpdateBanner from "./UpdateBanner";
 import { removeAlert, toastSuccess } from "../../../utils/toastUtils";
+import Title from "../../../components/Title/Title";
 
 const BannerManagement = () => {
     const [axiosSecure] = useAxiosSecure();
@@ -40,6 +41,7 @@ const BannerManagement = () => {
 
     return (
         <div>
+            <Title title={'Banner Management'}/>
             {/* Header Section */}
             <div className="pb-2 border-b flex items-start justify-between">
                 <h2 className="text-lg font-bold">Banner Management</h2>

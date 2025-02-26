@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import generateImageLink from '../../../utils/generateImageLink';
 import dummyCourseThumbnail from '../../../assets/images/dummyCourseThumbnail2.jpg';
 import { toastSuccess } from '../../../utils/toastUtils';
+import Title from '../../../components/Title/Title';
 
 
 const MyCourses = () => {
@@ -94,6 +95,7 @@ const MyCourses = () => {
 
     return (
         <>
+            <Title title={'My Courses'}/>
             <div className='relative'>
                 <div className="space-y-3">
                     <h2 className="text-lg font-medium">Courses</h2>

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import searchIcon from '../../../assets/icon/search_icon.svg';
 import CourseReviewsSkeleton from "./CourseReviewsSkeleton";
 import generateImageLink from "../../../utils/generateImageLink";
+import Title from "../../../components/Title/Title";
 
 const CourseReviews = () => {
     const { user, loading } = useAuth();
@@ -30,6 +31,7 @@ const CourseReviews = () => {
 
     return (
         <div>
+            <Title title={'Reviews'}/>
             <div className="flex flex-col gap-y-2 sm:flex-row justify-between items-top mb-6">
                 <h2 className="text-lg font-medium">Reviews</h2>
                 <form onSubmit={handleSubmit} className="sm:w-[18rem] h-fit relative">

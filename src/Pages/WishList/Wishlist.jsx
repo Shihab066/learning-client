@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchWishlist, fetchWishlistCourses, removeCourseFromWishList } from "../../services/wishlistService";
 import generateImageLink from "../../utils/generateImageLink";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import Title from "../../components/Title/Title";
 
 const Wishlist = () => {
     const { user } = useAuth();
@@ -29,6 +30,7 @@ const Wishlist = () => {
 
     return (
         <section className="lg-container min-h-[25rem] px-2 sm:px-4 xl:px-6">
+            <Title title={'Wishlist'}/>
             {/* section heading */}
             <div className="mt-4 md:mt-6 lg:mt-8 xl:mt-10">
                 <h1 className="text-2xl font-medium">Wishlist</h1>

@@ -16,6 +16,7 @@ import formateCourseDuration from '../../utils/formateCourseDuration';
 import useUserRole from '../../hooks/useUserRole';
 import { toastWarning } from '../../utils/toastUtils';
 import api from '../../services/baseAPI';
+import Title from '../../components/Title/Title';
 
 // Custom hook to get query parameters
 function usePathQuery() {
@@ -180,6 +181,7 @@ const Courses = () => {
 
     return (
         <section className='lg-container'>
+            <Title title={'Courses'}/>
             <ScrollToTop limit={itemPerPage} page={currentPage} />
             <Header
                 handlePageOptions={handleItemPerPageOptions}

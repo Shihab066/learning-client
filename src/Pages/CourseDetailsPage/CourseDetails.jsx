@@ -25,6 +25,7 @@ import { addCourseToCart } from "../../services/cartService";
 import { addCourseToWishList, removeCourseFromWishList } from "../../services/wishlistService";
 import useUserRole from "../../hooks/useUserRole";
 import formatDate from "../../utils/formatDate";
+import Title from "../../components/Title/Title";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
@@ -161,6 +162,7 @@ const CourseDetails = () => {
 
     return (
         <>
+            <Title title={courseName}/>
             <div className="bg-[#F8FAFC]">
                 <div className="lg-container px-4 xl:px-6 py-10 space-y-5 relative">
                     {/* Breadcrumb */}

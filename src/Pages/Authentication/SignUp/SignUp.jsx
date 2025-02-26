@@ -3,13 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import useAuth from "../../../hooks/useAuth";
-import Swal from "sweetalert2";
-import { Helmet } from "react-helmet-async";
 import api from "../../../services/baseAPI";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import TickMark from "../../../components/Icons/TickMark";
 import WarningCircle from "../../../components/Icons/WarningCircle";
 import { toastError, toastSuccess } from "../../../utils/toastUtils";
+import Title from "../../../components/Title/Title";
 
 const SignUp = () => {
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
@@ -74,9 +73,7 @@ const SignUp = () => {
 
     return (
         <section>
-            <Helmet>
-                <title>SignUp | Learning Point</title>
-            </Helmet>
+            <Title title={'SignUp'}/>
             <div className="mx-auto mt-10 sm:mt-20 w-full max-w-sm lg:max-w-lg px-4 sm:px-0">
                 <h3 className="text-center py-4 sm:py-8 font-medium text-xl sm:text-3xl">Create Your Account</h3>
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">

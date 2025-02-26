@@ -7,6 +7,8 @@ import NewsLetter from "../NewsLetter/NewsLetter";
 import Sponser from "../Sponser/Sponser";
 import Testimonials from "../../../components/Testimonial/Testimonial";
 import { useEffect, useState } from "react";
+import Title from "../../../components/Title/Title";
+import { Helmet } from "react-helmet-async";
 
 
 const Home = () => {
@@ -43,7 +45,10 @@ const Home = () => {
         };
     }, []);
     return (
-        <>                        
+        <>
+            <Helmet>
+                <title>Learning Point</title>
+            </Helmet>
             <Slider />
             <PopularCourses isMobileView={isMobileView} />
             <PopularInstructor isMobileView={isMobileView} />

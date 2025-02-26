@@ -3,11 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../../../Shared/SocialLogin/SocialLogin";
 import { useState } from "react";
 import useAuth from "../../../hooks/useAuth";
-import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
 import api from "../../../services/baseAPI";
 import EyeIcon from "../../../components/Icons/EyeIcon";
 import EyeSlash from "../../../components/Icons/EyeSlash";
+import Title from "../../../components/Title/Title";
 
 const Login = () => {
     const location = useLocation();
@@ -60,9 +60,7 @@ const Login = () => {
 
     return (
         <section>
-            <Helmet>
-                <title>Login | Learning Point</title>
-            </Helmet>
+            <Title title={'Login'}/>
             <div className="mx-auto mt-10 sm:mt-20 w-full max-w-sm lg:max-w-lg px-4 sm:px-0">
                 <h3 className="text-center py-4 sm:py-8 font-medium text-xl sm:text-3xl">Sign in to your account</h3>
                 <form onSubmit={handleSubmit(onSubmit)}>

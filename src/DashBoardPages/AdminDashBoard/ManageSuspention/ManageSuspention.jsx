@@ -10,6 +10,7 @@ import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import Swal from "sweetalert2";
 import { toastSuccess } from "../../../utils/toastUtils";
 import EmptyPage from "../../../components/EmptyPage/EmptyPage";
+import Title from "../../../components/Title/Title";
 
 const ManageSuspention = () => {
     const { user } = useAuth();
@@ -60,6 +61,7 @@ const ManageSuspention = () => {
 
     return (
         <>
+            <Title title={'Manage Suspension'}/>
             <div>
                 {/* Header Section */}
                 <div className="border-b pb-2 flex flex-col sm:flex-row justify-between gap-y-2">

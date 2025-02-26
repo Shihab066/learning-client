@@ -5,6 +5,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import formatNumber from "../../../utils/formateNumber";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
+import Title from "../../../components/Title/Title";
 
 const Dashboard = () => {
     const [axiosSecure] = useAxiosSecure();
@@ -103,6 +104,7 @@ const Dashboard = () => {
 
     return (
         <>
+            <Title title={'Dashboard'}/>
             {isLoading ? (
                 <Loading />
             ) : (

@@ -6,6 +6,7 @@ import Loading from '../../../components/Loading/Loading';
 import EmptyPage from '../../../components/EmptyPage/EmptyPage';
 import formatDate from '../../../utils/formatDate';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import Title from '../../../components/Title/Title';
 
 // Order row component for each purchase item
 const OrderRow = ({ data }) => (
@@ -70,6 +71,7 @@ const PurchaseHistory = () => {
 
     return (
         <div className='lg:px-2 xl:px-0'>
+            <Title title={'Purchase History'}/>
             <div>
                 <h2 className='text-xl font-medium mb-4'>Purchase History</h2>
             </div>

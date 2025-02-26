@@ -9,6 +9,7 @@ import useAuth from "../../hooks/useAuth";
 import CourseCompleteAnimation from "./CourseCompleteAnimation";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { Helmet } from "react-helmet-async";
+import Title from "../../components/Title/Title";
 
 const ViewCourse = () => {
     const { courseId } = useParams();
@@ -140,9 +141,7 @@ const ViewCourse = () => {
 
     return (
         <>
-            <Helmet>
-               <title></title>
-            </Helmet>
+            <Title title={videoTitle}/>
             <section className="lg-container px-4 pt-8">
                 <div className="border-b pb-4 flex items-center gap-x-10">
                     {/* Back Button and Video Title */}

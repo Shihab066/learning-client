@@ -11,6 +11,7 @@ import useUserRole from "../../../hooks/useUserRole";
 import Loading from "../../../components/Loading/Loading";
 import useUploadImage from "../../../hooks/useUploadImage";
 import generateImageLink from "../../../utils/generateImageLink";
+import Title from "../../../components/Title/Title";
 
 const Profile = () => {
     // React Hook Form setup
@@ -169,6 +170,7 @@ const Profile = () => {
 
     return (
         <>
+            <Title title={'Profile'}/>
             {
                 !user
                     ?

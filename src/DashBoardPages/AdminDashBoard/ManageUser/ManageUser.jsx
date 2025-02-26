@@ -14,6 +14,7 @@ import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import { useForm } from "react-hook-form";
 import generateUniqueId from "../../../utils/generateUniqueId";
 import Loading from "../../../components/Loading/Loading";
+import Title from "../../../components/Title/Title";
 
 const ManageUser = () => {
     const { user } = useAuth();
@@ -40,6 +41,7 @@ const ManageUser = () => {
 
     return (
         <div>
+            <Title title={'Manage User'}/>
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:justify-between gap-y-2 border-b pb-2">
                 <h2 className="text-lg font-bold">Manage User</h2>

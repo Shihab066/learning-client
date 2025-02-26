@@ -7,6 +7,7 @@ import EditIcon from "../../../components/Icons/EditIcon";
 import DeleteIcon from "../../../components/Icons/DeleteIcon";
 import Loading from "../../../components/Loading/Loading";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Title from "../../../components/Title/Title";
 
 const Feedback = () => {
     const { user } = useAuth(); // Retrieve the authenticated user
@@ -22,6 +23,7 @@ const Feedback = () => {
 
     return (
         <section className="lg:px-2 xl:px-0">
+            <Title title={'Feedback'}/>
             {/* Header Section */}
             <header>
                 <h2 className="mb-2 text-xl font-medium">Feedback</h2>

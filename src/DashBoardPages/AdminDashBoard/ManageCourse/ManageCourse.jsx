@@ -14,6 +14,7 @@ import TickCircle from "../../../components/Icons/TickCircle";
 import CloseCircle from "../../../components/Icons/CloseCircle";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
+import Title from "../../../components/Title/Title";
 
 const ManageCourse = () => {
     const { user } = useAuth();
@@ -71,6 +72,7 @@ const ManageCourse = () => {
 
     return (
         <div>
+            <Title title={'Manage Course'}/>
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row justify-between gap-y-2 border-b pb-2">
                 <h2 className="text-lg font-bold">Manage Courses</h2>

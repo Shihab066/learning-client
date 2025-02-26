@@ -1,8 +1,10 @@
 import { NavLink, Outlet } from "react-router-dom";
+import Title from "../../../components/Title/Title";
 
 const MyReviews = () => {
     return (
         <>
+            <Title title={'My Reviews'}/>
             <section className="w-full overflow-hidden lg:px-2 xl:px-0">
                 <div>
                     <h2 className="text-xl font-medium">

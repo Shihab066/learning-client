@@ -4,6 +4,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import generateImageLink from "../../utils/generateImageLink";
 import InstructorProfileSkeleton from "./InstructorProfileSkeleton";
+import Title from "../../components/Title/Title";
 
 
 const InstructorProfile = () => {
@@ -28,6 +29,7 @@ const InstructorProfile = () => {
     }
     return (
         <>
+            <Title title={`Instructor: ${name}`}/>
             <section className="lg-container px-4 lg:px-6 md:flex justify-between items-start gap-x-20 lg:gap-x-44 xl:gap-x-60 pt-10">
                 <section className="text-gray-700 space-y-6">
                     <article className="space-y-6">

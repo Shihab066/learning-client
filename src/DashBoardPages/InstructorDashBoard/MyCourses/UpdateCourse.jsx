@@ -10,6 +10,7 @@ import Loading from "../../../components/Loading/Loading";
 import useUploadImage from "../../../hooks/useUploadImage";
 import generateImageLink from "../../../utils/generateImageLink";
 import useAuth from "../../../hooks/useAuth";
+import { toastError, toastSuccess } from "../../../utils/toastUtils";
 
 const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCourses }) => {
 
@@ -30,6 +31,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
     const [thumbnail, setThumbnail] = useState(null);
     const [courseContentError, setCourseContentError] = useState(false);
     const [checkCourseContentError, setCheckCourseContentError] = useState(false);
+    const [isCourseUpdating, setIsCourseUpdating] = useState(false);
     const { courseName, courseThumbnail, summary, description, courseContents, level, category, seats, price, discount } = formData || {};
     const [milestonesData, setMilestonesData] = useState(courseContents);
     const { setCourseId: setCurrentCourseId } = useAuth();
@@ -147,6 +149,7 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
 
     // Handle form submission
     const onSubmit = async (data) => {
+        setIsCourseUpdating(true);
         const { courseThumbnail, seats, price, discount } = data;
 
         if (courseContentError) return;
@@ -165,30 +168,26 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
             totalVideos
         };
 
-        axiosSecure.patch(`/course/update?id=${user.uid}&courseId=${courseId}`, updatedCourse).then(res => {
-            if (res.data.result.modifiedCount) {
-                resetForm();
-                showSuccessMessage();
-                refetch();
-                refetchCourses();
-            }
-        });
+        axiosSecure.patch(`/course/update?id=${user.uid}&courseId=${courseId}`, updatedCourse)
+            .then(res => {
+                if (res.data.result.modifiedCount) {
+                    resetForm();
+                    toastSuccess('Course Update Successfully')
+                    refetch();
+                    refetchCourses();
+                }
+            })
+            .catch(() => {
+                toastError('Something Went Wrong!');
+                setIsCourseUpdating(false);
+            })
     };
 
     const resetForm = () => {
         setThumbnail(null);
         setCheckCourseContentError(false);
         reset();
-    };
-
-    const showSuccessMessage = () => {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Course Update Successfully',
-            showConfirmButton: false,
-            timer: 2000
-        });
+        setIsCourseUpdating(false);
     };
 
     // Set CourseId to the context API.
@@ -434,10 +433,10 @@ const UpdateCourse = ({ setIsUpdateCourseOpen, courseId, setCourseId, refetchCou
                             {/* Submit Button */}
                             <input
                                 type="submit"
-                                value="Save Change"
+                                value={isCourseUpdating ? 'Saving...' : 'Save Change'}
                                 className="btn bg-blue-600 hover:bg-blue-700 text-white normal-case w-full md:w-52 mt-[2rem!important]"
                                 onClick={validateCourseContent}
-                                disabled={isUpdateBtnDisabled}
+                                disabled={isUpdateBtnDisabled || isCourseUpdating}
                             />
                         </form >
                     </div >

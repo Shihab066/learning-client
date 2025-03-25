@@ -410,7 +410,7 @@ const Navbar = () => {
 
                 {
                   user &&
-                  <div className="hidden lg:flex items-center gap-x-6">
+                  <div className="lg:flex items-center gap-x-6">
                     {
                       isStudent &&
                       <>
